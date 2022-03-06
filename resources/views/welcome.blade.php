@@ -11,12 +11,10 @@
 
 <body class="bg-gray-200 w-screen h-screen grid">
 
-    <div id="mobile-frame" class="bg-white max-w-[450px] max-h-[1000px] place-self-center">
-        <div class="w-[320px] h-[740px]">
-            {{--  --}}
-            <div id="app"></div>
-            {{--  --}}
-        </div>
+    <div id="mobile-frame" class="bg-white w-full h-full max-w-[450px] max-h-[920px] place-self-center">
+        {{--  --}}
+        <div id="root"></div>
+        {{--  --}}
     </div>
 
     <script src="{{ asset('js/manifest.js') }}"></script>
