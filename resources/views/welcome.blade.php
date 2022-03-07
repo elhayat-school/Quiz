@@ -13,7 +13,7 @@
 
     <div id="mobile-frame" class="bg-white w-full h-full max-w-[450px] max-h-[920px] place-self-center">
         {{--  --}}
-        <div id="root"></div>
+        <div id="root" class="flex h-full flex-col"></div>
         {{--  --}}
     </div>
 

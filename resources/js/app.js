@@ -1,7 +1,6 @@
 require("./bootstrap");
 //
 //
-import React from "react";
 import ReactDOM from "react-dom";
 //
 import FrontEnd from "./FrontEnd";
