@@ -20,6 +20,8 @@ use App\Models\Question;
 
 Route::get('/questions', [QuestionController::class, 'index']);
 Route::post('/questions', [QuestionController::class, 'store']);
+Route::post('/login', [AuthController::class, 'login']);
+
 
 Route::post('/register', [AuthController::class, 'register']);
 

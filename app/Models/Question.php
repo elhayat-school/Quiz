@@ -11,7 +11,7 @@ class Question extends Model
 
 
     public $timestamps = false;
-    protected $fillable = [
-        'content'
+    protected $guarded = [
+        'id'
     ];
 }
