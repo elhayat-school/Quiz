@@ -10,15 +10,14 @@ use App\Models\Question;
 
 Route::post('/questions', [QuestionController::class, 'store']);
 Route::post('/login', [AuthController::class, 'login']);
-Route::get('/questions', [QuizManagerController::class, 'getQuestion']);
-
 Route::post('/register', [AuthController::class, 'register']);
+
+
 
 Route::group(['middleware' => ['auth:sanctum']], function () {
 
-    // Route::get('/questions', [QuestionController::class, 'index']);
      Route::post('/logout', [AuthController::class, 'logout']);
-
+     Route::get('/questions', [QuizManagerController::class, 'getQuestion']);
 
 });
 
