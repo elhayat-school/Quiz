@@ -15,6 +15,12 @@ return new class extends Migration
     {
         Schema::create('answers', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained();
+            $table->foreignId('question_id')->constrained();
+            $table->set('choice_number', config('rules.choice_number.in'));
+            $table->dateTime('served_at');
+            $table->dateTime('received_at');
+            $table->integer('duration');
             $table->timestamps();
         });
     }

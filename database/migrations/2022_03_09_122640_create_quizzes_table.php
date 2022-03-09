@@ -15,6 +15,9 @@ return new class extends Migration
     {
         Schema::create('quizzes', function (Blueprint $table) {
             $table->id();
+            $table->dateTime('start_at');
+            $table->integer('order');
+            $table->boolean('done')->default(0);
             $table->timestamps();
         });
     }
