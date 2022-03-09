@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 
+import getCsrfCookie from "../apis/getCsrfCookie";
+
 const LoginForm = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -12,7 +14,7 @@ const LoginForm = () => {
         ev.preventDefault();
 
         if (email.length > 0 && password.length > 0) {
-            axios.get("/sanctum/csrf-cookie").then(() => {
+            getCsrfCookie.then(() => {
                 axios
                     .post("api/login", {
                         email: email,

@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
-import Choice from "./Choice";
 
-import axios from "axios";
+import authenticated from "../apis/authenticated";
+import getCsrfCookie from "../apis/getCsrfCookie";
+
+import Choice from "./Choice";
 
 function QuestionForm() {
     const [question, setQuestion] = useState([]);
@@ -29,17 +31,8 @@ function QuestionForm() {
     const getQuestion = (api, onSuccess, onFail) => {
         setStartFlag(true);
 
-        axios.get("/sanctum/csrf-cookie").then((response) => {
-            axios
-                .get(`/api/${api}`, {
-                    headers: {
-                        Authorization: `Bearer ${sessionStorage.getItem(
-                            "auth_token"
-                        )}`,
-                    },
-                })
-                .then(onSuccess)
-                .catch(onFail);
+        getCsrfCookie.then(() => {
+            authenticated.get(api).then(onSuccess).catch(onFail);
         });
     };
 

@@ -2215,6 +2215,47 @@ var FrontEnd = function FrontEnd(props) {
 
 /***/ }),
 
+/***/ "./resources/js/apis/authenticated.js":
+/*!********************************************!*\
+  !*** ./resources/js/apis/authenticated.js ***!
+  \********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_0__);
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (axios__WEBPACK_IMPORTED_MODULE_0___default().create({
+  baseURL: "".concat(window.location.origin, "/api/"),
+  headers: {
+    Authorization: "Bearer ".concat(sessionStorage.getItem("auth_token"))
+  }
+}));
+
+/***/ }),
+
+/***/ "./resources/js/apis/getCsrfCookie.js":
+/*!********************************************!*\
+  !*** ./resources/js/apis/getCsrfCookie.js ***!
+  \********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_0__);
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (axios__WEBPACK_IMPORTED_MODULE_0___default().get("/sanctum/csrf-cookie"));
+
+/***/ }),
+
 /***/ "./resources/js/app.js":
 /*!*****************************!*\
   !*** ./resources/js/app.js ***!
@@ -2319,7 +2360,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
+/* harmony import */ var _apis_getCsrfCookie__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../apis/getCsrfCookie */ "./resources/js/apis/getCsrfCookie.js");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
 
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
@@ -2331,6 +2373,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 function _iterableToArrayLimit(arr, i) { var _i = arr == null ? null : typeof Symbol !== "undefined" && arr[Symbol.iterator] || arr["@@iterator"]; if (_i == null) return; var _arr = []; var _n = true; var _d = false; var _s, _e; try { for (_i = _i.call(arr); !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
 
 
 
@@ -2356,7 +2399,7 @@ var LoginForm = function LoginForm() {
     ev.preventDefault();
 
     if (email.length > 0 && password.length > 0) {
-      axios.get("/sanctum/csrf-cookie").then(function () {
+      _apis_getCsrfCookie__WEBPACK_IMPORTED_MODULE_1__["default"].then(function () {
         axios.post("api/login", {
           email: email,
           password: password
@@ -2374,9 +2417,9 @@ var LoginForm = function LoginForm() {
     }
   };
 
-  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("form", {
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("form", {
     onSubmit: loginHandler,
-    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("input", {
+    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("input", {
       type: "email",
       value: email,
       onChange: function onChange(ev) {
@@ -2384,7 +2427,7 @@ var LoginForm = function LoginForm() {
       },
       className: "w-full h-8 p-1 m-1 rounded-sm border-gray-400",
       placeholder: "email"
-    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("input", {
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("input", {
       type: "password",
       autoComplete: "",
       value: password,
@@ -2393,7 +2436,7 @@ var LoginForm = function LoginForm() {
       },
       className: "w-full h-8 p-1 m-1 rounded-sm border-gray-400",
       placeholder: "password"
-    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("button", {
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("button", {
       className: "bg-emerald-600 text-gray-50 mx-2 px-4 py-2 rounded-full font-bold",
       children: "Connecter"
     })]
@@ -2416,10 +2459,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
-/* harmony import */ var _Choice__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Choice */ "./resources/js/components/Choice.jsx");
-/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
-/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
+/* harmony import */ var _apis_authenticated__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../apis/authenticated */ "./resources/js/apis/authenticated.js");
+/* harmony import */ var _apis_getCsrfCookie__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../apis/getCsrfCookie */ "./resources/js/apis/getCsrfCookie.js");
+/* harmony import */ var _Choice__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./Choice */ "./resources/js/components/Choice.jsx");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
 
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
@@ -2431,6 +2474,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 function _iterableToArrayLimit(arr, i) { var _i = arr == null ? null : typeof Symbol !== "undefined" && arr[Symbol.iterator] || arr["@@iterator"]; if (_i == null) return; var _arr = []; var _n = true; var _d = false; var _s, _e; try { for (_i = _i.call(arr); !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
 
 
 
@@ -2470,12 +2514,8 @@ function QuestionForm() {
 
   var getQuestion = function getQuestion(api, onSuccess, onFail) {
     setStartFlag(true);
-    axios__WEBPACK_IMPORTED_MODULE_2___default().get("/sanctum/csrf-cookie").then(function (response) {
-      axios__WEBPACK_IMPORTED_MODULE_2___default().get("/api/".concat(api), {
-        headers: {
-          Authorization: "Bearer ".concat(sessionStorage.getItem("auth_token"))
-        }
-      }).then(onSuccess)["catch"](onFail);
+    _apis_getCsrfCookie__WEBPACK_IMPORTED_MODULE_2__["default"].then(function () {
+      _apis_authenticated__WEBPACK_IMPORTED_MODULE_1__["default"].get(api).then(onSuccess)["catch"](onFail);
     });
   };
   /**
@@ -2523,19 +2563,19 @@ function QuestionForm() {
 
   var renderChoices = function renderChoices() {
     return choices.map(function (choice) {
-      return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(_Choice__WEBPACK_IMPORTED_MODULE_1__["default"], {
+      return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_Choice__WEBPACK_IMPORTED_MODULE_3__["default"], {
         answer: choice
       }, choice.nb);
     });
   };
 
-  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsxs)("form", {
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("form", {
     onSubmit: answerHandler,
     className: "bg-white",
-    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("h2", {
+    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("h2", {
       className: "bg-gray-100 px-4 py-6 rounded-b-xl text-xl",
       children: question
-    }), renderChoices(), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("button", {
+    }), renderChoices(), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("button", {
       className: "bg-emerald-600 text-gray-50 mx-2 px-4 py-2 rounded-full font-bold",
       children: "Answer"
     })]
