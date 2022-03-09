@@ -18,8 +18,8 @@ const FrontEnd = (props) => {
         <div className="bg-stone-300 flex-1">
             <h2 className="text-center font-bold"> {time} </h2>
 
-            <QuestionForm />
             <LoginForm />
+            <QuestionForm />
         </div>
     );
 };

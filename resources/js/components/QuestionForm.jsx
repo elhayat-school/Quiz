@@ -9,6 +9,7 @@ function QuestionForm() {
     const [startFlag, setStartFlag] = useState(false);
 
     useEffect(() => {
+        // check auth
         // Mount
         if (!startFlag) {
             getQuestion(
@@ -29,7 +30,16 @@ function QuestionForm() {
         setStartFlag(true);
 
         axios.get("/sanctum/csrf-cookie").then((response) => {
-            axios.get(`/api/${api}`).then(onSuccess).catch(onFail);
+            axios
+                .get(`/api/${api}`, {
+                    headers: {
+                        Authorization: `Bearer ${sessionStorage.getItem(
+                            "auth_token"
+                        )}`,
+                    },
+                })
+                .then(onSuccess)
+                .catch(onFail);
         });
     };
 
