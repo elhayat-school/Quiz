@@ -2356,7 +2356,7 @@ var LoginForm = function LoginForm() {
     ev.preventDefault();
 
     if (email.length > 0 && password.length > 0) {
-      axios.get("/sanctum/csrf-cookie").then(function (response) {
+      axios.get("/sanctum/csrf-cookie").then(function () {
         axios.post("api/login", {
           email: email,
           password: password
@@ -2386,6 +2386,7 @@ var LoginForm = function LoginForm() {
       placeholder: "email"
     }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("input", {
       type: "password",
+      autoComplete: "",
       value: password,
       onChange: function onChange(ev) {
         setPassword(ev.target.value);

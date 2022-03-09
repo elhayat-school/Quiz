@@ -12,7 +12,7 @@ const LoginForm = () => {
         ev.preventDefault();
 
         if (email.length > 0 && password.length > 0) {
-            axios.get("/sanctum/csrf-cookie").then((response) => {
+            axios.get("/sanctum/csrf-cookie").then(() => {
                 axios
                     .post("api/login", {
                         email: email,
@@ -51,6 +51,7 @@ const LoginForm = () => {
 
             <input
                 type="password"
+                autoComplete=""
                 value={password}
                 onChange={(ev) => {
                     setPassword(ev.target.value);
