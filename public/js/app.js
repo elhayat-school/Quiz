@@ -2207,7 +2207,7 @@ var FrontEnd = function FrontEnd(props) {
     children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsxs)("h2", {
       className: "text-center font-bold",
       children: [" ", time, " "]
-    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(_components_QuestionForm__WEBPACK_IMPORTED_MODULE_1__["default"], {}), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(_components_LoginForm__WEBPACK_IMPORTED_MODULE_2__["default"], {})]
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(_components_LoginForm__WEBPACK_IMPORTED_MODULE_2__["default"], {}), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(_components_QuestionForm__WEBPACK_IMPORTED_MODULE_1__["default"], {})]
   });
 };
 
@@ -2361,7 +2361,8 @@ var LoginForm = function LoginForm() {
           email: email,
           password: password
         }).then(function (response) {
-          console.log(response.data); // if (response.data.success) {
+          console.log(response.data);
+          sessionStorage.setItem("auth_token", response.data.token); // if (response.data.success) {
           //     router.go("/dashboard");
           // } else {
           //     error = response.data.message;
@@ -2453,6 +2454,7 @@ function QuestionForm() {
       setStartFlag = _useState6[1];
 
   (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(function () {
+    // check auth
     // Mount
     if (!startFlag) {
       getQuestion("questions", successfulQuestionFetchHandler, failureFirstQuestionFetchHandler);
@@ -2468,7 +2470,11 @@ function QuestionForm() {
   var getQuestion = function getQuestion(api, onSuccess, onFail) {
     setStartFlag(true);
     axios__WEBPACK_IMPORTED_MODULE_2___default().get("/sanctum/csrf-cookie").then(function (response) {
-      axios__WEBPACK_IMPORTED_MODULE_2___default().get("/api/".concat(api)).then(onSuccess)["catch"](onFail);
+      axios__WEBPACK_IMPORTED_MODULE_2___default().get("/api/".concat(api), {
+        headers: {
+          Authorization: "Bearer ".concat(sessionStorage.getItem("auth_token"))
+        }
+      }).then(onSuccess)["catch"](onFail);
     });
   };
   /**

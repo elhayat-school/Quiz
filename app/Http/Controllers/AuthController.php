@@ -43,8 +43,7 @@ class AuthController extends Controller
 
         // Check password
 
-        if(!$user || ! Hash::check('password', $user->password))
-        {
+        if (!$user || password_verify($request->password, $user->password)) {
             return response([
                 'success' => false,
                 'status' => 'FAILED_AUTH',

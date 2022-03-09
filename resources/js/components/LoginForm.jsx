@@ -20,6 +20,10 @@ const LoginForm = () => {
                     })
                     .then((response) => {
                         console.log(response.data);
+                        sessionStorage.setItem(
+                            "auth_token",
+                            response.data.token
+                        );
                         // if (response.data.success) {
                         //     router.go("/dashboard");
                         // } else {
