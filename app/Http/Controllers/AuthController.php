@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreUserRequest;
 use App\Models\User;
-use Illuminate\Auth\Events\Validated;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -16,12 +15,12 @@ class AuthController extends Controller
         $user = User::create(
             array_merge(
                 $request->safe()->except(['password']),
-                ['password' => bcrypt('password')]
+                ['password' => Hash::make('password')]
             )
         );
 
 
-        $token = $user->createToken('myapptoken')->plainTextToken;
+        $token = $user->createToken('registertoken')->plainTextToken;
 
         $response = [
             'user' => $user,
@@ -52,7 +51,7 @@ class AuthController extends Controller
             ], 401);
         }
 
-        $token = $user->createToken('myapptoken')->plainTextToken;
+        $token = $user->createToken('logintoken')->plainTextToken;
 
         $response = [
             'user' => $user,
