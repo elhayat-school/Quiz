@@ -31,11 +31,15 @@ class AuthController extends Controller
         return response($response, 201);
     }
 
-    public function login(StoreUserRequest $request)
+    public function login(Request $request)
     {
+        $field = $request->validate([
+            'email' => 'required',
+            'password' => 'required|string'
+        ]);
         // Check email
 
-        $user = User::where('email', '=', 'email')->first();
+        $user = User::where('email', $field['email'])->first();
 
         // Check password
 
