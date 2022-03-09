@@ -46,6 +46,8 @@ class AuthController extends Controller
         if(!$user || ! Hash::check('password', $user->password))
         {
             return response([
+                'success' => false,
+                'status' => 'FAILED_AUTH',
                 'message' => 'Bad creds'
             ], 401);
         }
