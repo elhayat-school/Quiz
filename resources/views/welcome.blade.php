@@ -9,11 +9,11 @@
     <title> Quizz </title>
 </head>
 
-<body class="bg-gray-200 w-screen h-screen grid">
+<body class="bg-center bg-cover w-screen h-screen grid" style="background-image: url('/assets/stars.svg')">
 
     <div id="mobile-frame" class="bg-white w-full h-full max-w-[450px] max-h-[920px] place-self-center">
         {{--  --}}
-        <div id="root" class="flex h-full flex-col"></div>
+        <div id="root" class="flex h-full flex-col justify-center"></div>
         {{--  --}}
     </div>
 
