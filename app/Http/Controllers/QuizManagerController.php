@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Quiz;
 use Illuminate\Http\Request;
 
 class QuizManagerController extends Controller
@@ -23,6 +24,12 @@ class QuizManagerController extends Controller
                 ],
             ]
         );
+    }
+
+    private function getStartAt()
+    {
+        Quiz::where('done', false)
+        ->orderBy('order', 'desc')->first();
     }
 
 }

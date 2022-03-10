@@ -13,13 +13,8 @@ Route::post('/register', [AuthController::class, 'register']);
 
 
 Route::group(['middleware' => ['auth:sanctum']], function () {
+
     Route::get('/questions', [QuizManagerController::class, 'getQuestion']);
-
-<<<<<<< HEAD
-     Route::post('/logout', [AuthController::class, 'logout']);
-     Route::get('/questions', [QuizManagerController::class, 'getQuestion']);
-
-=======
     Route::post('/logout', [AuthController::class, 'logout']);
->>>>>>> test_login
+    Route::get('/questions', [QuizManagerController::class, 'getQuestion']);
 });
