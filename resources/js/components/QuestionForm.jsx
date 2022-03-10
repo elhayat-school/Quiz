@@ -1,8 +1,5 @@
 import React, { useState, useEffect } from "react";
 
-import authenticated from "../apis/authenticated";
-import getCsrfCookie from "../apis/getCsrfCookie";
-
 import Choice from "./Choice";
 
 function QuestionForm() {
@@ -31,8 +28,17 @@ function QuestionForm() {
     const getQuestion = (api, onSuccess, onFail) => {
         setStartFlag(true);
 
-        getCsrfCookie.then(() => {
-            authenticated.get(api).then(onSuccess).catch(onFail);
+        axios.get("/sanctum/csrf-cookie").then(() => {
+            axios
+                .get(`/api/${api}`, {
+                    headers: {
+                        Authorization: `Bearer ${sessionStorage.getItem(
+                            "auth_token"
+                        )}`,
+                    },
+                })
+                .then(onSuccess)
+                .catch(onFail);
         });
     };
 
@@ -54,7 +60,7 @@ function QuestionForm() {
      * @param {*} err
      */
     const failureFirstQuestionFetchHandler = (err) => {
-        // refresh ?
+        // If 401 redirect to login
         setStartFlag(false);
     };
 

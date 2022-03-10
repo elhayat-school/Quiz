@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-
-import getCsrfCookie from "../apis/getCsrfCookie";
+import { useNavigate } from "react-router-dom";
 
 const LoginForm = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const navigate = useNavigate();
 
     /**
      *
@@ -14,7 +14,7 @@ const LoginForm = () => {
         ev.preventDefault();
 
         if (email.length > 0 && password.length > 0) {
-            getCsrfCookie.then(() => {
+            axios.get("/sanctum/csrf-cookie").then(() => {
                 axios
                     .post("api/login", {
                         email: email,
@@ -26,11 +26,7 @@ const LoginForm = () => {
                             "auth_token",
                             response.data.token
                         );
-                        // if (response.data.success) {
-                        //     router.go("/dashboard");
-                        // } else {
-                        //     error = response.data.message;
-                        // }
+                        navigate("/play");
                     })
                     .catch(function (error) {
                         console.error(error);
