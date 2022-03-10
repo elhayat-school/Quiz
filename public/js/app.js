@@ -2285,13 +2285,14 @@ __webpack_require__.r(__webpack_exports__);
 
 var Choice = function Choice(props) {
   return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("div", {
-    className: "bg-gray-50 m-2 px-2 py-4 rounded-md shadow-sm flex items-center",
+    className: "bg-gray-50 m-2 px-2 py-4 rounded-md shadow-sm flex items-center flex-row-reverse",
     children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("input", {
       name: "answer",
       type: "radio",
       value: props.answer.nb,
-      className: "h-6 w-6 mr-2"
+      className: "h-6 w-6 ml-2"
     }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("label", {
+      dir: "rtl",
       className: "flex-1",
       children: props.answer.content
     })]
@@ -2371,13 +2372,14 @@ var LoginForm = function LoginForm() {
 
   return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("form", {
     onSubmit: loginHandler,
+    className: "flex flex-col items-center",
     children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("input", {
       type: "email",
       value: email,
       onChange: function onChange(ev) {
         setEmail(ev.target.value.toLocaleLowerCase());
       },
-      className: "w-full h-8 p-1 m-1 rounded-sm border-gray-400",
+      className: "w-[80%] h-8 p-1 m-1 rounded-sm border-gray-400",
       placeholder: "email"
     }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("input", {
       type: "password",
@@ -2386,10 +2388,10 @@ var LoginForm = function LoginForm() {
       onChange: function onChange(ev) {
         setPassword(ev.target.value);
       },
-      className: "w-full h-8 p-1 m-1 rounded-sm border-gray-400",
+      className: "w-[80%] h-8 p-1 m-1 rounded-sm border-gray-400",
       placeholder: "password"
     }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("button", {
-      className: "bg-emerald-600 text-gray-50 mx-2 px-4 py-2 rounded-full font-bold",
+      className: "w-[80%] bg-emerald-600 text-gray-50 m-1 px-4 py-2 rounded-sm font-bold",
       children: "Connecter"
     })]
   });
@@ -2556,6 +2558,7 @@ function QuestionForm() {
     className: "bg-white",
     children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("h2", {
       className: "bg-gray-100 px-4 py-6 rounded-b-xl text-xl",
+      dir: "rtl",
       children: question
     }), renderChoices(), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("button", {
       className: "bg-emerald-600 text-gray-50 mx-2 px-4 py-2 rounded-full font-bold",

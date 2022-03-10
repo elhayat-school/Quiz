@@ -36,14 +36,14 @@ const LoginForm = () => {
     };
 
     return (
-        <form onSubmit={loginHandler}>
+        <form onSubmit={loginHandler} className="flex flex-col items-center">
             <input
                 type="email"
                 value={email}
                 onChange={(ev) => {
                     setEmail(ev.target.value.toLocaleLowerCase());
                 }}
-                className="w-full h-8 p-1 m-1 rounded-sm border-gray-400"
+                className="w-[80%] h-8 p-1 m-1 rounded-sm border-gray-400"
                 placeholder="email"
             />
 
@@ -54,11 +54,11 @@ const LoginForm = () => {
                 onChange={(ev) => {
                     setPassword(ev.target.value);
                 }}
-                className="w-full h-8 p-1 m-1 rounded-sm border-gray-400"
+                className="w-[80%] h-8 p-1 m-1 rounded-sm border-gray-400"
                 placeholder="password"
             />
 
-            <button className="bg-emerald-600 text-gray-50 mx-2 px-4 py-2 rounded-full font-bold">
+            <button className="w-[80%] bg-emerald-600 text-gray-50 m-1 px-4 py-2 rounded-sm font-bold">
                 Connecter
             </button>
         </form>

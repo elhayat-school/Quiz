@@ -9,17 +9,18 @@ class QuizManagerController extends Controller
 {
     public function getQuestion()
     {
-        $lorem = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.";
+        $lorem = '"لوريم ايبسوم دولار سيت أميت ,كونسيكتيتور أدايبا يسكينج أليايت,سيت دو أيوسمود تيمبورأنكايديديونتيوت لابوري ات دولار ماجنا أليكيوا . يوت انيم أدمينيم فينايم,كيواس نوستأكسير سيتاشن يللأمكو لابورأس نيسي يت أليكيوب أكس أيا كوممودو كونسيكيوات . ديواسأيوتي أريري دولار إن ريبريهينديرأيتفوليوبتاتي فيلايت أيسسي كايلليوم دولار أيو فيجايتنيولا باراياتيور. أيكسسيبتيور ساينت أوككايكات كيوبايداتات نون بروايدينت ,سيونت انكيولباكيو أوفيسيا ديسيريونتموليت انيم أيدي ايست لابوريوم."
+        "سيت يتبيرسبايكياتيس يوندي أومنيس أستي ناتيس أيررور سيت فوليبتاتيم أكيسأنتييومدولاريمكيو لايودانتيوم,توتام ريم أبيرأم,أيكيو أبسا كيواي أب أللوأنفينتوري فيرأتاتيس ايتكياسي أرشيتيكتو بيتاي فيتاي ديكاتا سيونت أكسبليكابو. نيمو أنيم أبسام فوليوباتاتيم كيوايفوليوبتاس سايت أسبيرناتشر أيوتأودايت أيوت فيوجايت, سيد كيواي كونسيكيونتشر ماجنايدولارس أيوس كيواي راتاشن فوليوبتاتيم سيكيواي نيسكايونت. نيكيو بوررو كيوايسكيومايست,كيوايدولوريم ايبسيوم كيوا دولار سايت أميت, كونسيكتيتيور,أديبايسكاي فيلايت, سيدكيواي نون نيومكيوام ايايوس موداي تيمبورا انكايديونت يوت لابوري أيتدولار ماجنامألايكيوام كيوايرات فوليوبتاتيم. يوت اينايم أد مينيما فينيام, كيواس نوستريوم أكسيركايتاشيميلامكوربوريس سيوسكايبيت لابورايوسام, نايساييوت ألايكيوايد أكس أيا كومودايكونسيكيواتشر؟ كيوايس أيوتيم فيل أيوم أيوري ريبريهينديرايت كيواي ان إيا فوليوبتاتيفيلايت ايسسي كيوم نايهايلموليستايا كونسيكيواتيو,فيلايليوم كيواي دولوريم أيوم فيوجايات كيوفوليوبتاس نيولا باراياتيور؟"';
 
         return response()->json(
             [
                 'question' => [
-                    'content' => substr($lorem, rand(30, 50), rand(60, 80)),
+                    'content' => mb_substr($lorem, rand(30, 50), rand(60, 80)),
                     'choices' => [
-                        ['nb' => 1, 'content' => substr($lorem, rand(150, 170), rand(180, 200))],
-                        ['nb' => 2, 'content' => substr($lorem, rand(120, 140), rand(150, 170))],
-                        ['nb' => 3, 'content' => substr($lorem, rand(200, 220), rand(230, 250))],
-                        ['nb' => 4, 'content' => substr($lorem, rand(100, 120), rand(130, 150))],
+                        ['nb' => 1, 'content' => mb_substr($lorem, rand(150, 170), rand(180, 200))],
+                        ['nb' => 2, 'content' => mb_substr($lorem, rand(120, 140), rand(150, 170))],
+                        ['nb' => 3, 'content' => mb_substr($lorem, rand(200, 220), rand(230, 250))],
+                        ['nb' => 4, 'content' => mb_substr($lorem, rand(100, 120), rand(130, 150))],
                     ]
                 ],
             ]
@@ -29,7 +30,6 @@ class QuizManagerController extends Controller
     private function getStartAt()
     {
         Quiz::where('done', false)
-        ->orderBy('order', 'desc')->first();
+            ->orderBy('order', 'desc')->first();
     }
-
 }

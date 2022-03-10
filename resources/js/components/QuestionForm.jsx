@@ -88,7 +88,10 @@ function QuestionForm() {
 
     return (
         <form onSubmit={answerHandler} className="bg-white">
-            <h2 className="bg-gray-100 px-4 py-6 rounded-b-xl text-xl">
+            <h2
+                className="bg-gray-100 px-4 py-6 rounded-b-xl text-xl"
+                dir="rtl"
+            >
                 {question}
             </h2>
 
