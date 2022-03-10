@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
-import Choice from "./Choice";
 
-import axios from "axios";
+import Choice from "./Choice";
 
 function QuestionForm() {
     const [question, setQuestion] = useState([]);
@@ -29,7 +28,7 @@ function QuestionForm() {
     const getQuestion = (api, onSuccess, onFail) => {
         setStartFlag(true);
 
-        axios.get("/sanctum/csrf-cookie").then((response) => {
+        axios.get("/sanctum/csrf-cookie").then(() => {
             axios
                 .get(`/api/${api}`, {
                     headers: {
@@ -61,7 +60,7 @@ function QuestionForm() {
      * @param {*} err
      */
     const failureFirstQuestionFetchHandler = (err) => {
-        // refresh ?
+        // If 401 redirect to login
         setStartFlag(false);
     };
 

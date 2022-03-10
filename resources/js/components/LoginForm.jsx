@@ -1,8 +1,10 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const LoginForm = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const navigate = useNavigate();
 
     /**
      *
@@ -12,7 +14,7 @@ const LoginForm = () => {
         ev.preventDefault();
 
         if (email.length > 0 && password.length > 0) {
-            axios.get("/sanctum/csrf-cookie").then((response) => {
+            axios.get("/sanctum/csrf-cookie").then(() => {
                 axios
                     .post("api/login", {
                         email: email,
@@ -24,11 +26,7 @@ const LoginForm = () => {
                             "auth_token",
                             response.data.token
                         );
-                        // if (response.data.success) {
-                        //     router.go("/dashboard");
-                        // } else {
-                        //     error = response.data.message;
-                        // }
+                        navigate("/play");
                     })
                     .catch(function (error) {
                         console.error(error);
@@ -51,6 +49,7 @@ const LoginForm = () => {
 
             <input
                 type="password"
+                autoComplete=""
                 value={password}
                 onChange={(ev) => {
                     setPassword(ev.target.value);
