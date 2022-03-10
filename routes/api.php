@@ -15,6 +15,7 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::group(['middleware' => ['auth:sanctum']], function () {
 
     Route::get('/questions', [QuizManagerController::class, 'getQuestion']);
+    Route::get('/start', [QuizManagerController::class, 'getStartAt']);
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/questions', [QuizManagerController::class, 'getQuestion']);
 });
