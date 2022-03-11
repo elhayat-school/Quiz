@@ -14,9 +14,9 @@ class Quiz extends Model
         return $this->hasMany(Question::class);
     }
 
-    /* ********************************* */
-    //      Scopes
-    /* ********************************* */
+    /* ************************************************* */
+    //      SCOPES
+    /* ************************************************* */
     public function scopeCurrentQuiz($query)
     {
         return $query->notDone()->sortSmallestOrder()->first();
