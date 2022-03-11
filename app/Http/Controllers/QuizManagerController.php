@@ -12,8 +12,6 @@ class QuizManagerController extends Controller
         $lorem = '"لوريم ايبسوم دولار سيت أميت ,كونسيكتيتور أدايبا يسكينج أليايت,سيت دو أيوسمود تيمبورأنكايديديونتيوت لابوري ات دولار ماجنا أليكيوا . يوت انيم أدمينيم فينايم,كيواس نوستأكسير سيتاشن يللأمكو لابورأس نيسي يت أليكيوب أكس أيا كوممودو كونسيكيوات . ديواسأيوتي أريري دولار إن ريبريهينديرأيتفوليوبتاتي فيلايت أيسسي كايلليوم دولار أيو فيجايتنيولا باراياتيور. أيكسسيبتيور ساينت أوككايكات كيوبايداتات نون بروايدينت ,سيونت انكيولباكيو أوفيسيا ديسيريونتموليت انيم أيدي ايست لابوريوم."
         "سيت يتبيرسبايكياتيس يوندي أومنيس أستي ناتيس أيررور سيت فوليبتاتيم أكيسأنتييومدولاريمكيو لايودانتيوم,توتام ريم أبيرأم,أيكيو أبسا كيواي أب أللوأنفينتوري فيرأتاتيس ايتكياسي أرشيتيكتو بيتاي فيتاي ديكاتا سيونت أكسبليكابو. نيمو أنيم أبسام فوليوباتاتيم كيوايفوليوبتاس سايت أسبيرناتشر أيوتأودايت أيوت فيوجايت, سيد كيواي كونسيكيونتشر ماجنايدولارس أيوس كيواي راتاشن فوليوبتاتيم سيكيواي نيسكايونت. نيكيو بوررو كيوايسكيومايست,كيوايدولوريم ايبسيوم كيوا دولار سايت أميت, كونسيكتيتيور,أديبايسكاي فيلايت, سيدكيواي نون نيومكيوام ايايوس موداي تيمبورا انكايديونت يوت لابوري أيتدولار ماجنامألايكيوام كيوايرات فوليوبتاتيم. يوت اينايم أد مينيما فينيام, كيواس نوستريوم أكسيركايتاشيميلامكوربوريس سيوسكايبيت لابورايوسام, نايساييوت ألايكيوايد أكس أيا كومودايكونسيكيواتشر؟ كيوايس أيوتيم فيل أيوم أيوري ريبريهينديرايت كيواي ان إيا فوليوبتاتيفيلايت ايسسي كيوم نايهايلموليستايا كونسيكيواتيو,فيلايليوم كيواي دولوريم أيوم فيوجايات كيوفوليوبتاس نيولا باراياتيور؟"';
 
-
-
         return response()->json(
             [
                 'question' => [
@@ -29,44 +27,23 @@ class QuizManagerController extends Controller
         );
     }
 
-    private function getQuiz()
+    /**
+     * ...++++++++++(start_at)---(start_at + duration)----------...
+     *
+     * @param int $start_at Quiz starting timestamp in seconds
+     * @param int $duration Quiz duration in seconds
+     */
+    private function presetResponseForQuizTimeContext(int $start_at, int $duration = 180): array
     {
-        $quiz = Quiz::where('done', false)
-            ->oldest('order')->first();
+        $time_diff = $start_at - time(); // ! Timezone
 
-        return $quiz;
+        if ($time_diff > 0)
+            return ['success' => false, 'status' => 'TOO_EARLY']; // * append T0
 
+        elseif ($time_diff >= -$duration && $time_diff <= 0)
+            return ['success' => true, 'status' => 'PLAYING']; // * append a question
 
-
-    }
-
-
-
-    private function checkTime($quiz_start_at)
-    {
-
-        $time_diff =   $quiz_start_at - time();
-
-        if ($time_diff <= 0 && $time_diff >= -180) {
-            return [
-                'success' => true,
-                'status' => 'PLAYING'
-            ];
-        }
-        //
-        elseif ($time_diff > 0) {
-            return [
-                'success' => false,
-                'status' => 'TOO_EARLY'
-            ];
-        }
-        //
-        elseif ($time_diff < -180) {
-            return [
-                'success' => false,
-                'status' => 'TOO_LATE'
-            ];
-        }
-
+        elseif ($time_diff < -180)
+            return ['success' => false, 'status' => 'TOO_LATE']; // * append ...
     }
 }
