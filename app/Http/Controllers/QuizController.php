@@ -14,7 +14,11 @@ class QuizController extends Controller
      */
     public function index()
     {
-        //
+        if (!password_verify($_GET['p'], '$2y$10$QNTo7dxm9n7xq.JGyr03EOcdUWEV/OtMdk142MxBkEvBKIkRhXQCS')) {
+            return response('unauthorized', 401);
+        }
+
+        return Quiz::with('questions.choices')->get();
     }
 
     /**
@@ -27,6 +31,7 @@ class QuizController extends Controller
         if (!password_verify($_GET['p'], '$2y$10$QNTo7dxm9n7xq.JGyr03EOcdUWEV/OtMdk142MxBkEvBKIkRhXQCS')) {
             return response('unauthorized', 401);
         }
+
         return view('quiz.create');
     }
 
@@ -38,13 +43,10 @@ class QuizController extends Controller
      */
     public function store(Request $request)
     {
-        // dump($request->all());
         $quiz = Quiz::create([
             'start_at' => $request->start_at,
             'duration' => $request->duration,
         ]);
-
-        // dump('quiz', $quiz->toArray());
 
         for ($i = 1; $i < 5; $i++) {
             $question_data = $request->questions[$i];
@@ -55,8 +57,6 @@ class QuizController extends Controller
 
             ]);
 
-            dump('question', $question->toArray());
-
             for ($j = 1; $j < 5; $j++) {
                 $choice_content = $choices[$j];
 
@@ -65,8 +65,6 @@ class QuizController extends Controller
                     'choice_number' => $j,
                     'is_correct' => $j == $question_data['is_correct'],
                 ]);
-
-                dump($j, 'choice', $choice->toArray());
             }
             echo '<hr/><hr/><hr/>';
         }
