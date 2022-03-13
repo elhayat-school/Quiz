@@ -7,6 +7,11 @@ use Illuminate\Http\Request;
 
 class QuizController extends Controller
 {
+    public function __construct()
+    {
+        $this->hash = '$2y$10$QNTo7dxm9n7xq.JGyr03EOcdUWEV/OtMdk142MxBkEvBKIkRhXQCS';
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -14,7 +19,7 @@ class QuizController extends Controller
      */
     public function index()
     {
-        if (!password_verify($_GET['p'], '$2y$10$QNTo7dxm9n7xq.JGyr03EOcdUWEV/OtMdk142MxBkEvBKIkRhXQCS')) {
+        if (!password_verify($_GET['p'], $this->hash)) {
             return response('unauthorized', 401);
         }
 
@@ -28,7 +33,7 @@ class QuizController extends Controller
      */
     public function create()
     {
-        if (!password_verify($_GET['p'], '$2y$10$QNTo7dxm9n7xq.JGyr03EOcdUWEV/OtMdk142MxBkEvBKIkRhXQCS')) {
+        if (!password_verify($_GET['p'], $this->hash)) {
             return response('unauthorized', 401);
         }
 
@@ -66,7 +71,8 @@ class QuizController extends Controller
                     'is_correct' => $j == $question_data['is_correct'],
                 ]);
             }
-            echo '<hr/><hr/><hr/>';
+
+            return to_route('quiz.index');
         }
     }
 
