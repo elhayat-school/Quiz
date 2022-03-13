@@ -11,13 +11,33 @@ class Quiz extends Model
 
     public $guarded = ['id'];
 
+
     public function questions()
     {
         return $this->hasMany(Question::class);
     }
 
+
     public function choices()
     {
         return $this->hasManyThrough(Choice::class, Question::class);
+    }
+
+    /* ************************************************* */
+    //      SCOPES
+    /* ************************************************* */
+    public function scopeCurrentQuiz($query)
+    {
+        return $query->notDone()->sortSmallestOrder()->first();
+    }
+
+    public function scopeNotDone($query)
+    {
+        return $query->where('done', false);
+    }
+
+    public function scopeSortSmallestOrder($query)
+    {
+        return $query->oldest('order');
     }
 }

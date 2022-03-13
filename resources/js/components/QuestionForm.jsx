@@ -48,11 +48,12 @@ function QuestionForm() {
      */
     const successfulQuestionFetchHandler = (res) => {
         const data = res.data;
-        setQuestion(data.question.content);
-        setChoices(data.question.choices);
+
+        setQuestion(data.body.question.content);
+        setChoices(data.body.question.choices);
         //
-        console.log(data.question.content);
-        console.table(data.question.choices);
+        console.log(data.body.question.content);
+        console.table(data.body.question.choices);
     };
 
     /**
