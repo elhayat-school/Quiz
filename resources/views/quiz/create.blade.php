@@ -3,6 +3,7 @@
     @csrf
 
     <input type="datetime-local" name="start_at" required>
+    <input type="number" min="0" name="duration" required>
 
     <hr>
     <hr>
