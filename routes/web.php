@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\QuizController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -11,3 +12,5 @@ Route::get('/login', function () {
 Route::get('/play', function () {
     return view('welcome');
 });
+
+Route::resource('/quiz', QuizController::class);
