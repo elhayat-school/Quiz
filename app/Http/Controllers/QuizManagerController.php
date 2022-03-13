@@ -9,8 +9,9 @@ class QuizManagerController extends Controller
 {
     public function getQuestion()
     {
-        $test_timestamp = time() - 50; // Quiz already started
-        $response = $this->presetResponseForQuizTimeContext($test_timestamp);
+        $quiz = Quiz::currentQuiz(); // Quiz already started
+
+        $response = $this->presetResponseForQuizTimeContext(strtotime($quiz->start_at), $quiz->duration);
 
         /* ************************************************* */
         //      SIMULATING GETTING A REAL QUESTION
@@ -43,17 +44,19 @@ class QuizManagerController extends Controller
      * @param int $start_at Quiz starting timestamp in seconds
      * @param int $duration Quiz duration in seconds
      */
-    private function presetResponseForQuizTimeContext(int $start_at, int $duration = 180): array
+    private function presetResponseForQuizTimeContext(int $start_at, int $duration): array
     {
-        $time_diff = $start_at - time(); // ! Timezone
+        $time_diff = $start_at - date(time()); // ! Timezone
 
         if ($time_diff > 0)
-            return ['success' => false, 'status' => 'TOO_EARLY']; // * append T0
+            return ['success' => false, 'status' => 'TOO_EARLY' , 'diff' => $time_diff]; // * append T0
 
         elseif ($time_diff >= -$duration && $time_diff <= 0)
-            return ['success' => true, 'status' => 'PLAYING']; // * append a question
+            return ['success' => true, 'status' => 'PLAYING' , 'diff' => $time_diff]; // * append a question
 
         elseif ($time_diff < -180)
-            return ['success' => false, 'status' => 'TOO_LATE']; // * append ...
+            return ['success' => false, 'status' => 'TOO_LATE' , 'diff' => $time_diff]; // * append ...
     }
+
+
 }
