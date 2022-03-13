@@ -20,7 +20,7 @@
             <label for="questions[{{ $i }}][choices][{{ $j }}]">
                 Choix {{ $j }}
             </label>
-            <input type="radio" name="questions[{{ $i }}][correct]" value="{{ $j }}" required>
+            <input type="radio" name="questions[{{ $i }}][is_correct]" value="{{ $j }}" required>
             <textarea name="questions[{{ $i }}][choices][{{ $j }}]" cols="30" rows="8"></textarea>
         @endfor
 
