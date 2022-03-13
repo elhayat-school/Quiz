@@ -48,19 +48,23 @@ class QuizController extends Controller
      */
     public function store(Request $request)
     {
+        // dump($request->all());
         $quiz = Quiz::create([
             'start_at' => $request->start_at,
             'duration' => $request->duration,
         ]);
 
+        // dump('quiz', $quiz->toArray());
+
         for ($i = 1; $i < 5; $i++) {
             $question_data = $request->questions[$i];
             $choices = $question_data['choices'];
-
             $question = $quiz->questions()->create([
                 'content' => $question_data['content'],
 
             ]);
+
+            dump('question', $question->toArray());
 
             for ($j = 1; $j < 5; $j++) {
                 $choice_content = $choices[$j];
@@ -70,9 +74,10 @@ class QuizController extends Controller
                     'choice_number' => $j,
                     'is_correct' => $j == $question_data['is_correct'],
                 ]);
-            }
 
-            return to_route('quiz.index');
+                dump($j, 'choice', $choice->toArray());
+            }
+            echo '<hr/><hr/><hr/>';
         }
     }
 
