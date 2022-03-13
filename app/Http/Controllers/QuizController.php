@@ -39,7 +39,10 @@ class QuizController extends Controller
     public function store(Request $request)
     {
         // dump($request->all());
-        $quiz = Quiz::create(['start_at' => $request->start_at]);
+        $quiz = Quiz::create([
+            'start_at' => $request->start_at,
+            'duration' => $request->duration,
+        ]);
 
         // dump('quiz', $quiz->toArray());
 

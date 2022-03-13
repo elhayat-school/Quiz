@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id();
             $table->dateTime('start_at');
             $table->boolean('done')->default(0);
+            $table->unsignedSmallInteger('duration');
             $table->timestamps();
         });
     }
