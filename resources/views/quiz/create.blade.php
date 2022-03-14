@@ -1,6 +1,7 @@
 <form action='{{ route('quiz.store') }}' method="POST">
 
     @csrf
+    {{ _p_field() }}
 
     <input type="datetime-local" name="start_at" required>
     <input type="number" min="0" name="duration" required>

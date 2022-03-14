@@ -13,4 +13,4 @@ Route::get('/play', function () {
     return view('welcome');
 });
 
-Route::resource('/quiz', QuizController::class);
+Route::resource('/quiz', QuizController::class)->middleware('auth.weak');

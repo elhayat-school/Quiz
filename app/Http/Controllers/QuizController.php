@@ -16,9 +16,6 @@ class QuizController extends Controller
      */
     public function index()
     {
-        if ($this->isNotAuthorized())
-            return response('unauthorized', 401);
-
         return Quiz::with('questions.choices')->get();
     }
 
@@ -27,9 +24,6 @@ class QuizController extends Controller
      */
     public function create()
     {
-        if ($this->isNotAuthorized())
-            return response('unauthorized', 401);
-
         return view('quiz.create');
     }
 
@@ -57,7 +51,7 @@ class QuizController extends Controller
             }
             Choice::insert($choices);
         });
-        return to_route('quiz.index', ['p' => 'pass']);
+        return to_route('quiz.index', ['_p' => get_weak_auth_hashed_password()]);
     }
 
     /**
@@ -95,10 +89,5 @@ class QuizController extends Controller
     public function destroy(Quiz $quiz)
     {
         //
-    }
-
-    private function isNotAuthorized(): bool
-    {
-        return !isset($_GET['p']) || $_GET['p'] !== $this->super_security;
     }
 }
