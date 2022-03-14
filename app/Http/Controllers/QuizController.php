@@ -16,9 +16,8 @@ class QuizController extends Controller
      */
     public function index()
     {
-        if (!isset($_GET['p']) || $_GET['p'] !== $this->super_security) {
+        if ($this->isNotAuthorized())
             return response('unauthorized', 401);
-        }
 
         return Quiz::with('questions.choices')->get();
     }
@@ -28,9 +27,8 @@ class QuizController extends Controller
      */
     public function create()
     {
-        if (!isset($_GET['p']) && $_GET['p'] !== $this->super_security) {
+        if ($this->isNotAuthorized())
             return response('unauthorized', 401);
-        }
 
         return view('quiz.create');
     }
@@ -50,13 +48,13 @@ class QuizController extends Controller
                 foreach ($question_data['choices'] as $j => $choice_content) {
                     $choices[] = [
                         'question_id' => $questions[$i - 1]->id, // Append foreign id
-                    'content' => $choice_content,
-                    'choice_number' => $j,
-                    'is_correct' => $j == $question_data['is_correct'],
+                        'content' => $choice_content,
+                        'choice_number' => $j,
+                        'is_correct' => $j == $question_data['is_correct'],
                         'created_at' => date('Y-m-d H:i:s'),
                     ];
+                }
             }
-        }
             Choice::insert($choices);
         });
         return to_route('quiz.index', ['p' => 'pass']);
@@ -97,5 +95,10 @@ class QuizController extends Controller
     public function destroy(Quiz $quiz)
     {
         //
+    }
+
+    private function isNotAuthorized(): bool
+    {
+        return !isset($_GET['p']) || $_GET['p'] !== $this->super_security;
     }
 }
