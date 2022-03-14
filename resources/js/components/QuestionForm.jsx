@@ -5,12 +5,12 @@ import Choice from "./Choice";
 function QuestionForm() {
     const [question, setQuestion] = useState([]);
     const [choices, setChoices] = useState([]);
-    const [startFlag, setStartFlag] = useState(false);
+    const [quizState, setQuizState] = useState("");
 
     useEffect(() => {
         // check auth
         // Mount
-        if (!startFlag) {
+        if (quizState === "") {
             getQuestion(
                 "questions",
                 successfulQuestionFetchHandler,
@@ -20,14 +20,11 @@ function QuestionForm() {
     });
 
     /**
-     *
      * @param {string} api
      * @param {callback} onSuccess
      * @param {callback} onFail
      */
     const getQuestion = (api, onSuccess, onFail) => {
-        setStartFlag(true);
-
         axios.get("/sanctum/csrf-cookie").then(() => {
             axios
                 .get(`/api/${api}`, {
@@ -43,30 +40,40 @@ function QuestionForm() {
     };
 
     /**
-     *
      * @param {*} res
      */
     const successfulQuestionFetchHandler = (res) => {
         const data = res.data;
+        console.log(data.status);
+        setQuizState(data.status);
+        console.log(quizState);
 
-        setQuestion(data.body.question.content);
-        setChoices(data.body.question.choices);
-        //
-        console.log(data.body.question.content);
-        console.table(data.body.question.choices);
+        if (data.status === "PLAYING") {
+            setQuestion(data.body.question.content);
+            setChoices(data.body.question.choices);
+            //
+            console.log(data.body.question.content);
+            console.table(data.body.question.choices);
+        } else if (data.status === "TOO_EARLY") {
+            console.log(data.body.start_at);
+            const timeDiff = data.body.start_at * 1000 - new Date().getTime();
+
+            console.log(timeDiff);
+            // UTC to local
+            setTimeout(() => {
+                location.reload();
+            }, timeDiff);
+        }
     };
 
     /**
-     *
      * @param {*} err
      */
     const failureFirstQuestionFetchHandler = (err) => {
         // If 401 redirect to login
-        setStartFlag(false);
     };
 
     /**
-     *
      * @param {SubmitEvent} ev
      */
     const answerHandler = (ev) => {
@@ -78,7 +85,6 @@ function QuestionForm() {
     };
 
     /**
-     *
      * @returns
      */
     const renderChoices = () => {

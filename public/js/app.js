@@ -2473,27 +2473,25 @@ function QuestionForm() {
       choices = _useState4[0],
       setChoices = _useState4[1];
 
-  var _useState5 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false),
+  var _useState5 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(""),
       _useState6 = _slicedToArray(_useState5, 2),
-      startFlag = _useState6[0],
-      setStartFlag = _useState6[1];
+      quizState = _useState6[0],
+      setQuizState = _useState6[1];
 
   (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(function () {
     // check auth
     // Mount
-    if (!startFlag) {
+    if (quizState === "") {
       getQuestion("questions", successfulQuestionFetchHandler, failureFirstQuestionFetchHandler);
     }
   });
   /**
-   *
    * @param {string} api
    * @param {callback} onSuccess
    * @param {callback} onFail
    */
 
   var getQuestion = function getQuestion(api, onSuccess, onFail) {
-    setStartFlag(true);
     axios.get("/sanctum/csrf-cookie").then(function () {
       axios.get("/api/".concat(api), {
         headers: {
@@ -2503,31 +2501,40 @@ function QuestionForm() {
     });
   };
   /**
-   *
    * @param {*} res
    */
 
 
   var successfulQuestionFetchHandler = function successfulQuestionFetchHandler(res) {
     var data = res.data;
-    setQuestion(data.body.question.content);
-    setChoices(data.body.question.choices); //
+    console.log(data.status);
+    setQuizState(data.status);
+    console.log(quizState);
 
-    console.log(data.body.question.content);
-    console.table(data.body.question.choices);
+    if (data.status === "PLAYING") {
+      setQuestion(data.body.question.content);
+      setChoices(data.body.question.choices); //
+
+      console.log(data.body.question.content);
+      console.table(data.body.question.choices);
+    } else if (data.status === "TOO_EARLY") {
+      console.log(data.body.start_at);
+      var timeDiff = data.body.start_at * 1000 - new Date().getTime();
+      console.log(timeDiff); // UTC to local
+
+      setTimeout(function () {
+        location.reload();
+      }, timeDiff);
+    }
   };
   /**
-   *
    * @param {*} err
    */
 
 
-  var failureFirstQuestionFetchHandler = function failureFirstQuestionFetchHandler(err) {
-    // If 401 redirect to login
-    setStartFlag(false);
+  var failureFirstQuestionFetchHandler = function failureFirstQuestionFetchHandler(err) {// If 401 redirect to login
   };
   /**
-   *
    * @param {SubmitEvent} ev
    */
 
@@ -2540,7 +2547,6 @@ function QuestionForm() {
     });
   };
   /**
-   *
    * @returns
    */
 
