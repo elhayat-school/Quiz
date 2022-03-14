@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Choice;
 use App\Models\Quiz;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class QuizController extends Controller
 {
@@ -39,30 +41,24 @@ class QuizController extends Controller
      */
     public function store(Request $request)
     {
-        $quiz = Quiz::create([
-            'start_at' => $request->start_at,
-            'duration' => $request->duration,
-        ]);
+        DB::transaction(function () use ($request) {
+            $quiz = Quiz::create(['start_at' => $request->start_at, 'duration' => $request->duration]);
+            $questions = $quiz->questions()->createMany($request->questions);
 
-        for ($i = 1; $i < 5; $i++) {
-            $question_data = $request->questions[$i];
-            $choices = $question_data['choices'];
-
-            $question = $quiz->questions()->create([
-                'content' => $question_data['content'],
-            ]);
-
-            for ($j = 1; $j < 5; $j++) {
-                $choice_content = $choices[$j];
-
-                $choice = $question->choices()->create([
+            $choices = [];
+            foreach ($request->questions as $i => $question_data) {
+                foreach ($question_data['choices'] as $j => $choice_content) {
+                    $choices[] = [
+                        'question_id' => $questions[$i - 1]->id, // Append foreign id
                     'content' => $choice_content,
                     'choice_number' => $j,
                     'is_correct' => $j == $question_data['is_correct'],
-                ]);
+                        'created_at' => date('Y-m-d H:i:s'),
+                    ];
             }
-            // REDIRECT was here in the wtf commit
         }
+            Choice::insert($choices);
+        });
         return to_route('quiz.index', ['p' => 'pass']);
     }
 
