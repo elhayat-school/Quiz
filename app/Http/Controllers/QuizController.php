@@ -49,7 +49,7 @@ class QuizController extends Controller
                     $choices[] = [
                         'question_id' => $questions[$i - 1]->id, // Append foreign id
                         'content' => $choice_content,
-                        'choice_number' => $j,
+                        'choice_number' => "$j",
                         'is_correct' => $j == $question_data['is_correct'],
                         'created_at' => date('Y-m-d H:i:s'),
                     ];
