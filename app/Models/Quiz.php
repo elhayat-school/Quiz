@@ -28,7 +28,7 @@ class Quiz extends Model
     /* ************************************************* */
     public function scopeCurrentQuiz($query)
     {
-        return $query->notDone()->sortSmallestOrder()->first();
+        return $query->notDone()->sortByOldestStartTime()->first();
     }
 
     public function scopeNotDone($query)
@@ -36,8 +36,8 @@ class Quiz extends Model
         return $query->where('done', false);
     }
 
-    public function scopeSortSmallestOrder($query)
+    public function scopeSortByOldestStartTime($query)
     {
-        return $query->oldest('order');
+        return $query->oldest('start_at');
     }
 }
