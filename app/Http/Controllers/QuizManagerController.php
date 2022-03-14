@@ -12,19 +12,24 @@ class QuizManagerController extends Controller
     public const PLAYING = "PLAYING";
     public const TOO_LATE = "TOO_LATE";
 
+    public array $json = [];
+
     public function getQuestion()
     {
         $quiz = Quiz::with('questions.choices')->currentQuiz();
 
-        $response = $this->presetResponseForQuizTimeContext(strtotime($quiz->start_at), $quiz->duration);
+        $this->setJsonStartAt(strtotime($quiz->start_at));
+        $this->setJsonDuration($quiz->duration);
 
-        if ($response['status'] !== self::PLAYING)
-            return response()->json($response);
+        $this->presetResponseForQuizTimeContext();
+
+        if ($this->getJsonStatus() !== self::PLAYING)
+            return response()->json($this->json);
 
         // NOT AS SIMPLE AS THIS
-        $response['body']['question'] = $quiz->questions->first();
+        $this->json['body']['question'] = $quiz->questions->first();
 
-        return response()->json($response);
+        return response()->json($this->json);
     }
 
     /**
@@ -33,17 +38,67 @@ class QuizManagerController extends Controller
      * @param int $start_at Quiz starting timestamp in seconds
      * @param int $duration Quiz duration in seconds
      */
-    private function presetResponseForQuizTimeContext(int $start_at, int $duration): array
+    private function presetResponseForQuizTimeContext(): void
     {
-        $time_diff = $start_at - date(time()); // ! Timezone
+        $time_diff = $this->getJsonStartAt() - date(time()); // ! Timezone
 
-        if ($time_diff > 0)
-            return ['success' => false, 'status' => self::TOO_EARLY, 'body' => ['t0' => $start_at]]; // * append T0
+        if ($time_diff > 0) {
+            $this->setJsonSuccess(false);
+            $this->setJsonStatus(self::TOO_EARLY);
+        }
+        //
+        elseif ($time_diff >= -$this->getJsonDuration() && $time_diff <= 0) {
+            $this->setJsonSuccess(true);
+            $this->setJsonStatus(self::PLAYING);
+        }
+        //
+        elseif ($time_diff < -$this->getJsonDuration()) {
+            $this->setJsonSuccess(false);
+            $this->setJsonStatus(self::TOO_LATE);
+        }
+    }
 
-        elseif ($time_diff >= -$duration && $time_diff <= 0)
-            return ['success' => true, 'status' => self::PLAYING]; // * append a question
 
-        elseif ($time_diff < -$duration)
-            return ['success' => false, 'status' => self::TOO_LATE, 'body' => ['t0' => $start_at]]; // * append ...
+    /* ----------------------------------------- */
+    //      SETTING & GETTING JSON
+    /* ----------------------------------------- */
+    private function setJsonSuccess(bool $success): void
+    {
+        $this->json['success'] = $success;
+    }
+
+    private function setJsonStatus(string $status): void
+    {
+        $this->json['status'] = $status;
+    }
+
+    private function setJsonStartAt(int $start_at): void
+    {
+        $this->json['body']['start_at'] = $start_at;
+    }
+
+    private function setJsonDuration(int $duration): void
+    {
+        $this->json['body']['duration'] = $duration;
+    }
+
+    private function getJsonSuccess(): bool
+    {
+        return $this->json['success'];
+    }
+
+    private function getJsonStatus(): string
+    {
+        return $this->json['status'];
+    }
+
+    private function getJsonStartAt(): int
+    {
+        return $this->json['body']['start_at'];
+    }
+
+    private function getJsonDuration(): int
+    {
+        return $this->json['body']['duration'];
     }
 }
