@@ -9,14 +9,13 @@ use Illuminate\Support\Facades\DB;
 
 class QuizController extends Controller
 {
-    private string $super_security = 'pass';
-
     /**
      * @return \Illuminate\Http\Response
      */
     public function index()
     {
-        return Quiz::with('questions.choices')->get();
+        return view("quiz.index")
+            ->with('quizzes', Quiz::with('questions.choices')->get());
     }
 
     /**

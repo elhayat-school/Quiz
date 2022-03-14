@@ -15,7 +15,7 @@ This is a project is made with **Laravel** and **React**.
 
 ### :warning: Disclaimer
 
-**:warning: Don't consider this under any circumstances as a sirious security measurement**
+:warning: **Don't consider this under any circumstances as a sirious security measurement**
 
 For example the hashed password will remain in the users navigator...
 
