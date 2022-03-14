@@ -39,6 +39,12 @@ Append `->middleware('auth.weak')` to the target routes.
 
 Call `{{ _p_field() }}` in your forms (similar to `@csrf`).
 
+Redirect like this:
+
+```php
+return to_route('quiz.index', ['_p' => get_weak_auth_hashed_password()]);
+```
+
 ### The setup
 
 Create `app\Http\Middleware\WeakAuth.php` as:
