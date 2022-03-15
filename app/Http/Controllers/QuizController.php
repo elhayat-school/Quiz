@@ -15,7 +15,7 @@ class QuizController extends Controller
     public function index()
     {
         return view("quiz.index")
-            ->with('quizzes', Quiz::with('questions.choices')->get());
+            ->with('quizzes', Quiz::with('questions.choices')->oldest('start_at')->get());
     }
 
     /**

@@ -2303,6 +2303,56 @@ var Choice = function Choice(props) {
 
 /***/ }),
 
+/***/ "./resources/js/components/CountDown.jsx":
+/*!***********************************************!*\
+  !*** ./resources/js/components/CountDown.jsx ***!
+  \***********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
+ // import { useState } from "react";
+
+
+
+
+var CountDown = function CountDown(props) {
+  console.log("called CountDown render helper: ", props.rdv); // const [startAt, setStartAt] = useState(props.rdv);
+  // setInterval(() => {
+  //     console.log(startAt);
+  //     setStartAt(startAt - 2);
+  // }, 2000);
+
+  if (props.rdv !== false) {
+    return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("div", {
+      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("span", {
+        children: new Date(Math.abs(props.rdv)).getHours()
+      }), ":", /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("span", {
+        children: new Date(Math.abs(props.rdv)).getMinutes()
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("span", {
+        children: " "
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("span", {
+        children: new Date(Math.abs(props.rdv)).getDate()
+      }), "/", /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("span", {
+        children: new Date(Math.abs(props.rdv)).getMonth()
+      }), "/", /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("span", {
+        children: new Date(Math.abs(props.rdv)).getFullYear()
+      })]
+    });
+  } else {
+    return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("div", {});
+  }
+};
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (CountDown);
+
+/***/ }),
+
 /***/ "./resources/js/components/LoginForm.jsx":
 /*!***********************************************!*\
   !*** ./resources/js/components/LoginForm.jsx ***!
@@ -2444,7 +2494,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var _Choice__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Choice */ "./resources/js/components/Choice.jsx");
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
+/* harmony import */ var _CountDown__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./CountDown */ "./resources/js/components/CountDown.jsx");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
 
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
@@ -2456,6 +2507,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 function _iterableToArrayLimit(arr, i) { var _i = arr == null ? null : typeof Symbol !== "undefined" && arr[Symbol.iterator] || arr["@@iterator"]; if (_i == null) return; var _arr = []; var _n = true; var _d = false; var _s, _e; try { for (_i = _i.call(arr); !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
 
 
 
@@ -2475,14 +2527,28 @@ function QuestionForm() {
 
   var _useState5 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(""),
       _useState6 = _slicedToArray(_useState5, 2),
-      quizState = _useState6[0],
-      setQuizState = _useState6[1];
+      quizStatus = _useState6[0],
+      setQuizStatus = _useState6[1];
+
+  var _useState7 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false),
+      _useState8 = _slicedToArray(_useState7, 2),
+      isRendered = _useState8[0],
+      setIsRendered = _useState8[1];
+
+  var _useState9 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false),
+      _useState10 = _slicedToArray(_useState9, 2),
+      startAt = _useState10[0],
+      setStartAt = _useState10[1];
 
   (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(function () {
-    // check auth
+    console.log("useEffect exec..."); // check auth
     // Mount
-    if (quizState === "") {
+
+    if (quizStatus === "") {
       getQuestion("questions", successfulQuestionFetchHandler, failureFirstQuestionFetchHandler);
+    }
+
+    if (quizStatus !== "" && !isRendered) {//
     }
   });
   /**
@@ -2492,6 +2558,7 @@ function QuestionForm() {
    */
 
   var getQuestion = function getQuestion(api, onSuccess, onFail) {
+    console.info("===>  ASKING API FOR QUESTION");
     axios.get("/sanctum/csrf-cookie").then(function () {
       axios.get("/api/".concat(api), {
         headers: {
@@ -2506,26 +2573,28 @@ function QuestionForm() {
 
 
   var successfulQuestionFetchHandler = function successfulQuestionFetchHandler(res) {
-    var data = res.data;
-    console.log(data.status);
-    setQuizState(data.status);
-    console.log(quizState);
+    console.info("===>  GOT API FOR QUESTION");
+    res.data.body.start_at = res.data.body.start_at * 1000;
+    console.log("==> QUIZ STATE:  ->> ".concat(res.data.status, " <<-"));
+    setQuizStatus(res.data.status);
+    setStartAt(res.data.body.start_at); //
+    // HERE ===================>
+    //
 
-    if (data.status === "PLAYING") {
-      setQuestion(data.body.question.content);
-      setChoices(data.body.question.choices); //
-
-      console.log(data.body.question.content);
-      console.table(data.body.question.choices);
-    } else if (data.status === "TOO_EARLY") {
-      console.log(data.body.start_at);
-      var timeDiff = data.body.start_at * 1000 - new Date().getTime();
-      console.log(timeDiff); // UTC to local
-
+    if (res.data.status === "PLAYING") {
+      setQuestion(res.data.body.question.content);
+      setChoices(res.data.body.question.choices);
+      console.log("==> Question: ", res.data.body.question.content);
+      console.table(res.data.body.question.choices); //
+    } else if (res.data.status === "TOO_EARLY") {
+      console.log("==>  refresh in ".concat((res.data.body.start_at - new Date().getTime()) / 1000, " seconds"));
       setTimeout(function () {
+        // UTC to local --> refresh to start playing
         location.reload();
-      }, timeDiff);
+      }, res.data.body.start_at - new Date().getTime());
     }
+
+    console.info("===>  FINISHED HANDLING API RESPONSE FOR QUESTION");
   };
   /**
    * @param {*} err
@@ -2546,6 +2615,18 @@ function QuestionForm() {
       console.error(ev);
     });
   };
+  /* ------------------------------- */
+  //      UI Body buidlers
+
+  /* ------------------------------- */
+
+
+  var renderCountDown = function renderCountDown() {
+    console.log("calling CountDown render helper: ", startAt);
+    return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(_CountDown__WEBPACK_IMPORTED_MODULE_2__["default"], {
+      rdv: startAt
+    });
+  };
   /**
    * @returns
    */
@@ -2553,20 +2634,20 @@ function QuestionForm() {
 
   var renderChoices = function renderChoices() {
     return choices.map(function (choice) {
-      return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)(_Choice__WEBPACK_IMPORTED_MODULE_1__["default"], {
+      return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(_Choice__WEBPACK_IMPORTED_MODULE_1__["default"], {
         answer: choice
-      }, choice.nb);
+      }, choice.choice_number);
     });
   };
 
-  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("form", {
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsxs)("form", {
     onSubmit: answerHandler,
     className: "bg-white",
-    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("h2", {
+    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("h2", {
       className: "bg-gray-100 px-4 py-6 rounded-b-xl text-xl",
       dir: "rtl",
       children: question
-    }), renderChoices(), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("button", {
+    }), quizStatus === "TOO_EARLY" ? renderCountDown() : quizStatus === "PLAYING" ? renderChoices() : quizStatus === "TOO_LATE" ? "trop tard" : "", /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("button", {
       className: "bg-emerald-600 text-gray-50 mx-2 px-4 py-2 rounded-full font-bold",
       children: "Answer"
     })]

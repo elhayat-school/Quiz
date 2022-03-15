@@ -1,21 +1,31 @@
 import React, { useState, useEffect } from "react";
 
 import Choice from "./Choice";
+import CountDown from "./CountDown";
 
 function QuestionForm() {
     const [question, setQuestion] = useState([]);
     const [choices, setChoices] = useState([]);
-    const [quizState, setQuizState] = useState("");
+
+    const [quizStatus, setQuizStatus] = useState("");
+    const [isRendered, setIsRendered] = useState(false);
+
+    const [startAt, setStartAt] = useState(false);
 
     useEffect(() => {
+        console.log("useEffect exec...");
         // check auth
         // Mount
-        if (quizState === "") {
+        if (quizStatus === "") {
             getQuestion(
                 "questions",
                 successfulQuestionFetchHandler,
                 failureFirstQuestionFetchHandler
             );
+        }
+
+        if (quizStatus !== "" && !isRendered) {
+            //
         }
     });
 
@@ -25,6 +35,8 @@ function QuestionForm() {
      * @param {callback} onFail
      */
     const getQuestion = (api, onSuccess, onFail) => {
+        console.info("===>  ASKING API FOR QUESTION");
+
         axios.get("/sanctum/csrf-cookie").then(() => {
             axios
                 .get(`/api/${api}`, {
@@ -43,27 +55,38 @@ function QuestionForm() {
      * @param {*} res
      */
     const successfulQuestionFetchHandler = (res) => {
-        const data = res.data;
-        console.log(data.status);
-        setQuizState(data.status);
-        console.log(quizState);
+        console.info("===>  GOT API FOR QUESTION");
 
-        if (data.status === "PLAYING") {
-            setQuestion(data.body.question.content);
-            setChoices(data.body.question.choices);
+        res.data.body.start_at = res.data.body.start_at * 1000;
+        console.log(`==> QUIZ STATE:  ->> ${res.data.status} <<-`);
+
+        setQuizStatus(res.data.status);
+        setStartAt(res.data.body.start_at);
+
+        //
+        // HERE ===================>
+        //
+        if (res.data.status === "PLAYING") {
+            setQuestion(res.data.body.question.content);
+            setChoices(res.data.body.question.choices);
+
+            console.log("==> Question: ", res.data.body.question.content);
+            console.table(res.data.body.question.choices);
             //
-            console.log(data.body.question.content);
-            console.table(data.body.question.choices);
-        } else if (data.status === "TOO_EARLY") {
-            console.log(data.body.start_at);
-            const timeDiff = data.body.start_at * 1000 - new Date().getTime();
+        } else if (res.data.status === "TOO_EARLY") {
+            console.log(
+                `==>  refresh in ${
+                    (res.data.body.start_at - new Date().getTime()) / 1000
+                } seconds`
+            );
 
-            console.log(timeDiff);
-            // UTC to local
             setTimeout(() => {
+                // UTC to local --> refresh to start playing
                 location.reload();
-            }, timeDiff);
+            }, res.data.body.start_at - new Date().getTime());
         }
+
+        console.info("===>  FINISHED HANDLING API RESPONSE FOR QUESTION");
     };
 
     /**
@@ -78,10 +101,20 @@ function QuestionForm() {
      */
     const answerHandler = (ev) => {
         ev.preventDefault();
+
         // do more and use POST
+
         getQuestion("questions", successfulQuestionFetchHandler, (e) => {
             console.error(ev);
         });
+    };
+
+    /* ------------------------------- */
+    //      UI Body buidlers
+    /* ------------------------------- */
+    const renderCountDown = () => {
+        console.log("calling CountDown render helper: ", startAt);
+        return <CountDown rdv={startAt} />;
     };
 
     /**
@@ -89,7 +122,7 @@ function QuestionForm() {
      */
     const renderChoices = () => {
         return choices.map(function (choice) {
-            return <Choice key={choice.nb} answer={choice} />;
+            return <Choice key={choice.choice_number} answer={choice} />;
         });
     };
 
@@ -102,7 +135,13 @@ function QuestionForm() {
                 {question}
             </h2>
 
-            {renderChoices()}
+            {quizStatus === "TOO_EARLY"
+                ? renderCountDown()
+                : quizStatus === "PLAYING"
+                ? renderChoices()
+                : quizStatus === "TOO_LATE"
+                ? "trop tard"
+                : ""}
 
             <button className="bg-emerald-600 text-gray-50 mx-2 px-4 py-2 rounded-full font-bold">
                 Answer
