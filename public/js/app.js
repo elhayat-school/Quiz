@@ -2322,31 +2322,34 @@ __webpack_require__.r(__webpack_exports__);
 
 
 var CountDown = function CountDown(props) {
-  console.log("called CountDown render helper: ", props.rdv); // const [startAt, setStartAt] = useState(props.rdv);
-  // setInterval(() => {
-  //     console.log(startAt);
-  //     setStartAt(startAt - 2);
-  // }, 2000);
+  console.group("CountDown scope{}");
+  if (props.rdv === false) return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("div", {});
+  var rdv = new Date(Math.abs(props.rdv));
+  console.log("====> called CountDown render helper: ", props.rdv);
+  console.log("====>  refresh in ".concat((props.rdv - new Date().getTime()) / 1000, " seconds"));
+  setTimeout(function () {
+    // UTC to local --> refresh to start playing
+    location.reload();
+  }, props.rdv - new Date().getTime());
 
-  if (props.rdv !== false) {
-    return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("div", {
-      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("span", {
-        children: new Date(Math.abs(props.rdv)).getHours()
-      }), ":", /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("span", {
-        children: new Date(Math.abs(props.rdv)).getMinutes()
-      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("span", {
-        children: " "
-      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("span", {
-        children: new Date(Math.abs(props.rdv)).getDate()
-      }), "/", /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("span", {
-        children: new Date(Math.abs(props.rdv)).getMonth()
-      }), "/", /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("span", {
-        children: new Date(Math.abs(props.rdv)).getFullYear()
-      })]
-    });
-  } else {
-    return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("div", {});
-  }
+  var el = /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("div", {
+    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("span", {
+      children: rdv.getHours()
+    }), ":", /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("span", {
+      children: rdv.getMinutes()
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("span", {
+      children: " "
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("span", {
+      children: rdv.getDate()
+    }), "/", /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("span", {
+      children: rdv.getMonth()
+    }), "/", /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("span", {
+      children: rdv.getFullYear()
+    })]
+  });
+
+  console.groupEnd("CountDown scope{}");
+  return el;
 };
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (CountDown);
@@ -2515,6 +2518,8 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 
 function QuestionForm() {
+  console.group("QuestionForm scope{}");
+
   var _useState = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)([]),
       _useState2 = _slicedToArray(_useState, 2),
       question = _useState2[0],
@@ -2539,26 +2544,16 @@ function QuestionForm() {
       _useState10 = _slicedToArray(_useState9, 2),
       startAt = _useState10[0],
       setStartAt = _useState10[1];
-
-  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(function () {
-    console.log("useEffect exec..."); // check auth
-    // Mount
-
-    if (quizStatus === "") {
-      getQuestion("questions", successfulQuestionFetchHandler, failureFirstQuestionFetchHandler);
-    }
-
-    if (quizStatus !== "" && !isRendered) {//
-    }
-  });
   /**
    * @param {string} api
    * @param {callback} onSuccess
    * @param {callback} onFail
    */
 
+
   var getQuestion = function getQuestion(api, onSuccess, onFail) {
-    console.info("===>  ASKING API FOR QUESTION");
+    console.group("getQuestion scope{}");
+    console.info("==>  ASKING THE API FOR A QUESTION");
     axios.get("/sanctum/csrf-cookie").then(function () {
       axios.get("/api/".concat(api), {
         headers: {
@@ -2566,6 +2561,7 @@ function QuestionForm() {
         }
       }).then(onSuccess)["catch"](onFail);
     });
+    console.groupEnd("getQuestion scope{}");
   };
   /**
    * @param {*} res
@@ -2573,28 +2569,24 @@ function QuestionForm() {
 
 
   var successfulQuestionFetchHandler = function successfulQuestionFetchHandler(res) {
-    console.info("===>  GOT API FOR QUESTION");
+    console.group("successfulQuestionFetchHandler scope{}");
+    console.info("==>  GOT AN API RESPONSE FOR QUESTION");
     res.data.body.start_at = res.data.body.start_at * 1000;
-    console.log("==> QUIZ STATE:  ->> ".concat(res.data.status, " <<-"));
+    console.log("====> QUIZ STATUS:  ->> ".concat(res.data.status, " <<-"));
     setQuizStatus(res.data.status);
     setStartAt(res.data.body.start_at); //
-    // HERE ===================>
+    // HERE ====================>
     //
 
     if (res.data.status === "PLAYING") {
       setQuestion(res.data.body.question.content);
       setChoices(res.data.body.question.choices);
-      console.log("==> Question: ", res.data.body.question.content);
+      console.log("====> Question: ", res.data.body.question.content);
       console.table(res.data.body.question.choices); //
-    } else if (res.data.status === "TOO_EARLY") {
-      console.log("==>  refresh in ".concat((res.data.body.start_at - new Date().getTime()) / 1000, " seconds"));
-      setTimeout(function () {
-        // UTC to local --> refresh to start playing
-        location.reload();
-      }, res.data.body.start_at - new Date().getTime());
     }
 
-    console.info("===>  FINISHED HANDLING API RESPONSE FOR QUESTION");
+    console.info("==>  FINISHED HANDLING API RESPONSE FOR QUESTION");
+    console.groupEnd("successfulQuestionFetchHandler scope{}");
   };
   /**
    * @param {*} err
@@ -2622,10 +2614,15 @@ function QuestionForm() {
 
 
   var renderCountDown = function renderCountDown() {
-    console.log("calling CountDown render helper: ", startAt);
-    return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(_CountDown__WEBPACK_IMPORTED_MODULE_2__["default"], {
+    console.group("renderCountDown scope{}");
+    console.log("====> calling CountDown render helper: ", startAt);
+
+    var el = /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(_CountDown__WEBPACK_IMPORTED_MODULE_2__["default"], {
       rdv: startAt
     });
+
+    console.groupEnd("renderCountDown scope{}");
+    return el;
   };
   /**
    * @returns
@@ -2633,14 +2630,37 @@ function QuestionForm() {
 
 
   var renderChoices = function renderChoices() {
-    return choices.map(function (choice) {
+    console.group("renderChoices scope{}");
+    var el = choices.map(function (choice) {
       return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(_Choice__WEBPACK_IMPORTED_MODULE_1__["default"], {
         answer: choice
       }, choice.choice_number);
     });
+    console.groupEnd("renderChoices scope{}");
+    return el;
   };
+  /* ------------------------------- */
+  //      USE EFFECT
 
-  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsxs)("form", {
+  /* ------------------------------- */
+
+
+  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(function () {
+    console.group("useEffect scope{}");
+    console.count("=> useEffect exec..."); // check auth ?
+
+    if (quizStatus === "") {
+      console.log("==> QUIZ STATUS: ->> UNKNOWN <<- (MOUNT)");
+      getQuestion("questions", successfulQuestionFetchHandler, failureFirstQuestionFetchHandler);
+    }
+
+    if (quizStatus !== "" && !isRendered) {//
+    }
+
+    console.groupEnd("useEffect scope{}");
+  });
+
+  var el = /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsxs)("form", {
     onSubmit: answerHandler,
     className: "bg-white",
     children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("h2", {
@@ -2652,6 +2672,9 @@ function QuestionForm() {
       children: "Answer"
     })]
   });
+
+  console.groupEnd("QuestionForm scope{}");
+  return el;
 }
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (QuestionForm);

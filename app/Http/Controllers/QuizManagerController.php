@@ -16,6 +16,7 @@ class QuizManagerController extends Controller
 
     public function getQuestion()
     {
+        // cover the begging when there is no quizzes
         $quiz = Quiz::with('questions.choices')->currentQuiz();
 
         $this->setJsonStartAt(strtotime($quiz->start_at));

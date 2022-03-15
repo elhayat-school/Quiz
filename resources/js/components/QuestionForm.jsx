@@ -4,6 +4,8 @@ import Choice from "./Choice";
 import CountDown from "./CountDown";
 
 function QuestionForm() {
+    console.group("QuestionForm scope{}");
+
     const [question, setQuestion] = useState([]);
     const [choices, setChoices] = useState([]);
 
@@ -12,30 +14,14 @@ function QuestionForm() {
 
     const [startAt, setStartAt] = useState(false);
 
-    useEffect(() => {
-        console.log("useEffect exec...");
-        // check auth
-        // Mount
-        if (quizStatus === "") {
-            getQuestion(
-                "questions",
-                successfulQuestionFetchHandler,
-                failureFirstQuestionFetchHandler
-            );
-        }
-
-        if (quizStatus !== "" && !isRendered) {
-            //
-        }
-    });
-
     /**
      * @param {string} api
      * @param {callback} onSuccess
      * @param {callback} onFail
      */
     const getQuestion = (api, onSuccess, onFail) => {
-        console.info("===>  ASKING API FOR QUESTION");
+        console.group("getQuestion scope{}");
+        console.info("==>  ASKING THE API FOR A QUESTION");
 
         axios.get("/sanctum/csrf-cookie").then(() => {
             axios
@@ -49,44 +35,36 @@ function QuestionForm() {
                 .then(onSuccess)
                 .catch(onFail);
         });
+        console.groupEnd("getQuestion scope{}");
     };
 
     /**
      * @param {*} res
      */
     const successfulQuestionFetchHandler = (res) => {
-        console.info("===>  GOT API FOR QUESTION");
+        console.group("successfulQuestionFetchHandler scope{}");
+        console.info("==>  GOT AN API RESPONSE FOR QUESTION");
 
         res.data.body.start_at = res.data.body.start_at * 1000;
-        console.log(`==> QUIZ STATE:  ->> ${res.data.status} <<-`);
+        console.log(`====> QUIZ STATUS:  ->> ${res.data.status} <<-`);
 
         setQuizStatus(res.data.status);
         setStartAt(res.data.body.start_at);
 
         //
-        // HERE ===================>
+        // HERE ====================>
         //
         if (res.data.status === "PLAYING") {
             setQuestion(res.data.body.question.content);
             setChoices(res.data.body.question.choices);
 
-            console.log("==> Question: ", res.data.body.question.content);
+            console.log("====> Question: ", res.data.body.question.content);
             console.table(res.data.body.question.choices);
             //
-        } else if (res.data.status === "TOO_EARLY") {
-            console.log(
-                `==>  refresh in ${
-                    (res.data.body.start_at - new Date().getTime()) / 1000
-                } seconds`
-            );
-
-            setTimeout(() => {
-                // UTC to local --> refresh to start playing
-                location.reload();
-            }, res.data.body.start_at - new Date().getTime());
         }
 
-        console.info("===>  FINISHED HANDLING API RESPONSE FOR QUESTION");
+        console.info("==>  FINISHED HANDLING API RESPONSE FOR QUESTION");
+        console.groupEnd("successfulQuestionFetchHandler scope{}");
     };
 
     /**
@@ -113,20 +91,54 @@ function QuestionForm() {
     //      UI Body buidlers
     /* ------------------------------- */
     const renderCountDown = () => {
-        console.log("calling CountDown render helper: ", startAt);
-        return <CountDown rdv={startAt} />;
+        console.group("renderCountDown scope{}");
+
+        console.log("====> calling CountDown render helper: ", startAt);
+
+        const el = <CountDown rdv={startAt} />;
+
+        console.groupEnd("renderCountDown scope{}");
+        return el;
     };
 
     /**
      * @returns
      */
     const renderChoices = () => {
-        return choices.map(function (choice) {
+        console.group("renderChoices scope{}");
+
+        const el = choices.map(function (choice) {
             return <Choice key={choice.choice_number} answer={choice} />;
         });
+
+        console.groupEnd("renderChoices scope{}");
+        return el;
     };
 
-    return (
+    /* ------------------------------- */
+    //      USE EFFECT
+    /* ------------------------------- */
+    useEffect(() => {
+        console.group("useEffect scope{}");
+        console.count("=> useEffect exec...");
+        // check auth ?
+        if (quizStatus === "") {
+            console.log("==> QUIZ STATUS: ->> UNKNOWN <<- (MOUNT)");
+
+            getQuestion(
+                "questions",
+                successfulQuestionFetchHandler,
+                failureFirstQuestionFetchHandler
+            );
+        }
+
+        if (quizStatus !== "" && !isRendered) {
+            //
+        }
+        console.groupEnd("useEffect scope{}");
+    });
+
+    const el = (
         <form onSubmit={answerHandler} className="bg-white">
             <h2
                 className="bg-gray-100 px-4 py-6 rounded-b-xl text-xl"
@@ -148,6 +160,9 @@ function QuestionForm() {
             </button>
         </form>
     );
+
+    console.groupEnd("QuestionForm scope{}");
+    return el;
 }
 
 export default QuestionForm;

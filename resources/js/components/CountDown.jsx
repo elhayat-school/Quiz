@@ -2,28 +2,34 @@ import React from "react";
 // import { useState } from "react";
 
 const CountDown = (props) => {
-    console.log("called CountDown render helper: ", props.rdv);
-    // const [startAt, setStartAt] = useState(props.rdv);
+    console.group("CountDown scope{}");
 
-    // setInterval(() => {
-    //     console.log(startAt);
-    //     setStartAt(startAt - 2);
-    // }, 2000);
+    if (props.rdv === false) return <div></div>;
 
-    if (props.rdv !== false) {
-        return (
-            <div>
-                <span>{new Date(Math.abs(props.rdv)).getHours()}</span>:
-                <span>{new Date(Math.abs(props.rdv)).getMinutes()}</span>
-                <span> </span>
-                <span>{new Date(Math.abs(props.rdv)).getDate()}</span>/
-                <span>{new Date(Math.abs(props.rdv)).getMonth()}</span>/
-                <span>{new Date(Math.abs(props.rdv)).getFullYear()}</span>
-            </div>
-        );
-    } else {
-        return <div></div>;
-    }
+    const rdv = new Date(Math.abs(props.rdv));
+
+    console.log("====> called CountDown render helper: ", props.rdv);
+    console.log(
+        `====>  refresh in ${(props.rdv - new Date().getTime()) / 1000} seconds`
+    );
+
+    setTimeout(() => {
+        // UTC to local --> refresh to start playing
+        location.reload();
+    }, props.rdv - new Date().getTime());
+
+    var el = (
+        <div>
+            <span>{rdv.getHours()}</span>:<span>{rdv.getMinutes()}</span>
+            <span> </span>
+            <span>{rdv.getDate()}</span>/<span>{rdv.getMonth()}</span>/
+            <span>{rdv.getFullYear()}</span>
+        </div>
+    );
+
+    console.groupEnd("CountDown scope{}");
+
+    return el;
 };
 
 export default CountDown;
