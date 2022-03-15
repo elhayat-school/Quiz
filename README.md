@@ -6,12 +6,13 @@ This is a project is made with **Laravel** and **React**.
 
 ![DB](DB.png)
 
-----
-----
+---
+
+---
 
 ## WEAK AUTH feature
 
-----
+---
 
 ### :warning: Disclaimer
 
@@ -19,7 +20,7 @@ This is a project is made with **Laravel** and **React**.
 
 For example the hashed password will remain in the users navigator...
 
-----
+---
 
 ### The usage
 
@@ -95,4 +96,8 @@ Add to `composer.json`:
         "files": [
             "app/Http/helpers.php"
         ],
+```
+
+```
+composer dump
 ```
