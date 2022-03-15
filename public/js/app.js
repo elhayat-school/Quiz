@@ -2322,8 +2322,14 @@ __webpack_require__.r(__webpack_exports__);
 
 
 var CountDown = function CountDown(props) {
-  console.group("CountDown scope{}");
-  if (props.rdv === false) return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("div", {});
+  console.group("%cCountDown scope{}", "background: #333; color: #bada55");
+
+  if (props.rdv === false) {
+    console.log("====> No CountDown rendering: ", props.rdv);
+    console.groupEnd("CountDown scope{}");
+    return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("div", {});
+  }
+
   var rdv = new Date(Math.abs(props.rdv));
   console.log("====> called CountDown render helper: ", props.rdv);
   console.log("====>  refresh in ".concat((props.rdv - new Date().getTime()) / 1000, " seconds"));
@@ -2518,32 +2524,33 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 
 function QuestionForm() {
-  console.group("QuestionForm scope{}");
+  console.group("%cQuestionForm scope{}", "background: #333; color: #1900ff");
 
-  var _useState = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)([]),
+  var _useState = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(""),
       _useState2 = _slicedToArray(_useState, 2),
-      question = _useState2[0],
-      setQuestion = _useState2[1];
+      quizStatus = _useState2[0],
+      setQuizStatus = _useState2[1];
 
-  var _useState3 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)([]),
+  var _useState3 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false),
       _useState4 = _slicedToArray(_useState3, 2),
-      choices = _useState4[0],
-      setChoices = _useState4[1];
+      startAt = _useState4[0],
+      setStartAt = _useState4[1];
 
   var _useState5 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(""),
       _useState6 = _slicedToArray(_useState5, 2),
-      quizStatus = _useState6[0],
-      setQuizStatus = _useState6[1];
+      question = _useState6[0],
+      setQuestion = _useState6[1];
 
-  var _useState7 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false),
+  var _useState7 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)([]),
       _useState8 = _slicedToArray(_useState7, 2),
-      isRendered = _useState8[0],
-      setIsRendered = _useState8[1];
+      choices = _useState8[0],
+      setChoices = _useState8[1];
 
-  var _useState9 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false),
+  var _useState9 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(0),
       _useState10 = _slicedToArray(_useState9, 2),
-      startAt = _useState10[0],
-      setStartAt = _useState10[1];
+      touchRerender = _useState10[0],
+      setTouchRerender = _useState10[1]; // update when in need to rerender
+
   /**
    * @param {string} api
    * @param {callback} onSuccess
@@ -2552,7 +2559,7 @@ function QuestionForm() {
 
 
   var getQuestion = function getQuestion(api, onSuccess, onFail) {
-    console.group("getQuestion scope{}");
+    console.group("%cgetQuestion scope{}", "background: #333; color: #b260ff");
     console.info("==>  ASKING THE API FOR A QUESTION");
     axios.get("/sanctum/csrf-cookie").then(function () {
       axios.get("/api/".concat(api), {
@@ -2569,20 +2576,19 @@ function QuestionForm() {
 
 
   var successfulQuestionFetchHandler = function successfulQuestionFetchHandler(res) {
-    console.group("successfulQuestionFetchHandler scope{}");
+    console.group("%csuccessfulQuestionFetchHandler scope{}", "background: #333; color: #22a7ff");
     console.info("==>  GOT AN API RESPONSE FOR QUESTION");
-    res.data.body.start_at = res.data.body.start_at * 1000;
+    res.data.body.start_at = res.data.body.start_at * 1000; // to ms
+
     console.log("====> QUIZ STATUS:  ->> ".concat(res.data.status, " <<-"));
     setQuizStatus(res.data.status);
-    setStartAt(res.data.body.start_at); //
-    // HERE ====================>
-    //
+    setStartAt(res.data.body.start_at);
 
     if (res.data.status === "PLAYING") {
       setQuestion(res.data.body.question.content);
       setChoices(res.data.body.question.choices);
       console.log("====> Question: ", res.data.body.question.content);
-      console.table(res.data.body.question.choices); //
+      console.table(res.data.body.question.choices);
     }
 
     console.info("==>  FINISHED HANDLING API RESPONSE FOR QUESTION");
@@ -2614,7 +2620,7 @@ function QuestionForm() {
 
 
   var renderCountDown = function renderCountDown() {
-    console.group("renderCountDown scope{}");
+    console.group("%crenderCountDown scope{}", "background: #333; color: #bada55");
     console.log("====> calling CountDown render helper: ", startAt);
 
     var el = /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(_CountDown__WEBPACK_IMPORTED_MODULE_2__["default"], {
@@ -2630,7 +2636,7 @@ function QuestionForm() {
 
 
   var renderChoices = function renderChoices() {
-    console.group("renderChoices scope{}");
+    console.group("%crenderChoices scope{}", "background: #333; color: #bada55");
     var el = choices.map(function (choice) {
       return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(_Choice__WEBPACK_IMPORTED_MODULE_1__["default"], {
         answer: choice
@@ -2646,15 +2652,12 @@ function QuestionForm() {
 
 
   (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(function () {
-    console.group("useEffect scope{}");
+    console.group("%cuseEffect scope{}", "background: #333; color: #ff6060");
     console.count("=> useEffect exec..."); // check auth ?
 
-    if (quizStatus === "") {
+    if (quizStatus === "" || question === "" && choices.length === 0) {
       console.log("==> QUIZ STATUS: ->> UNKNOWN <<- (MOUNT)");
       getQuestion("questions", successfulQuestionFetchHandler, failureFirstQuestionFetchHandler);
-    }
-
-    if (quizStatus !== "" && !isRendered) {//
     }
 
     console.groupEnd("useEffect scope{}");

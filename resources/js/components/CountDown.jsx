@@ -2,9 +2,13 @@ import React from "react";
 // import { useState } from "react";
 
 const CountDown = (props) => {
-    console.group("CountDown scope{}");
+    console.group("%cCountDown scope{}", "background: #333; color: #bada55");
 
-    if (props.rdv === false) return <div></div>;
+    if (props.rdv === false) {
+        console.log("====> No CountDown rendering: ", props.rdv);
+        console.groupEnd("CountDown scope{}");
+        return <div></div>;
+    }
 
     const rdv = new Date(Math.abs(props.rdv));
 
