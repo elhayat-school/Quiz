@@ -1,39 +1,25 @@
 import React from "react";
-// import { useState } from "react";
+import Countdown from "react-countdown";
 
 const CountDown = (props) => {
     console.group("%cCountDown scope{}", "background: #333; color: #bada55");
+    console.log("====> Rendering Coundown: ");
 
-    if (props.rdv === false) {
-        console.log("====> No CountDown rendering: ", props.rdv);
-        console.groupEnd("CountDown scope{}");
-        return <div></div>;
-    }
-
-    const rdv = new Date(Math.abs(props.rdv));
-
-    console.log("====> called CountDown render helper: ", props.rdv);
     console.log(
-        `====>  refresh in ${(props.rdv - new Date().getTime()) / 1000} seconds`
+        `====>  refresh in ${
+            (props.date - new Date().getTime()) / 1000
+        } seconds`
     );
 
+    // Replace this reload with a fetch/render
     setTimeout(() => {
         // UTC to local --> refresh to start playing
         location.reload();
-    }, props.rdv - new Date().getTime());
-
-    var el = (
-        <div>
-            <span>{rdv.getHours()}</span>:<span>{rdv.getMinutes()}</span>
-            <span> </span>
-            <span>{rdv.getDate()}</span>/<span>{rdv.getMonth()}</span>/
-            <span>{rdv.getFullYear()}</span>
-        </div>
-    );
+    }, props.date - new Date().getTime());
 
     console.groupEnd("CountDown scope{}");
 
-    return el;
+    return <Countdown date={props.date} />;
 };
 
 export default CountDown;

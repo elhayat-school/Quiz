@@ -3,7 +3,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 
 import QuestionForm from "./QuestionForm";
-import Countdown from "react-countdown";
+import CountDown from "./CountDown";
 
 const PlayGround = () => {
     console.group(
@@ -71,22 +71,9 @@ const PlayGround = () => {
         else if (res.data.status === "TOO_EARLY") {
             //
             ReactDOM.render(
-                <Countdown date={res.data.body.start_at} />,
+                <CountDown date={res.data.body.start_at} />,
                 document.getElementById("playGround")
             );
-
-            console.log("====> Rendered Coundown: ");
-            console.log(
-                `====>  refresh in ${
-                    (res.data.body.start_at - new Date().getTime()) / 1000
-                } seconds`
-            );
-
-            // Replace this reload with a fetch/render
-            setTimeout(() => {
-                // UTC to local --> refresh to start playing
-                location.reload();
-            }, res.data.body.start_at - new Date().getTime());
             //
         }
         //

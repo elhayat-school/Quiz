@@ -2280,6 +2280,43 @@ var Choice = function Choice(props) {
 
 /***/ }),
 
+/***/ "./resources/js/components/CountDown.jsx":
+/*!***********************************************!*\
+  !*** ./resources/js/components/CountDown.jsx ***!
+  \***********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react_countdown__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-countdown */ "./node_modules/react-countdown/dist/index.es.js");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
+
+
+
+
+var CountDown = function CountDown(props) {
+  console.group("%cCountDown scope{}", "background: #333; color: #bada55");
+  console.log("====> Rendering Coundown: ");
+  console.log("====>  refresh in ".concat((props.date - new Date().getTime()) / 1000, " seconds")); // Replace this reload with a fetch/render
+
+  setTimeout(function () {
+    // UTC to local --> refresh to start playing
+    location.reload();
+  }, props.date - new Date().getTime());
+  console.groupEnd("CountDown scope{}");
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)(react_countdown__WEBPACK_IMPORTED_MODULE_1__["default"], {
+    date: props.date
+  });
+};
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (CountDown);
+
+/***/ }),
+
 /***/ "./resources/js/components/LoginForm.jsx":
 /*!***********************************************!*\
   !*** ./resources/js/components/LoginForm.jsx ***!
@@ -2392,7 +2429,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-dom */ "./node_modules/react-dom/index.js");
 /* harmony import */ var _QuestionForm__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./QuestionForm */ "./resources/js/components/QuestionForm.jsx");
-/* harmony import */ var react_countdown__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react-countdown */ "./node_modules/react-countdown/dist/index.es.js");
+/* harmony import */ var _CountDown__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./CountDown */ "./resources/js/components/CountDown.jsx");
 /* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
 
 
@@ -2445,16 +2482,9 @@ var PlayGround = function PlayGround() {
     } //
     else if (res.data.status === "TOO_EARLY") {
       //
-      react_dom__WEBPACK_IMPORTED_MODULE_1__.render( /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(react_countdown__WEBPACK_IMPORTED_MODULE_3__["default"], {
+      react_dom__WEBPACK_IMPORTED_MODULE_1__.render( /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_CountDown__WEBPACK_IMPORTED_MODULE_3__["default"], {
         date: res.data.body.start_at
-      }), document.getElementById("playGround"));
-      console.log("====> Rendered Coundown: ");
-      console.log("====>  refresh in ".concat((res.data.body.start_at - new Date().getTime()) / 1000, " seconds")); // Replace this reload with a fetch/render
-
-      setTimeout(function () {
-        // UTC to local --> refresh to start playing
-        location.reload();
-      }, res.data.body.start_at - new Date().getTime()); //
+      }), document.getElementById("playGround")); //
     } //
     else if (res.data.status === "TOO_LATE") {
       //
