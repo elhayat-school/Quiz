@@ -15,9 +15,11 @@ return new class extends Migration
     {
         Schema::create('quizzes', function (Blueprint $table) {
             $table->id();
+            //
             $table->dateTime('start_at');
             $table->boolean('done')->default(0);
             $table->unsignedSmallInteger('duration');
+            //
             $table->timestamps();
         });
     }

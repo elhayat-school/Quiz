@@ -15,10 +15,12 @@ return new class extends Migration
     {
         Schema::create('choices', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('question_id')->constrained();
+            $table->foreignId('question_id')->constrained()->onDelete('cascade');
+            //
             $table->string('content');
             $table->set('choice_number', config('rules.choice_number.in'));
             $table->boolean('is_correct');
+            //
             $table->timestamps();
         });
     }
