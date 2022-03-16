@@ -2472,42 +2472,75 @@ var PlayGround = function PlayGround() {
     console.log("====> QUIZ STATUS:  ->> ".concat(res.data.status, " <<-"));
 
     if (res.data.status === "PLAYING") {
-      //
-      console.log("====> Question: ", res.data.body.question.content);
-      console.table(res.data.body.question.choices);
-      react_dom__WEBPACK_IMPORTED_MODULE_1__.render( /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_QuestionForm__WEBPACK_IMPORTED_MODULE_2__["default"], {
-        question: res.data.body.question.content,
-        choices: res.data.body.question.choices
-      }), document.getElementById("playGround"));
-    } //
-    else if (res.data.status === "TOO_EARLY") {
-      //
-      react_dom__WEBPACK_IMPORTED_MODULE_1__.render( /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_CountDown__WEBPACK_IMPORTED_MODULE_3__["default"], {
-        date: res.data.body.start_at
-      }), document.getElementById("playGround")); //
-    } //
-    else if (res.data.status === "TOO_LATE") {
-      //
-      react_dom__WEBPACK_IMPORTED_MODULE_1__.render("Le quiz est fini", document.getElementById("playGround"));
+      renderQuestionForm(componentId, res.data.body.question.content, res.data.body.question.choices);
+    } else if (res.data.status === "TOO_EARLY") {
+      renderCountDown(componentId, res.data.body.start_at);
+    } else if (res.data.status === "TOO_LATE") {
+      renderTooLate(componentId);
     }
 
     console.info("==>  FINISHED HANDLING API RESPONSE FOR QUESTION");
     console.groupEnd("successfulQuestionFetchHandler scope{}");
   };
-
-  getQuestion("questions", successfulQuestionFetchHandler, failureFirstQuestionFetchHandler);
   /**
    * @param {*} err
    */
 
+
   var failureFirstQuestionFetchHandler = function failureFirstQuestionFetchHandler(err) {// If 401 redirect to login
   };
+  /* ---------------------------------------------- */
+  //                  ACTIONS
 
+  /* ---------------------------------------------- */
+
+
+  var componentId = "playGround";
+  getQuestion("questions", successfulQuestionFetchHandler, failureFirstQuestionFetchHandler);
   return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("div", {
-    id: "playGround",
+    id: componentId,
     children: " Loading... "
   });
 };
+/* ---------------------------------------------- */
+//                  CONTENT REDERERS
+
+/* ---------------------------------------------- */
+
+/**
+ * @param {string} componentId
+ * @param {int} timestamp
+ */
+
+
+function renderCountDown(componentId, timestamp) {
+  react_dom__WEBPACK_IMPORTED_MODULE_1__.render( /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_CountDown__WEBPACK_IMPORTED_MODULE_3__["default"], {
+    date: timestamp
+  }), document.getElementById(componentId));
+}
+/**
+ * @param {string} componentId
+ * @param {string} content
+ * @param {array} choices
+ */
+
+
+function renderQuestionForm(componentId, content, choices) {
+  console.log("====> Question: ", content);
+  console.table(choices);
+  react_dom__WEBPACK_IMPORTED_MODULE_1__.render( /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_QuestionForm__WEBPACK_IMPORTED_MODULE_2__["default"], {
+    question: content,
+    choices: choices
+  }), document.getElementById(componentId));
+}
+/**
+ * @param {string} componentId
+ */
+
+
+function renderTooLate(componentId) {
+  react_dom__WEBPACK_IMPORTED_MODULE_1__.render("Le quiz est fini", document.getElementById(componentId));
+}
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (PlayGround);
 

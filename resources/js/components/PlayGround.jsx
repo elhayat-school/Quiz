@@ -1,5 +1,4 @@
 import React from "react";
-
 import ReactDOM from "react-dom";
 
 import QuestionForm from "./QuestionForm";
@@ -55,45 +54,20 @@ const PlayGround = () => {
         console.log(`====> QUIZ STATUS:  ->> ${res.data.status} <<-`);
 
         if (res.data.status === "PLAYING") {
-            //
-            console.log("====> Question: ", res.data.body.question.content);
-            console.table(res.data.body.question.choices);
-
-            ReactDOM.render(
-                <QuestionForm
-                    question={res.data.body.question.content}
-                    choices={res.data.body.question.choices}
-                />,
-                document.getElementById("playGround")
+            renderQuestionForm(
+                componentId,
+                res.data.body.question.content,
+                res.data.body.question.choices
             );
-        }
-        //
-        else if (res.data.status === "TOO_EARLY") {
-            //
-            ReactDOM.render(
-                <CountDown date={res.data.body.start_at} />,
-                document.getElementById("playGround")
-            );
-            //
-        }
-        //
-        else if (res.data.status === "TOO_LATE") {
-            //
-            ReactDOM.render(
-                "Le quiz est fini",
-                document.getElementById("playGround")
-            );
+        } else if (res.data.status === "TOO_EARLY") {
+            renderCountDown(componentId, res.data.body.start_at);
+        } else if (res.data.status === "TOO_LATE") {
+            renderTooLate(componentId);
         }
 
         console.info("==>  FINISHED HANDLING API RESPONSE FOR QUESTION");
         console.groupEnd("successfulQuestionFetchHandler scope{}");
     };
-
-    getQuestion(
-        "questions",
-        successfulQuestionFetchHandler,
-        failureFirstQuestionFetchHandler
-    );
 
     /**
      * @param {*} err
@@ -102,7 +76,56 @@ const PlayGround = () => {
         // If 401 redirect to login
     };
 
-    return <div id="playGround"> Loading... </div>;
+    /* ---------------------------------------------- */
+    //                  ACTIONS
+    /* ---------------------------------------------- */
+
+    const componentId = "playGround";
+
+    getQuestion(
+        "questions",
+        successfulQuestionFetchHandler,
+        failureFirstQuestionFetchHandler
+    );
+
+    return <div id={componentId}> Loading... </div>;
 };
+
+/* ---------------------------------------------- */
+//                  CONTENT REDERERS
+/* ---------------------------------------------- */
+
+/**
+ * @param {string} componentId
+ * @param {int} timestamp
+ */
+function renderCountDown(componentId, timestamp) {
+    ReactDOM.render(
+        <CountDown date={timestamp} />,
+        document.getElementById(componentId)
+    );
+}
+
+/**
+ * @param {string} componentId
+ * @param {string} content
+ * @param {array} choices
+ */
+function renderQuestionForm(componentId, content, choices) {
+    console.log("====> Question: ", content);
+    console.table(choices);
+
+    ReactDOM.render(
+        <QuestionForm question={content} choices={choices} />,
+        document.getElementById(componentId)
+    );
+}
+
+/**
+ * @param {string} componentId
+ */
+function renderTooLate(componentId) {
+    ReactDOM.render("Le quiz est fini", document.getElementById(componentId));
+}
 
 export default PlayGround;
