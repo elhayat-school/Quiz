@@ -14,15 +14,21 @@ class QuizManagerController extends Controller
     public const FINISHED = "FINISHED";
     public const TOO_LATE = "TOO_LATE";
 
+    private $currentQuiz;
+
     public array $json = [];
+
+    public function __construct()
+    {
+        $this->currentQuiz = Quiz::with('questions.choices')->currentQuiz();
+    }
 
     public function getQuestion()
     {
         // cover the beggining when there is no quizzes
-        $quiz = Quiz::with('questions.choices')->currentQuiz();
 
-        $this->setJsonStartAt(strtotime($quiz->start_at));
-        $this->setJsonDuration($quiz->duration);
+        $this->setJsonStartAt(strtotime($this->currentQuiz->start_at));
+        $this->setJsonDuration($this->currentQuiz->duration);
 
         $this->presetResponseForQuizTimeContext();
 
@@ -32,9 +38,9 @@ class QuizManagerController extends Controller
         //      It's Quiz time
         /* ------------------------------------------------- */
 
-        $answers = $quiz->answers()->where('user_id', auth()->user()->id)->get();
+        $answers = $this->currentQuiz->answers()->where('user_id', auth()->user()->id)->get();
 
-        $questions_per_quiz = $quiz->questions->count();
+        $questions_per_quiz = $this->currentQuiz->questions->count();
 
         $this->json['debug']['answers'] = $answers;
         $this->json['debug']['answers_count'] = $answers->count();
@@ -56,7 +62,6 @@ class QuizManagerController extends Controller
         /* ------------------------------------------------- */
 
         $question = NULL;
-        $answer = NULL;
 
         $this->json['debug']['choice_number'] = $answers->last()?->choice_number;
         $this->json['debug']['received_at'] = $answers->last()?->received_at;
@@ -70,13 +75,13 @@ class QuizManagerController extends Controller
             //   didn't answer his latest question AND still can
             /* ------------------------------------------------- */
 
-            $question = $quiz->questions[$answers->count() - 1];
+            $question = $this->currentQuiz->questions[$answers->count() - 1];
         } else {
             /* ------------------------------------------------- */
             // prepare new question + placeholder answer(served_at)
             /* ------------------------------------------------- */
 
-            $question = $quiz->questions[$answers->count()];
+            $question = $this->currentQuiz->questions[$answers->count()];
 
             Answer::create([
                 'user_id' => auth()->user()->id,
@@ -89,8 +94,24 @@ class QuizManagerController extends Controller
         return response()->json($this->json);
     }
 
-    public function postAnswer()
+    public function postAnswer(Request $request)
     {
+        $received_at = time();
+
+        $question = $this->currentQuiz->questions->filter(function ($question) use ($request) {
+            return $question->id == $request->question_id;
+        })->first();
+
+        $answer = Answer::where('user_id', auth()->user()->id)
+            ->where('question_id', $question->id)
+            ->firstOrfail();
+
+        if ($received_at - strtotime($answer->served_at) <= 30) {
+            $answer->choice_number = $request->choice_number;
+            $answer->received_at = date('Y-m-d H:i:s', $received_at);
+            $answer->save();
+        }
+
         return $this->getQuestion();
     }
 
@@ -119,7 +140,6 @@ class QuizManagerController extends Controller
             $this->setJsonStatus(self::TOO_LATE);
         }
     }
-
 
     /* ----------------------------------------- */
     //      SETTING & GETTING JSON

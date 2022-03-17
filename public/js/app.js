@@ -2273,10 +2273,11 @@ var Choice = function Choice(props) {
   return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("div", {
     className: "bg-gray-50 m-2 px-2 py-4 rounded-md shadow-sm flex items-center flex-row-reverse",
     children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("input", {
-      name: "answer",
+      name: "choice_number",
       type: "radio",
-      value: props.answer.nb,
-      className: "h-6 w-6 ml-2"
+      value: props.answer.choice_number,
+      className: "h-6 w-6 ml-2",
+      required: true
     }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("label", {
       dir: "rtl",
       className: "flex-1",
@@ -2493,7 +2494,7 @@ var PlayGround = function PlayGround() {
     console.log("====> QUIZ STATUS:  ->> ".concat(res.data.status, " <<-"));
 
     if (res.data.status === "PLAYING") {
-      renderQuestionForm(componentId, res.data.body.question.content, res.data.body.question.choices);
+      renderQuestionForm(componentId, res.data.body.question.content, res.data.body.question.id, res.data.body.question.choices);
     } else if (res.data.status === "TOO_EARLY") {
       console.log("====>  Refetching in ".concat((res.data.body.start_at - new Date().getTime()) / 1000, " seconds"));
       setTimeout(function () {
@@ -2553,11 +2554,12 @@ function renderCountDown(componentId, timestamp) {
  */
 
 
-function renderQuestionForm(componentId, content, choices) {
+function renderQuestionForm(componentId, content, id, choices) {
   console.log("====> Question: ", content);
   console.table(choices);
   react_dom__WEBPACK_IMPORTED_MODULE_1__.render( /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_QuestionForm__WEBPACK_IMPORTED_MODULE_2__["default"], {
-    question: content,
+    questionContent: content,
+    questionId: id,
     choices: choices
   }), document.getElementById(componentId));
 }
@@ -2608,15 +2610,20 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 function QuestionForm(props) {
   console.group("%cQuestionForm scope{}", "background: #333; color: #1900ff");
 
-  var _useState = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(props.question),
+  var _useState = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(props.questionContent),
       _useState2 = _slicedToArray(_useState, 2),
-      question = _useState2[0],
-      setQuestion = _useState2[1];
+      questionContent = _useState2[0],
+      setQuestionContent = _useState2[1];
 
-  var _useState3 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(props.choices),
+  var _useState3 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(props.questionId),
       _useState4 = _slicedToArray(_useState3, 2),
-      choices = _useState4[0],
-      setChoices = _useState4[1]; // -----------------------------------------------------------------
+      questionId = _useState4[0],
+      setQuestionId = _useState4[1];
+
+  var _useState5 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(props.choices),
+      _useState6 = _slicedToArray(_useState5, 2),
+      choices = _useState6[0],
+      setChoices = _useState6[1]; // -----------------------------------------------------------------
   // -----------------------------------------------------------------
 
   /**
@@ -2626,12 +2633,11 @@ function QuestionForm(props) {
    */
 
 
-  var postAnswer = function postAnswer(api, onSuccess, onFail) {
+  var postAnswer = function postAnswer(api, data, onSuccess, onFail) {
     console.group("%cpostAnswer scope{}", "background: #333; color: #b260ff");
-    console.info("==>  ASKING THE API FOR A QUESTION");
+    console.log("==>  ASKING THE API FOR A QUESTION");
     axios.get("/sanctum/csrf-cookie").then(function () {
-      axios.post("/api/".concat(api), {}, // get selected answer
-      {
+      axios.post("/api/".concat(api), data, {
         headers: {
           Authorization: "Bearer ".concat(sessionStorage.getItem("auth_token"))
         }
@@ -2652,13 +2658,14 @@ function QuestionForm(props) {
     console.log("====> QUIZ STATUS:  ->> ".concat(res.data.status, " <<-"));
 
     if (res.data.status === "PLAYING") {
-      setQuestion(res.data.body.question.content);
+      setQuestionContent(res.data.body.question.content);
+      setQuestionId(res.data.body.question.id);
       setChoices(res.data.body.question.choices);
     } else {
-      location.reload();
+      location.reload(); // =============================>
     }
 
-    console.info("==>  FINISHED HANDLING API RESPONSE FOR QUESTION");
+    console.log("==>  FINISHED HANDLING API RESPONSE FOR QUESTION");
     console.groupEnd("successfulAnswerPostHandler scope{}");
   };
   /**
@@ -2680,16 +2687,24 @@ function QuestionForm(props) {
 
   var answerHandler = function answerHandler(ev) {
     ev.preventDefault();
-    postAnswer("anwsers", successfulAnswerPostHandler, failureAnswerPostHandler);
+    var answerData = new FormData(ev.target);
+    console.log("==>  Answering: ");
+    console.log("===>  question_id: ".concat(answerData.get("question_id")));
+    console.log("===>  choice_number: ".concat(answerData.get("choice_number")));
+    postAnswer("anwsers", answerData, successfulAnswerPostHandler, failureAnswerPostHandler);
   };
 
   var el = /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("form", {
     onSubmit: answerHandler,
     className: "bg-white",
-    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("h2", {
-      className: "bg-gray-100 px-4 py-6 rounded-b-xl text-xl",
+    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("input", {
+      type: "hidden",
+      name: "question_id",
+      value: questionId
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("h2", {
       dir: "rtl",
-      children: question
+      className: "bg-gray-100 px-4 py-6 rounded-b-xl text-xl",
+      children: questionContent
     }), choices.map(function (choice) {
       return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)(_Choice__WEBPACK_IMPORTED_MODULE_1__["default"], {
         answer: choice

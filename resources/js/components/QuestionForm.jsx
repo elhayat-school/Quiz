@@ -5,7 +5,10 @@ import Choice from "./Choice";
 function QuestionForm(props) {
     console.group("%cQuestionForm scope{}", "background: #333; color: #1900ff");
 
-    const [question, setQuestion] = useState(props.question);
+    const [questionContent, setQuestionContent] = useState(
+        props.questionContent
+    );
+    const [questionId, setQuestionId] = useState(props.questionId);
     const [choices, setChoices] = useState(props.choices);
 
     // -----------------------------------------------------------------
@@ -15,26 +18,22 @@ function QuestionForm(props) {
      * @param {callback} onSuccess
      * @param {callback} onFail
      */
-    const postAnswer = (api, onSuccess, onFail) => {
+    const postAnswer = (api, data, onSuccess, onFail) => {
         console.group(
             "%cpostAnswer scope{}",
             "background: #333; color: #b260ff"
         );
-        console.info("==>  ASKING THE API FOR A QUESTION");
+        console.log("==>  ASKING THE API FOR A QUESTION");
 
         axios.get("/sanctum/csrf-cookie").then(() => {
             axios
-                .post(
-                    `/api/${api}`,
-                    {}, // get selected answer
-                    {
-                        headers: {
-                            Authorization: `Bearer ${sessionStorage.getItem(
-                                "auth_token"
-                            )}`,
-                        },
-                    }
-                )
+                .post(`/api/${api}`, data, {
+                    headers: {
+                        Authorization: `Bearer ${sessionStorage.getItem(
+                            "auth_token"
+                        )}`,
+                    },
+                })
                 .then(onSuccess)
                 .catch(onFail);
         });
@@ -55,13 +54,14 @@ function QuestionForm(props) {
         console.log(`====> QUIZ STATUS:  ->> ${res.data.status} <<-`);
 
         if (res.data.status === "PLAYING") {
-            setQuestion(res.data.body.question.content);
+            setQuestionContent(res.data.body.question.content);
+            setQuestionId(res.data.body.question.id);
             setChoices(res.data.body.question.choices);
         } else {
-            location.reload();
+            location.reload(); // =============================>
         }
 
-        console.info("==>  FINISHED HANDLING API RESPONSE FOR QUESTION");
+        console.log("==>  FINISHED HANDLING API RESPONSE FOR QUESTION");
         console.groupEnd("successfulAnswerPostHandler scope{}");
     };
 
@@ -82,8 +82,14 @@ function QuestionForm(props) {
     const answerHandler = (ev) => {
         ev.preventDefault();
 
+        const answerData = new FormData(ev.target);
+        console.log("==>  Answering: ");
+        console.log(`===>  question_id: ${answerData.get("question_id")}`);
+        console.log(`===>  choice_number: ${answerData.get("choice_number")}`);
+
         postAnswer(
             "anwsers",
+            answerData,
             successfulAnswerPostHandler,
             failureAnswerPostHandler
         );
@@ -91,11 +97,13 @@ function QuestionForm(props) {
 
     const el = (
         <form onSubmit={answerHandler} className="bg-white">
+            <input type="hidden" name="question_id" value={questionId} />
+
             <h2
-                className="bg-gray-100 px-4 py-6 rounded-b-xl text-xl"
                 dir="rtl"
+                className="bg-gray-100 px-4 py-6 rounded-b-xl text-xl"
             >
-                {question}
+                {questionContent}
             </h2>
 
             {choices.map(function (choice) {

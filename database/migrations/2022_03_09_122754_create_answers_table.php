@@ -22,7 +22,7 @@ return new class extends Migration
             $table->set('choice_number', config('rules.choice_number.in'))->nullable();
             $table->dateTime('served_at');
             $table->dateTime('received_at')->nullable();
-            $table->integer('duration')->nullable();
+            $table->integer('elapsed')->nullable();
             //
             $table->timestamps();
         });

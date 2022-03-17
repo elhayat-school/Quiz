@@ -59,6 +59,7 @@ const PlayGround = () => {
             renderQuestionForm(
                 componentId,
                 res.data.body.question.content,
+                res.data.body.question.id,
                 res.data.body.question.choices
             );
         } else if (res.data.status === "TOO_EARLY") {
@@ -125,12 +126,16 @@ function renderCountDown(componentId, timestamp) {
  * @param {string} content
  * @param {array} choices
  */
-function renderQuestionForm(componentId, content, choices) {
+function renderQuestionForm(componentId, content, id, choices) {
     console.log("====> Question: ", content);
     console.table(choices);
 
     ReactDOM.render(
-        <QuestionForm question={content} choices={choices} />,
+        <QuestionForm
+            questionContent={content}
+            questionId={id}
+            choices={choices}
+        />,
         document.getElementById(componentId)
     );
 }
