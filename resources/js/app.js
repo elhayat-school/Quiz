@@ -12,17 +12,28 @@ import PlayGround from "./components/PlayGround";
 
 // Guest route
 if (sessionStorage.getItem("auth_token") && location.pathname === "/login") {
-    redirect("/play"); // softRedirect("/play");
+    redirect("/play");
 }
 // Auth routes
 else if (
     !sessionStorage.getItem("auth_token") &&
     location.pathname === "/play"
 ) {
-    redirect("/login"); // softRedirect("/login");
+    redirect("/login");
 }
 
-// To soft reload dispatch event and change state
+axios.interceptors.response.use(
+    (response) => {
+        return response;
+    },
+    (error) => {
+        if (error.response.status === 401) {
+            sessionStorage.removeItem("auth_token");
+            redirect("/login");
+        }
+        return error;
+    }
+);
 
 ReactDOM.render(
     <div className="bg-stone-300 flex-1">

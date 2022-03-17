@@ -87,6 +87,7 @@ const PlayGround = () => {
      */
     const failureFirstQuestionFetchHandler = (err) => {
         // If 401 redirect to login
+        console.error("axios error", err);
     };
 
     /* ---------------------------------------------- */

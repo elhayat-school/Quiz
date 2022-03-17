@@ -2187,13 +2187,22 @@ __webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
 
 
 if (sessionStorage.getItem("auth_token") && location.pathname === "/login") {
-  (0,_services_redirect__WEBPACK_IMPORTED_MODULE_3__["default"])("/play"); // softRedirect("/play");
+  (0,_services_redirect__WEBPACK_IMPORTED_MODULE_3__["default"])("/play");
 } // Auth routes
 else if (!sessionStorage.getItem("auth_token") && location.pathname === "/play") {
-  (0,_services_redirect__WEBPACK_IMPORTED_MODULE_3__["default"])("/login"); // softRedirect("/login");
-} // To soft reload dispatch event and change state
+  (0,_services_redirect__WEBPACK_IMPORTED_MODULE_3__["default"])("/login");
+}
 
+axios.interceptors.response.use(function (response) {
+  return response;
+}, function (error) {
+  if (error.response.status === 401) {
+    sessionStorage.removeItem("auth_token");
+    (0,_services_redirect__WEBPACK_IMPORTED_MODULE_3__["default"])("/login");
+  }
 
+  return error;
+});
 react_dom__WEBPACK_IMPORTED_MODULE_0__.render( /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("div", {
   className: "bg-stone-300 flex-1",
   children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(react_router_dom__WEBPACK_IMPORTED_MODULE_7__.BrowserRouter, {
@@ -2504,7 +2513,9 @@ var PlayGround = function PlayGround() {
    */
 
 
-  var failureFirstQuestionFetchHandler = function failureFirstQuestionFetchHandler(err) {// If 401 redirect to login
+  var failureFirstQuestionFetchHandler = function failureFirstQuestionFetchHandler(err) {
+    // If 401 redirect to login
+    console.error("axios error", err);
   };
   /* ---------------------------------------------- */
   //                  ACTIONS
