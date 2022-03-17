@@ -23,9 +23,14 @@ class Quiz extends Model
         return $this->hasManyThrough(Choice::class, Question::class);
     }
 
-    /* ************************************************* */
+    public function answers()
+    {
+        return $this->hasManyThrough(Answer::class, Question::class);
+    }
+
+    /* ------------------------------------------------- */
     //      SCOPES
-    /* ************************************************* */
+    /* ------------------------------------------------- */
     public function scopeCurrentQuiz($query)
     {
         return $query->notDone()->sortByOldestStartTime()->first();

@@ -17,10 +17,13 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained();
             $table->foreignId('question_id')->constrained();
-            $table->set('choice_number', config('rules.choice_number.in'));
+            $table->unique(['user_id', 'question_id']);
+            //
+            $table->set('choice_number', config('rules.choice_number.in'))->nullable();
             $table->dateTime('served_at');
-            $table->dateTime('received_at');
-            $table->integer('duration');
+            $table->dateTime('received_at')->nullable();
+            $table->integer('duration')->nullable();
+            //
             $table->timestamps();
         });
     }

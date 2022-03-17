@@ -2605,18 +2605,71 @@ function QuestionForm(props) {
   var _useState3 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(props.choices),
       _useState4 = _slicedToArray(_useState3, 2),
       choices = _useState4[0],
-      setChoices = _useState4[1];
+      setChoices = _useState4[1]; // -----------------------------------------------------------------
+  // -----------------------------------------------------------------
+
+  /**
+   * @param {string} api
+   * @param {callback} onSuccess
+   * @param {callback} onFail
+   */
+
+
+  var postAnswer = function postAnswer(api, onSuccess, onFail) {
+    console.group("%cpostAnswer scope{}", "background: #333; color: #b260ff");
+    console.info("==>  ASKING THE API FOR A QUESTION");
+    axios.get("/sanctum/csrf-cookie").then(function () {
+      axios.post("/api/".concat(api), {}, // get selected answer
+      {
+        headers: {
+          Authorization: "Bearer ".concat(sessionStorage.getItem("auth_token"))
+        }
+      }).then(onSuccess)["catch"](onFail);
+    });
+    console.groupEnd("postAnswer scope{}");
+  };
+  /**
+   * @param {*} res
+   */
+
+
+  var successfulAnswerPostHandler = function successfulAnswerPostHandler(res) {
+    console.group("%csuccessfulAnswerPostHandler scope{}", "background: #333; color: #22a7ff");
+    console.log("==>  GOT AN API RESPONSE FOR QUESTION", res.data);
+    res.data.body.start_at = res.data.body.start_at * 1000; // to ms
+
+    console.log("====> QUIZ STATUS:  ->> ".concat(res.data.status, " <<-"));
+
+    if (res.data.status === "PLAYING") {
+      setQuestion(res.data.body.question.content);
+      setChoices(res.data.body.question.choices);
+    } else {
+      location.reload();
+    }
+
+    console.info("==>  FINISHED HANDLING API RESPONSE FOR QUESTION");
+    console.groupEnd("successfulAnswerPostHandler scope{}");
+  };
+  /**
+   * @param {*} err
+   */
+
+
+  var failureAnswerPostHandler = function failureAnswerPostHandler(err) {// If 401 redirect to login
+  };
+  /* ---------------------------------------------- */
+  //                  ACTIONS
+
+  /* ---------------------------------------------- */
+
   /**
    * @param {SubmitEvent} ev
    */
 
 
   var answerHandler = function answerHandler(ev) {
-    ev.preventDefault(); // do more and use POST
-
-    getQuestion("questions", successfulQuestionFetchHandler, function (e) {
-      console.error(ev);
-    });
+    ev.preventDefault();
+    postAnswer("anwsers", successfulAnswerPostHandler, failureAnswerPostHandler);
   };
 
   var el = /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("form", {
