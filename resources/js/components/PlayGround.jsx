@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import ReactDOM from "react-dom";
 
 import QuestionForm from "./QuestionForm";
@@ -9,6 +9,8 @@ const PlayGround = () => {
         "%cQuestionForm PlayGround{}",
         "background: #333; color: #1900ff"
     );
+
+    const [touchToUpdate, setTouchToUpdate] = useState(0);
 
     /**
      * @param {string} api
@@ -60,6 +62,17 @@ const PlayGround = () => {
                 res.data.body.question.choices
             );
         } else if (res.data.status === "TOO_EARLY") {
+            console.log(
+                `====>  Refetching in ${
+                    (res.data.body.start_at - new Date().getTime()) / 1000
+                } seconds`
+            );
+
+            setTimeout(() => {
+                // Timezone ?
+                setTouchToUpdate(touchToUpdate + 1);
+            }, res.data.body.start_at - new Date().getTime());
+
             renderCountDown(componentId, res.data.body.start_at);
         } else if (res.data.status === "TOO_LATE") {
             renderTooLate(componentId);
