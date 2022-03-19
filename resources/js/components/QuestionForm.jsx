@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import Countdown from "react-countdown";
 
 import Choice from "./Choice";
 
@@ -9,6 +10,10 @@ function QuestionForm(props) {
         props.questionContent
     );
     const [questionId, setQuestionId] = useState(props.questionId);
+    const [questionDuration, setQuestionDuration] = useState(
+        props.questionDuration
+    );
+
     const [choices, setChoices] = useState(props.choices);
 
     // -----------------------------------------------------------------
@@ -53,8 +58,14 @@ function QuestionForm(props) {
 
         console.log(`====> QUIZ STATUS:  ->> ${res.data.status} <<-`);
 
+        console.table(res.data.body.question.choices);
+
         if (res.data.status === "PLAYING") {
+            res.data.body.question.duration =
+                res.data.body.question.duration * 1000; // to ms
+
             setQuestionContent(res.data.body.question.content);
+            setQuestionDuration(res.data.body.question.duration);
             setQuestionId(res.data.body.question.id);
             setChoices(res.data.body.question.choices);
         } else {
@@ -105,6 +116,8 @@ function QuestionForm(props) {
             >
                 {questionContent}
             </h2>
+
+            <Countdown date={Date.now() + questionDuration} />
 
             {choices.map(function (choice) {
                 return <Choice key={choice.choice_number} answer={choice} />;

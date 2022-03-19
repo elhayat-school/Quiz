@@ -56,10 +56,14 @@ const PlayGround = () => {
         console.log(`====> QUIZ STATUS:  ->> ${res.data.status} <<-`);
 
         if (res.data.status === "PLAYING") {
+            res.data.body.question.duration =
+                res.data.body.question.duration * 1000; // to ms
+
             renderQuestionForm(
                 componentId,
                 res.data.body.question.content,
                 res.data.body.question.id,
+                res.data.body.question.duration,
                 res.data.body.question.choices
             );
         } else if (res.data.status === "TOO_EARLY") {
@@ -126,7 +130,13 @@ function renderCountDown(componentId, timestamp) {
  * @param {string} content
  * @param {array} choices
  */
-function renderQuestionForm(componentId, content, id, choices) {
+function renderQuestionForm(
+    componentId,
+    content,
+    id,
+    questionDuration,
+    choices
+) {
     console.log("====> Question: ", content);
     console.table(choices);
 
@@ -134,6 +144,7 @@ function renderQuestionForm(componentId, content, id, choices) {
         <QuestionForm
             questionContent={content}
             questionId={id}
+            questionDuration={questionDuration}
             choices={choices}
         />,
         document.getElementById(componentId)
