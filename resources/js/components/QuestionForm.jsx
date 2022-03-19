@@ -58,9 +58,9 @@ function QuestionForm(props) {
 
         console.log(`====> QUIZ STATUS:  ->> ${res.data.status} <<-`);
 
-        console.table(res.data.body.question.choices);
-
         if (res.data.status === "PLAYING") {
+            console.table(res.data.body.question.choices);
+
             res.data.body.question.duration =
                 res.data.body.question.duration * 1000; // to ms
 
@@ -68,7 +68,7 @@ function QuestionForm(props) {
             setQuestionDuration(res.data.body.question.duration);
             setQuestionId(res.data.body.question.id);
             setChoices(res.data.body.question.choices);
-        } else {
+        } else if (res.data.status === "FINISHED") {
             location.reload(); // =============================>
         }
 

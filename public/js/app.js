@@ -2666,16 +2666,16 @@ function QuestionForm(props) {
     res.data.body.start_at = res.data.body.start_at * 1000; // to ms
 
     console.log("====> QUIZ STATUS:  ->> ".concat(res.data.status, " <<-"));
-    console.table(res.data.body.question.choices);
 
     if (res.data.status === "PLAYING") {
+      console.table(res.data.body.question.choices);
       res.data.body.question.duration = res.data.body.question.duration * 1000; // to ms
 
       setQuestionContent(res.data.body.question.content);
       setQuestionDuration(res.data.body.question.duration);
       setQuestionId(res.data.body.question.id);
       setChoices(res.data.body.question.choices);
-    } else {
+    } else if (res.data.status === "FINISHED") {
       location.reload(); // =============================>
     }
 

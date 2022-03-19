@@ -14,8 +14,6 @@ class QuizManagerController extends Controller
     public const FINISHED = "FINISHED";
     public const TOO_LATE = "TOO_LATE";
 
-    public const TIME_TO_ANSWER = 30;
-
     private $currentQuiz;
 
     public array $json = [];
@@ -48,7 +46,7 @@ class QuizManagerController extends Controller
         $this->json['debug']['answers_count'] = $answers->count();
 
         if ($answers->count() === $questions_per_quiz) {
-            if ((time() - strtotime($answers[$questions_per_quiz - 1]->served_at)) > self::TIME_TO_ANSWER
+            if ((time() - strtotime($answers[$questions_per_quiz - 1]->served_at)) > $this->currentQuiz->questions->last()->duration
                 || (!empty($answers[$questions_per_quiz - 1]->choice_number) &&
                     !empty($answers[$questions_per_quiz - 1]->received_at)
                 )
@@ -70,7 +68,7 @@ class QuizManagerController extends Controller
         if (
             $answers->count() > 0 &&
             empty($answers->last()->choice_number) && empty($answers->last()->received_at) &&
-            (time() - strtotime($answers->last()->served_at)) <= self::TIME_TO_ANSWER
+            (time() - strtotime($answers->last()->served_at)) <= $this->currentQuiz->questions[$answers->count() - 1]->duration
         ) {
             /* ------------------------------------------------- */
             //   didn't answer his latest question AND still can
@@ -110,7 +108,7 @@ class QuizManagerController extends Controller
             ->where('question_id', $question->id)
             ->firstOrfail();
 
-        if ($received_at - strtotime($answer->served_at) <= self::TIME_TO_ANSWER) {
+        if ($received_at - strtotime($answer->served_at) <= $question->duration) {
             $answer->choice_number = $request->choice_number;
             $answer->received_at = date('Y-m-d H:i:s', $received_at);
             $answer->save();
