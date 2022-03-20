@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 class QuizManagerController extends Controller
 {
 
+    public const NO_QUIZZES = "NO_QUIZZES";
     public const TOO_EARLY = "TOO_EARLY";
     public const PLAYING = "PLAYING";
     public const FINISHED = "FINISHED";
@@ -20,12 +21,16 @@ class QuizManagerController extends Controller
 
     public function __construct()
     {
-        $this->currentQuiz = Quiz::with('questions.choices')->currentQuiz();
+        $this->currentQuiz = Quiz::with('questions.choices')->notDone()->sortByOldestStartTime()->first();
     }
 
     public function getQuestion()
     {
-        // cover the beggining when there is no quizzes
+        if (is_null($this->currentQuiz)) {
+            $this->setJsonSuccess(false);
+            $this->setJsonStatus(self::NO_QUIZZES);
+            return response()->json($this->json);
+        }
 
         $this->setJsonStartAt(strtotime($this->currentQuiz->start_at));
         $this->setJsonDuration($this->currentQuiz->duration);
@@ -41,9 +46,6 @@ class QuizManagerController extends Controller
         $answers = $this->currentQuiz->answers()->where('user_id', auth()->user()->id)->get();
 
         $questions_per_quiz = $this->currentQuiz->questions->count();
-
-        $this->json['debug']['answers'] = $answers;
-        $this->json['debug']['answers_count'] = $answers->count();
 
         if ($answers->count() === $questions_per_quiz) {
             if ((time() - strtotime($answers[$questions_per_quiz - 1]->served_at)) > $this->currentQuiz->questions->last()->duration

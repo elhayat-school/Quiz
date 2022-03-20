@@ -31,11 +31,6 @@ class Quiz extends Model
     /* ------------------------------------------------- */
     //      SCOPES
     /* ------------------------------------------------- */
-    public function scopeCurrentQuiz($query)
-    {
-        return $query->notDone()->sortByOldestStartTime()->first();
-    }
-
     public function scopeNotDone($query)
     {
         return $query->where('done', false);
