@@ -14,3 +14,10 @@ Route::get('/play', function () {
 });
 
 Route::resource('/quiz', QuizController::class)->middleware('auth.weak');
+
+Route::controller(QuizManagerController::class)
+    ->middleware()
+    ->group(function () {
+        Route::get('/questions', 'getQuestion');
+        Route::post('/anwsers', 'postAnswer');
+    });
