@@ -25,9 +25,9 @@ class QuizManagerController extends Controller
 
     public function getQuestion()
     {
-
         if ($this->quizStatus === self::TOO_EARLY)
-            return view('play.early');
+            return view('play.early')
+                ->with('seconds_to_wait', strtotime($this->currentQuiz->start_at) - time());
         if ($this->quizStatus === self::TOO_LATE)
             return view('play.late');
         /* ------------------------------------------------- */
