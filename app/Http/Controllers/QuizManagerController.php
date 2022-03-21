@@ -8,69 +8,52 @@ use Illuminate\Http\Request;
 
 class QuizManagerController extends Controller
 {
-    public const NO_QUIZZES = "NO_QUIZZES";
-    public const TOO_EARLY = "TOO_EARLY";
-    public const PLAYING = "PLAYING";
-    public const FINISHED = "FINISHED";
-    public const TOO_LATE = "TOO_LATE";
-
     private $currentQuiz;
-    public string $quizStatus;
 
     public function __construct()
     {
         $this->currentQuiz = Quiz::with('questions.choices')->notDone()->sortByOldestStartTime()->first();
-        $this->setQuizStatus();
     }
 
     public function getQuestion()
     {
-        if ($this->quizStatus === self::NO_QUIZZES)
+        // * ...++++++++++(start_at)---(start_at + duration)----------...
+
+        if (is_null($this->currentQuiz))
             return view('play.no_available_quizzes');
-        if ($this->quizStatus === self::TOO_EARLY)
+
+        $time_diff = strtotime($this->currentQuiz->start_at) - time(); // ! Timezone
+
+        if ($time_diff > 0)
             return view('play.early')
                 ->with('seconds_to_wait', strtotime($this->currentQuiz->start_at) - time());
-        if ($this->quizStatus === self::TOO_LATE)
+
+        // elseif ($time_diff >= -$this->currentQuiz->duration && $time_diff <= 0)
+
+        elseif ($time_diff < -$this->currentQuiz->duration)
             return view('play.late');
+
         /* ------------------------------------------------- */
         //      It's Quiz time
         /* ------------------------------------------------- */
 
-        $answers = $this->currentQuiz->answers()->where('user_id', auth()->user()->id)->get();
+        $answers = $this->currentQuiz->answers()
+            ->where('user_id', auth()->user()->id)
+            ->get();
 
-        $questions_per_quiz = $this->currentQuiz->questions->count();
-
-        if ($answers->count() === $questions_per_quiz) {
-            if ((time() - strtotime($answers->last()->served_at)) >= $this->currentQuiz->questions->last()->duration // Time for last question elapsed
-                || (!empty($answers->last()->choice_number) && !empty($answers->last()->received_at) // Last question is answered
-                )
-            ) {
-                $this->quizStatus = self::FINISHED;
-                return view('play.finished');
-            }
-        }
-        /* ------------------------------------------------- */
-        //      User answered everything
-        /* ------------------------------------------------- */
+        if ($this->finishedAllQuestions($answers))
+            return view('play.finished');
 
         $question = NULL;
 
-        if (
-            $answers->count() > 0 && // started answering
-            empty($answers->last()->choice_number) && empty($answers->last()->received_at) && // Didn't answer the latest served question
-            (time() - strtotime($answers->last()->served_at)) <= $this->currentQuiz->questions[$answers->count() - 1]->duration // still has spared time to answer
-        ) {
-            /* ------------------------------------------------- */
-            //   didn't answer his latest question AND still can
-            /* ------------------------------------------------- */
+        if ($this->canAnswerPreviouslyServedQuestion($answers)) {
 
+            //  !
             $this->currentQuiz->questions[$answers->count() - 1]->duration = $this->currentQuiz->questions[$answers->count() - 1]->duration - (time() - strtotime($answers->last()->served_at)); // Set the spared time
 
             $question = $this->currentQuiz->questions[$answers->count() - 1];
         } else {
-            /* ------------------------------------------------- */
             // prepare new question + placeholder answer(served_at)
-            /* ------------------------------------------------- */
 
             $question = $this->currentQuiz->questions[$answers->count()];
 
@@ -82,8 +65,6 @@ class QuizManagerController extends Controller
         }
 
         return view('play.question')->with('question', $question);
-
-        // DONT SERVE ENTIRE MODELS !
     }
 
     public function postAnswer(Request $request)
@@ -107,25 +88,43 @@ class QuizManagerController extends Controller
         return to_route('playground');
     }
 
-    /**
-     * ...++++++++++(start_at)---(start_at + duration)----------...
-     */
-    private function setQuizStatus(): void
+    private function finishedAllQuestions($answers): bool
     {
-        if (is_null($this->currentQuiz)) {
-            $this->quizStatus = self::NO_QUIZZES;
-            return;
-        }
+        if ($answers->count() < $this->currentQuiz->questions->count())
+            // Didn't answer every question
+            return false;
 
-        $time_diff = strtotime($this->currentQuiz->start_at) - time(); // ! Timezone
+        if ((time() - strtotime($answers->last()->served_at)) >= $this->currentQuiz->questions->last()->duration)
+            // Time for last question elapsed
+            return true;
 
-        if ($time_diff > 0)
-            $this->quizStatus = self::TOO_EARLY;
+        if (!empty($answers->last()->choice_number) && !empty($answers->last()->received_at))
+            // Last question is answered
+            return true;
 
-        elseif ($time_diff >= -$this->currentQuiz->duration && $time_diff <= 0)
-            $this->quizStatus = self::PLAYING;
+        return false;
+    }
 
-        elseif ($time_diff < -$this->currentQuiz->duration)
-            $this->quizStatus = self::TOO_LATE;
+    private function canAnswerPreviouslyServedQuestion($answers): bool
+    {
+        if ($answers->count() === 0)
+            // First time requesting a question
+            return false;
+
+        if (
+            !empty($answers->last()->choice_number) &&
+            !empty($answers->last()->received_at)
+        )
+            // Did answer the latest question he got served
+            return false;
+
+        $answer_elapsed_time = time() - strtotime($answers->last()->served_at);
+        $previously_served_question_duration = $this->currentQuiz->questions[$answers->count() - 1]->duration;
+
+        if ($answer_elapsed_time <= $previously_served_question_duration)
+            // Still has spared time to answer
+            return true;
+
+        return false;
     }
 }
