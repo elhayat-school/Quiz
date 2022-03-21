@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 
 class QuizManagerController extends Controller
 {
-
+    public const NO_QUIZZES = "NO_QUIZZES";
     public const TOO_EARLY = "TOO_EARLY";
     public const PLAYING = "PLAYING";
     public const FINISHED = "FINISHED";
@@ -25,6 +25,8 @@ class QuizManagerController extends Controller
 
     public function getQuestion()
     {
+        if ($this->quizStatus === self::NO_QUIZZES)
+            return view('play.no_available_quizzes');
         if ($this->quizStatus === self::TOO_EARLY)
             return view('play.early')
                 ->with('seconds_to_wait', strtotime($this->currentQuiz->start_at) - time());
@@ -109,6 +111,11 @@ class QuizManagerController extends Controller
      */
     private function setQuizStatus(): void
     {
+        if (is_null($this->currentQuiz)) {
+            $this->quizStatus = self::NO_QUIZZES;
+            return;
+        }
+
         $time_diff = strtotime($this->currentQuiz->start_at) - time(); // ! Timezone
 
         if ($time_diff > 0)
