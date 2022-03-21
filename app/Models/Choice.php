@@ -10,8 +10,4 @@ class Choice extends Model
     use HasFactory;
 
     public $guarded = ['id'];
-
-    // protected $casts = [
-    //     'choice_number' => 'integer',
-    // ];
 }

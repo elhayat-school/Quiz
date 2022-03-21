@@ -8,7 +8,6 @@ use Illuminate\Http\Request;
 
 class QuizManagerController extends Controller
 {
-
     public const NO_QUIZZES = "NO_QUIZZES";
     public const TOO_EARLY = "TOO_EARLY";
     public const PLAYING = "PLAYING";
@@ -16,29 +15,23 @@ class QuizManagerController extends Controller
     public const TOO_LATE = "TOO_LATE";
 
     private $currentQuiz;
-
-    public array $json = [];
+    public string $quizStatus;
 
     public function __construct()
     {
         $this->currentQuiz = Quiz::with('questions.choices')->notDone()->sortByOldestStartTime()->first();
+        $this->setQuizStatus();
     }
 
     public function getQuestion()
     {
-        if (is_null($this->currentQuiz)) {
-            $this->setJsonSuccess(false);
-            $this->setJsonStatus(self::NO_QUIZZES);
-            return response()->json($this->json);
-        }
-
-        $this->setJsonStartAt(strtotime($this->currentQuiz->start_at));
-        $this->setJsonDuration($this->currentQuiz->duration);
-
-        $this->presetResponseForQuizTimeContext();
-
-        if ($this->getJsonStatus() !== self::PLAYING)
-            return response()->json($this->json);
+        if ($this->quizStatus === self::NO_QUIZZES)
+            return view('play.no_available_quizzes');
+        if ($this->quizStatus === self::TOO_EARLY)
+            return view('play.early')
+                ->with('seconds_to_wait', strtotime($this->currentQuiz->start_at) - time());
+        if ($this->quizStatus === self::TOO_LATE)
+            return view('play.late');
         /* ------------------------------------------------- */
         //      It's Quiz time
         /* ------------------------------------------------- */
@@ -48,14 +41,12 @@ class QuizManagerController extends Controller
         $questions_per_quiz = $this->currentQuiz->questions->count();
 
         if ($answers->count() === $questions_per_quiz) {
-            if ((time() - strtotime($answers[$questions_per_quiz - 1]->served_at)) > $this->currentQuiz->questions->last()->duration
-                || (!empty($answers[$questions_per_quiz - 1]->choice_number) &&
-                    !empty($answers[$questions_per_quiz - 1]->received_at)
+            if ((time() - strtotime($answers->last()->served_at)) >= $this->currentQuiz->questions->last()->duration // Time for last question elapsed
+                || (!empty($answers->last()->choice_number) && !empty($answers->last()->received_at) // Last question is answered
                 )
             ) {
-
-                $this->setJsonStatus(self::FINISHED);
-                return response()->json($this->json);
+                $this->quizStatus = self::FINISHED;
+                return view('play.finished');
             }
         }
         /* ------------------------------------------------- */
@@ -64,17 +55,16 @@ class QuizManagerController extends Controller
 
         $question = NULL;
 
-        $this->json['debug']['choice_number'] = $answers->last()?->choice_number;
-        $this->json['debug']['received_at'] = $answers->last()?->received_at;
-
         if (
-            $answers->count() > 0 &&
-            empty($answers->last()->choice_number) && empty($answers->last()->received_at) &&
-            (time() - strtotime($answers->last()->served_at)) <= $this->currentQuiz->questions[$answers->count() - 1]->duration
+            $answers->count() > 0 && // started answering
+            empty($answers->last()->choice_number) && empty($answers->last()->received_at) && // Didn't answer the latest served question
+            (time() - strtotime($answers->last()->served_at)) <= $this->currentQuiz->questions[$answers->count() - 1]->duration // still has spared time to answer
         ) {
             /* ------------------------------------------------- */
             //   didn't answer his latest question AND still can
             /* ------------------------------------------------- */
+
+            $this->currentQuiz->questions[$answers->count() - 1]->duration = $this->currentQuiz->questions[$answers->count() - 1]->duration - (time() - strtotime($answers->last()->served_at)); // Set the spared time
 
             $question = $this->currentQuiz->questions[$answers->count() - 1];
         } else {
@@ -91,9 +81,7 @@ class QuizManagerController extends Controller
             ]);
         }
 
-        $this->json['body']['question'] = $question;
-        return response()->json($this->json);
-
+        return view('play.question')->with('question', $question);
 
         // DONT SERVE ENTIRE MODELS !
     }
@@ -116,75 +104,28 @@ class QuizManagerController extends Controller
             $answer->save();
         }
 
-        return $this->getQuestion();
+        return to_route('playground');
     }
 
     /**
      * ...++++++++++(start_at)---(start_at + duration)----------...
-     *
-     * @param int $start_at Quiz starting timestamp in seconds
-     * @param int $duration Quiz duration in seconds
      */
-    private function presetResponseForQuizTimeContext(): void
+    private function setQuizStatus(): void
     {
-        $time_diff = $this->getJsonStartAt() - time(); // ! Timezone
-
-        if ($time_diff > 0) {
-            $this->setJsonSuccess(false);
-            $this->setJsonStatus(self::TOO_EARLY);
+        if (is_null($this->currentQuiz)) {
+            $this->quizStatus = self::NO_QUIZZES;
+            return;
         }
-        //
-        elseif ($time_diff >= -$this->getJsonDuration() && $time_diff <= 0) {
-            $this->setJsonSuccess(true);
-            $this->setJsonStatus(self::PLAYING);
-        }
-        //
-        elseif ($time_diff < -$this->getJsonDuration()) {
-            $this->setJsonSuccess(false);
-            $this->setJsonStatus(self::TOO_LATE);
-        }
-    }
 
-    /* ----------------------------------------- */
-    //      SETTING & GETTING JSON
-    /* ----------------------------------------- */
-    private function setJsonSuccess(bool $success): void
-    {
-        $this->json['success'] = $success;
-    }
+        $time_diff = strtotime($this->currentQuiz->start_at) - time(); // ! Timezone
 
-    private function setJsonStatus(string $status): void
-    {
-        $this->json['status'] = $status;
-    }
+        if ($time_diff > 0)
+            $this->quizStatus = self::TOO_EARLY;
 
-    private function setJsonStartAt(int $start_at): void
-    {
-        $this->json['body']['start_at'] = $start_at;
-    }
+        elseif ($time_diff >= -$this->currentQuiz->duration && $time_diff <= 0)
+            $this->quizStatus = self::PLAYING;
 
-    private function setJsonDuration(int $duration): void
-    {
-        $this->json['body']['duration'] = $duration;
-    }
-
-    private function getJsonSuccess(): bool
-    {
-        return $this->json['success'];
-    }
-
-    private function getJsonStatus(): string
-    {
-        return $this->json['status'];
-    }
-
-    private function getJsonStartAt(): int
-    {
-        return $this->json['body']['start_at'];
-    }
-
-    private function getJsonDuration(): int
-    {
-        return $this->json['body']['duration'];
+        elseif ($time_diff < -$this->currentQuiz->duration)
+            $this->quizStatus = self::TOO_LATE;
     }
 }
