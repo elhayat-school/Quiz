@@ -41,9 +41,8 @@ class QuizManagerController extends Controller
         $questions_per_quiz = $this->currentQuiz->questions->count();
 
         if ($answers->count() === $questions_per_quiz) {
-            if ((time() - strtotime($answers[$questions_per_quiz - 1]->served_at)) > $this->currentQuiz->questions->last()->duration
-                || (!empty($answers[$questions_per_quiz - 1]->choice_number) &&
-                    !empty($answers[$questions_per_quiz - 1]->received_at)
+            if ((time() - strtotime($answers->last()->served_at)) >= $this->currentQuiz->questions->last()->duration // Time for last question elapsed
+                || (!empty($answers->last()->choice_number) && !empty($answers->last()->received_at) // Last question is answered
                 )
             ) {
                 $this->quizStatus = self::FINISHED;
@@ -57,13 +56,15 @@ class QuizManagerController extends Controller
         $question = NULL;
 
         if (
-            $answers->count() > 0 &&
-            empty($answers->last()->choice_number) && empty($answers->last()->received_at) &&
-            (time() - strtotime($answers->last()->served_at)) <= $this->currentQuiz->questions[$answers->count() - 1]->duration
+            $answers->count() > 0 && // started answering
+            empty($answers->last()->choice_number) && empty($answers->last()->received_at) && // Didn't answer the latest served question
+            (time() - strtotime($answers->last()->served_at)) <= $this->currentQuiz->questions[$answers->count() - 1]->duration // still has spared time to answer
         ) {
             /* ------------------------------------------------- */
             //   didn't answer his latest question AND still can
             /* ------------------------------------------------- */
+
+            $this->currentQuiz->questions[$answers->count() - 1]->duration = $this->currentQuiz->questions[$answers->count() - 1]->duration - (time() - strtotime($answers->last()->served_at)); // Set the spared time
 
             $question = $this->currentQuiz->questions[$answers->count() - 1];
         } else {

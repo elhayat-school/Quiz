@@ -8,6 +8,7 @@ This is a project is made with **Laravel** and **React**.
 ## DB
 
 ![DB](DB.png)
+![FLow-chart](Quiz-Flow-chart.png)
 
 ## Up and Running
 
