@@ -8,11 +8,17 @@ use Illuminate\Http\Request;
 
 class QuizManagerController extends Controller
 {
+    public const MAX_START_DELAY = 25;
+
+    public int $currentTimestamp;
+
     private $currentQuiz;
+
 
     public function __construct()
     {
         $this->currentQuiz = Quiz::with('questions.choices')->notDone()->sortByOldestStartTime()->first();
+        $this->currentTimestamp = time();
     }
 
     public function getQuestion()
@@ -22,11 +28,11 @@ class QuizManagerController extends Controller
         if (is_null($this->currentQuiz))
             return view('play.no_available_quizzes');
 
-        $time_diff = strtotime($this->currentQuiz->start_at) - time(); // ! Timezone
+        $time_diff = strtotime($this->currentQuiz->start_at) - $this->currentTimestamp; // ! Timezone
 
         if ($time_diff > 0)
             return view('play.early')
-                ->with('seconds_to_wait', strtotime($this->currentQuiz->start_at) - time());
+                ->with('seconds_to_wait', strtotime($this->currentQuiz->start_at) - $this->currentTimestamp);
 
         // ($time_diff >= -$this->currentQuiz->duration && $time_diff <= 0)
 
@@ -40,6 +46,9 @@ class QuizManagerController extends Controller
         $answers = $this->currentQuiz->answers()
             ->where('user_id', auth()->user()->id)
             ->get();
+
+        if ($answers->count() === 0 && (time() - strtotime($this->currentQuiz->start_at) > self::MAX_START_DELAY))
+            return view('play.late');
 
         if ($this->finishedAllQuestions($answers))
             return view('play.finished');
@@ -66,7 +75,7 @@ class QuizManagerController extends Controller
             ]);
         }
 
-        $quiz_remaining_time = $this->currentQuiz->duration - (time() - strtotime($this->currentQuiz->start_at));
+        $quiz_remaining_time = $this->currentQuiz->duration - ($this->currentTimestamp - strtotime($this->currentQuiz->start_at));
         if ($question->duration > $quiz_remaining_time)
             $question->duration = $quiz_remaining_time;
 
@@ -79,8 +88,6 @@ class QuizManagerController extends Controller
      */
     public function postAnswer(Request $request)
     {
-        $received_at = time();
-
         $question = $this->currentQuiz->questions->filter(function ($question) use ($request) {
             return $question->id == $request->question_id;
         })->first();
@@ -89,9 +96,9 @@ class QuizManagerController extends Controller
             ->where('question_id', $question->id)
             ->firstOrfail();
 
-        if ($received_at - strtotime($answer->served_at) <= $question->duration) {
+        if ($this->currentTimestamp - strtotime($answer->served_at) <= $question->duration) {
             $answer->choice_number = $request->choice_number;
-            $answer->received_at = date('Y-m-d H:i:s', $received_at);
+            $answer->received_at = date('Y-m-d H:i:s',  $this->currentTimestamp);
             $answer->save();
         }
 
@@ -114,7 +121,7 @@ class QuizManagerController extends Controller
             // Didn't get to the last question
             return false;
 
-        if ((time() - strtotime($answers->last()->served_at)) >= $this->currentQuiz->questions->last()->duration)
+        if (($this->currentTimestamp - strtotime($answers->last()->served_at)) >= $this->currentQuiz->questions->last()->duration)
             // Time for last question elapsed
             return true;
 
@@ -147,7 +154,7 @@ class QuizManagerController extends Controller
             // Did answer the latest question he got served
             return false;
 
-        $answer_elapsed_time = time() - strtotime($answers->last()->served_at);
+        $answer_elapsed_time =  $this->currentTimestamp - strtotime($answers->last()->served_at);
         $previously_served_question_duration = $this->currentQuiz->questions[$answers->count() - 1]->duration;
 
         if ($answer_elapsed_time <= $previously_served_question_duration)
