@@ -10,8 +10,12 @@ module.exports = {
     theme: {
         extend: {
             fontFamily: {
+
                 sans: ['Nunito', ...defaultTheme.fontFamily.sans],
+                'amiri': ['"Amiri"', 'serif']
+
             },
+
         },
     },
 
