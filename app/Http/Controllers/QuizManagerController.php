@@ -28,7 +28,7 @@ class QuizManagerController extends Controller
             return view('play.early')
                 ->with('seconds_to_wait', strtotime($this->currentQuiz->start_at) - time());
 
-        // elseif ($time_diff >= -$this->currentQuiz->duration && $time_diff <= 0)
+        // ($time_diff >= -$this->currentQuiz->duration && $time_diff <= 0)
 
         elseif ($time_diff < -$this->currentQuiz->duration)
             return view('play.late');
@@ -51,12 +51,14 @@ class QuizManagerController extends Controller
             //  !
             $this->currentQuiz->questions[$answers->count() - 1]->duration = $this->currentQuiz->questions[$answers->count() - 1]->duration - (time() - strtotime($answers->last()->served_at)); // Set the spared time
 
+            // Reset previous question
             $question = $this->currentQuiz->questions[$answers->count() - 1];
         } else {
-            // prepare new question + placeholder answer(served_at)
 
+            // Set new question
             $question = $this->currentQuiz->questions[$answers->count()];
 
+            // placeholder answer(served_at)
             Answer::create([
                 'user_id' => auth()->user()->id,
                 'question_id' => $question->id,
@@ -71,6 +73,10 @@ class QuizManagerController extends Controller
         return view('play.question')->with('question', $question);
     }
 
+    /**
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
     public function postAnswer(Request $request)
     {
         $received_at = time();
@@ -92,10 +98,20 @@ class QuizManagerController extends Controller
         return to_route('playground');
     }
 
-    private function finishedAllQuestions($answers): bool
+    /**
+     * The player has finished the current Quiz if:
+     * - Every question has a recorded answer (placeholder)
+     * +  **AND**
+     * -  -  Time to fill  the last answer elapsed
+     * -  +  **OR**
+     * -  -  Last answer is filled
+     *
+     * @param \Illuminate\Database\Eloquent\Collection $answers Authenticated User answers for the current Quiz
+     */
+    private function finishedAllQuestions(\Illuminate\Database\Eloquent\Collection $answers): bool
     {
         if ($answers->count() < $this->currentQuiz->questions->count())
-            // Didn't answer every question
+            // Didn't get to the last question
             return false;
 
         if ((time() - strtotime($answers->last()->served_at)) >= $this->currentQuiz->questions->last()->duration)
@@ -109,7 +125,16 @@ class QuizManagerController extends Controller
         return false;
     }
 
-    private function canAnswerPreviouslyServedQuestion($answers): bool
+    /**
+     * - Have some answers (placeholder|filled) recorded for the current Quiz
+     * + **AND**
+     * - Didn't fill the Answer of the priviously served Question
+     * + **AND**
+     * - Still have remaining time to answer the priviously served Question
+     *
+     * @param \Illuminate\Database\Eloquent\Collection $answers Authenticated User answers for the current Quiz
+     */
+    private function canAnswerPreviouslyServedQuestion(\Illuminate\Database\Eloquent\Collection $answers): bool
     {
         if ($answers->count() === 0)
             // First time requesting a question
