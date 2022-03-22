@@ -64,6 +64,10 @@ class QuizManagerController extends Controller
             ]);
         }
 
+        $quiz_remaining_time = $this->currentQuiz->duration - (time() - strtotime($this->currentQuiz->start_at));
+        if ($question->duration > $quiz_remaining_time)
+            $question->duration = $quiz_remaining_time;
+
         return view('play.question')->with('question', $question);
     }
 
