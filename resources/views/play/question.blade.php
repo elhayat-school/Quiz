@@ -1,38 +1,45 @@
 <x-app-layout>
-                <div class="p-6 ">
+    <div class="p-6 ">
 
-                    <form action="{{ route('anwswer.store') }}" method="POST">
-                        @csrf
-                        <input type="hidden" name="question_id" value="{{ $question->id }}" />
+        <div class="flex justify-between w-full items-center ">
 
-                        <h2 dir="rtl" className="bg-gray-100 px-4 py-6 rounded-b-xl text-xl">
-                            {{ $question->content }}
-                        </h2>
+            <div id="question-countdown" data-question-duration="{{ $question->duration }}"
+                class="bg-white border-2 border-amber-400 rounded-full text-2xl font-semibold px-2 w-32 text-center" dir="ltr">
+                <span id="question-countdown-minutes">--</span>
+                :
+                <span id="question-countdown-seconds">--</span>
+            </div>
 
-                        <div id="question-countdown" data-question-duration="{{ $question->duration }}">
-                            <span id="question-countdown-minutes">--</span>
-                            :
-                            <span id="question-countdown-seconds">--</span>
-                        </div>
+            <x-application-logo />
+        </div>
+        <form action="{{ route('anwswer.store') }}" method="POST">
+            @csrf
+            <input type="hidden" name="question_id" value="{{ $question->id }}" />
 
-                        @foreach ($question->choices as $choice)
-                            <div
-                                className="bg-gray-50 m-2 px-2 py-4 rounded-md shadow-sm flex items-center flex-row-reverse">
-                                <input name="choice_number" type="radio" value="{{ $choice->choice_number }}"
-                                    className="h-6 w-6 ml-2" required />
+            <h2 dir="rtl" class="px-4 py-6 rounded-b-xl text-2xl text-amber-400">
+                {{ $question->content }}
+            </h2>
 
-                                <label dir="rtl" className="flex-1">
-                                    {{ $choice->content }}
-                                </label>
-                            </div>
-                        @endforeach
 
-                        <button className="bg-emerald-600 text-gray-50 mx-2 px-4 py-2 rounded-full font-bold">
-                            Répondre
-                        </button>
-                    </form>
+            @foreach ($question->choices as $choice)
+                <div class=" py-4 rounded-md shadow-sm flex items-center flex-row text-white text-xl">
+                    <input name="choice_number" type="radio" value="{{ $choice->choice_number }}"
+                        class="h-6 w-6 ml-2 " required />
 
+                    <label dir="rtl" class="flex-1">
+                        {{ $choice->content }}
+                    </label>
                 </div>
+            @endforeach
+
+
+            <x-button class=" mt-8 px-8  text-2xl rounded-full">
+                الإجابة
+            </x-button>
+
+        </form>
+
+    </div>
 
 
     <script src="{{ asset('js/countdown.js') }}"></script>
