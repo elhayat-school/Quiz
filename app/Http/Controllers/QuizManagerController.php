@@ -8,12 +8,9 @@ use Illuminate\Http\Request;
 
 class QuizManagerController extends Controller
 {
-    public const MAX_START_DELAY = 25;
-
     public int $currentTimestamp;
 
     private $currentQuiz;
-
 
     public function __construct()
     {
@@ -47,7 +44,11 @@ class QuizManagerController extends Controller
             ->where('user_id', auth()->user()->id)
             ->get();
 
-        if ($answers->count() === 0 && ($this->currentTimestamp - strtotime($this->currentQuiz->start_at) > self::MAX_START_DELAY))
+        if (
+            !config('quiz.QUIZ_ALLOW_DELAY') &&
+            $answers->count() === 0 &&
+            ($this->currentTimestamp - strtotime($this->currentQuiz->start_at) > config('quiz.QUIZ_MAX_DELAY'))
+        )
             return view('play.late');
 
         if ($this->finishedAllQuestions($answers))
