@@ -7,7 +7,7 @@
 
         </div>
 
-        <span class="text-white text-2xl"> بنضخنبخضنبخثنبخن </span>
+        <span class="text-white text-2xl"> No available quizzes </span>
 
     </div>
 

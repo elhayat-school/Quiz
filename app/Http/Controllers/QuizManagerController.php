@@ -47,7 +47,7 @@ class QuizManagerController extends Controller
             ->where('user_id', auth()->user()->id)
             ->get();
 
-        if ($answers->count() === 0 && (time() - strtotime($this->currentQuiz->start_at) > self::MAX_START_DELAY))
+        if ($answers->count() === 0 && ($this->currentTimestamp - strtotime($this->currentQuiz->start_at) > self::MAX_START_DELAY))
             return view('play.late');
 
         if ($this->finishedAllQuestions($answers))
@@ -58,7 +58,7 @@ class QuizManagerController extends Controller
         if ($this->canAnswerPreviouslyServedQuestion($answers)) {
 
             //  !
-            $this->currentQuiz->questions[$answers->count() - 1]->duration = $this->currentQuiz->questions[$answers->count() - 1]->duration - (time() - strtotime($answers->last()->served_at)); // Set the spared time
+            $this->currentQuiz->questions[$answers->count() - 1]->duration = $this->currentQuiz->questions[$answers->count() - 1]->duration - ($this->currentTimestamp - strtotime($answers->last()->served_at)); // Set the spared time
 
             // Reset previous question
             $question = $this->currentQuiz->questions[$answers->count() - 1];
@@ -79,7 +79,9 @@ class QuizManagerController extends Controller
         if ($question->duration > $quiz_remaining_time)
             $question->duration = $quiz_remaining_time;
 
-        return view('play.question')->with('question', $question);
+        return view('play.question')
+            // ->with('quiz_remaining_time', $quiz_remaining_time)
+            ->with('question', $question);
     }
 
     /**
