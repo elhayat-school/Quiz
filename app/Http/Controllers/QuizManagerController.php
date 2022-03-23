@@ -113,11 +113,10 @@ class QuizManagerController extends Controller
     {
         $correct_choices = \App\Models\Choice::where('is_correct', 1)->get();
 
-        // return $correct_choices;
-
-        // return Answer::all();
         return Answer::getQuery()
-            ->select('*')->addSelect(DB::raw('(UNIX_TIMESTAMP(received_at) - UNIX_TIMESTAMP(served_at)) AS elapsed_secods'))
+            ->select('user_id')
+            ->addSelect(DB::raw('SUM(UNIX_TIMESTAMP(received_at) - UNIX_TIMESTAMP(served_at)) AS sum_elapsed_seconds'))
+            ->addSelect(DB::raw('SUM(choice_number) AS count_correct_answers'))
             ->where('question_id', $correct_choices[0]->question_id)->where("choice_number", $correct_choices[0]->choice_number)
             ->orWhere(function ($query) use ($correct_choices) {
                 $query->Where('question_id', $correct_choices[1]->question_id)->where("choice_number", $correct_choices[1]->choice_number);
@@ -128,9 +127,9 @@ class QuizManagerController extends Controller
             ->orWhere(function ($query) use ($correct_choices) {
                 $query->Where('question_id', $correct_choices[3]->question_id)->where("choice_number", $correct_choices[3]->choice_number);
             })
-            // ->count()
-            ->orderBy('elapsed_secods')
-            // ->groupBy('user_id')
+            ->orderBy('count_correct_answers', 'DESC')
+            ->orderBy('sum_elapsed_seconds')
+            ->groupBy('user_id')
             ->get();
     }
 
