@@ -13,7 +13,7 @@
             <p class="text-white text-2xl">
                 أنت هنا مبكرًا
             </p>
-            <p class="text-white text-5xl animate-bounce">
+            <p class=" text-5xl animate-bounce">
                 ⌛
             </p>
 

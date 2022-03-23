@@ -41,13 +41,13 @@
             </div>
 
             <div class="flex items-center justify-end mt-4">
-                @if (Route::has('password.request'))
-                    <a class="underline text-sm text-white hover:text-gray-900" href="{{ route('password.request') }}">
+                {{-- @if (Route::has('password.request'))
+                    <a class="underline text-base text-white hover:text-green-200" href="{{ route('password.request') }}">
                         {{ __('هل نسيت كلمة السر ؟  ') }}
                     </a>
-                @endif
+                @endif --}}
 
-                <x-button class="ml-3 text-xl">
+                <x-button class="ml-3 ">
                     دخول
                 </x-button>
             </div>
