@@ -22,6 +22,10 @@ class DatabaseSeeder extends Seeder
             'password' => password_hash('123', PASSWORD_DEFAULT),
         ]);
 
+        \App\Models\User::factory(500)->create();
+
+        // ==========================================================
+
         $quiz = Quiz::create([
             'start_at' => date('Y-m-d H:i:s', time() + 15),
             'duration' => 140
@@ -75,5 +79,7 @@ class DatabaseSeeder extends Seeder
                 ]);
             }
         }
+
+        // ==========================================================
     }
 }
