@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Answer;
 use App\Models\Quiz;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class QuizManagerController extends Controller
 {
@@ -106,6 +107,31 @@ class QuizManagerController extends Controller
         }
 
         return to_route('playground');
+    }
+
+    public function getResults()
+    {
+        $correct_choices = \App\Models\Choice::where('is_correct', 1)->get();
+
+        // return $correct_choices;
+
+        // return Answer::all();
+        return Answer::getQuery()
+            ->select('*')->addSelect(DB::raw('(UNIX_TIMESTAMP(received_at) - UNIX_TIMESTAMP(served_at)) AS elapsed_secods'))
+            ->where('question_id', $correct_choices[0]->question_id)->where("choice_number", $correct_choices[0]->choice_number)
+            ->orWhere(function ($query) use ($correct_choices) {
+                $query->Where('question_id', $correct_choices[1]->question_id)->where("choice_number", $correct_choices[1]->choice_number);
+            })
+            ->orWhere(function ($query) use ($correct_choices) {
+                $query->Where('question_id', $correct_choices[2]->question_id)->where("choice_number", $correct_choices[2]->choice_number);
+            })
+            ->orWhere(function ($query) use ($correct_choices) {
+                $query->Where('question_id', $correct_choices[3]->question_id)->where("choice_number", $correct_choices[3]->choice_number);
+            })
+            // ->count()
+            ->orderBy('elapsed_secods')
+            // ->groupBy('user_id')
+            ->get();
     }
 
     /**
