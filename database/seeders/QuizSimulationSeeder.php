@@ -17,7 +17,7 @@ class QuizSimulationSeeder extends Seeder
      */
     public function run()
     {
-        $users = User::all();
+        $users = User::whereNotNull('email_verified_at')->get();
 
         $currentQuiz = Quiz::with('questions.choices')->notDone()->sortByOldestStartTime()->first();
 
