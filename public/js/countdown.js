@@ -1,22 +1,12 @@
 const quizCountdown = document.querySelector("#quiz-countdown");
 
 if (quizCountdown) {
-    const quizCountdownHours = quizCountdown.querySelector(
-        "#quiz-countdown-hours"
-    );
-    const quizCountdownMinutes = quizCountdown.querySelector(
-        "#quiz-countdown-minutes"
-    );
-    const quizCountdownSeconds = quizCountdown.querySelector(
-        "#quiz-countdown-seconds"
-    );
+    let quizDelay = parseInt(quizCountdown.dataset.duration);
+    const quizDelayFormat = quizCountdown.dataset.durationFormat;
 
-    let quizDelay = parseInt(quizCountdown.dataset.quizDelay);
-    let quizDelayDate = new Date(quizDelay * 1000);
-
-    quizCountdownMinutes.innerHTML = quizDelayDate.getHours();
-    quizCountdownMinutes.innerHTML = quizDelayDate.getMinutes();
-    quizCountdownSeconds.innerHTML = quizDelayDate.getSeconds();
+    quizCountdown.innerHTML = moment
+        .utc(quizDelay * 1000)
+        .format(quizDelayFormat);
 
     setInterval(() => {
         quizDelay--;
@@ -28,11 +18,9 @@ if (quizCountdown) {
 
         quizDelay = quizDelay < 0 ? 0 : quizDelay;
 
-        let quizDelayDate = new Date(quizDelay * 1000);
-
-        quizCountdownHours.innerHTML = quizDelayDate.getHours();
-        quizCountdownMinutes.innerHTML = quizDelayDate.getMinutes();
-        quizCountdownSeconds.innerHTML = quizDelayDate.getSeconds();
+        quizCountdown.innerHTML = moment
+            .utc(quizDelay * 1000)
+            .format("HH:mm:ss");
     }, 1000);
 }
 
@@ -42,18 +30,12 @@ if (quizCountdown) {
 const questionCountdown = document.querySelector("#question-countdown");
 
 if (questionCountdown) {
-    const questionCountdownMinutes = questionCountdown.querySelector(
-        "#question-countdown-minutes"
-    );
-    const questionCountdownSeconds = questionCountdown.querySelector(
-        "#question-countdown-seconds"
-    );
+    let questionDuration = parseInt(questionCountdown.dataset.duration);
+    const questionDurationFormat = questionCountdown.dataset.durationFormat;
 
-    let questionDuration = parseInt(questionCountdown.dataset.questionDuration);
-    let questionDurationDate = new Date(questionDuration * 1000);
-
-    questionCountdownMinutes.innerHTML = questionDurationDate.getMinutes();
-    questionCountdownSeconds.innerHTML = questionDurationDate.getSeconds();
+    questionCountdown.innerHTML = moment
+        .utc(questionDuration * 1000)
+        .format(questionDurationFormat);
 
     setInterval(() => {
         questionDuration--;
@@ -65,9 +47,8 @@ if (questionCountdown) {
 
         questionDuration = questionDuration < 0 ? 0 : questionDuration;
 
-        let questionDurationDate = new Date(questionDuration * 1000);
-
-        questionCountdownMinutes.innerHTML = questionDurationDate.getMinutes();
-        questionCountdownSeconds.innerHTML = questionDurationDate.getSeconds();
+        questionCountdown.innerHTML = moment
+            .utc(questionDuration * 1000)
+            .format(questionDurationFormat);
     }, 1000);
 }

@@ -17,21 +17,18 @@
                 ⌛
             </p>
 
-            <div id="quiz-countdown" data-quiz-delay="{{ $seconds_to_wait }}"
+            <div id="quiz-countdown" data-duration="{{ $seconds_to_wait }}" data-duration-format="HH:mm:ss"
                 class="bg-white border-2 border-amber-400 rounded-full text-2xl font-semibold px-2 w-44 text-center"
                 dir="ltr">
-                <span id="quiz-countdown-hours">--</span>
-                :
-                <span id="quiz-countdown-minutes">--</span>
-                :
-                <span id="quiz-countdown-seconds">--</span>
             </div>
         </div>
 
 
     </div>
 
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"
+        integrity="sha512-qTXRIMyZIFb8iQcfjXWCO8+M5Tbc38Qi5WzdPOYZHIlZpzBHG3L3by84BBBOiRGiEb7KKtAOAs5qYdUiZiQNNQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="{{ asset('js/countdown.js') }}"></script>
 
 </x-app-layout>

@@ -1,5 +1,6 @@
 <x-app-layout>
 
+
     <div class="p-6 ">
         <div class="flex justify-end w-full ">
 
@@ -19,5 +20,6 @@
     </div>
 
     <script src="{{ asset('js/countdown.js') }}"></script>
+
 
 </x-app-layout>
