@@ -111,22 +111,15 @@ class QuizManagerController extends Controller
 
     public function getResults()
     {
-        $correct_choices = \App\Models\Choice::where('is_correct', 1)->get();
+        if (is_null($this->currentQuiz))
+            return view('play.no_available_quizzes');
 
-        return Answer::getQuery()
-            ->select('user_id')
+        $correct_choices = $this->currentQuiz->choices()->where('is_correct', 1)->get();
+
+        return Answer::select('user_id')
             ->addSelect(DB::raw('SUM(UNIX_TIMESTAMP(received_at) - UNIX_TIMESTAMP(served_at)) AS sum_elapsed_seconds'))
-            ->addSelect(DB::raw('SUM(choice_number) AS count_correct_answers'))
-            ->where('question_id', $correct_choices[0]->question_id)->where("choice_number", $correct_choices[0]->choice_number)
-            ->orWhere(function ($query) use ($correct_choices) {
-                $query->Where('question_id', $correct_choices[1]->question_id)->where("choice_number", $correct_choices[1]->choice_number);
-            })
-            ->orWhere(function ($query) use ($correct_choices) {
-                $query->Where('question_id', $correct_choices[2]->question_id)->where("choice_number", $correct_choices[2]->choice_number);
-            })
-            ->orWhere(function ($query) use ($correct_choices) {
-                $query->Where('question_id', $correct_choices[3]->question_id)->where("choice_number", $correct_choices[3]->choice_number);
-            })
+            ->addSelect(DB::raw('COUNT(DISTINCT question_id) AS count_correct_answers'))
+            ->filterCorrectChoices($correct_choices)
             ->orderBy('count_correct_answers', 'DESC')
             ->orderBy('sum_elapsed_seconds')
             ->groupBy('user_id')
