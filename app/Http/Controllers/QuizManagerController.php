@@ -116,7 +116,8 @@ class QuizManagerController extends Controller
 
         $correct_choices = $this->currentQuiz->choices()->where('is_correct', 1)->get();
 
-        return Answer::select('user_id')
+        $results =  Answer::with('user')
+            ->select('user_id')
             ->addSelect(DB::raw('SUM(UNIX_TIMESTAMP(received_at) - UNIX_TIMESTAMP(served_at)) AS sum_elapsed_seconds'))
             ->addSelect(DB::raw('COUNT(DISTINCT question_id) AS count_correct_answers'))
             ->filterCorrectChoices($correct_choices)
@@ -124,6 +125,9 @@ class QuizManagerController extends Controller
             ->orderBy('sum_elapsed_seconds')
             ->groupBy('user_id')
             ->get();
+
+        return view('play.results')
+            ->with('results', $results);
     }
 
     /**

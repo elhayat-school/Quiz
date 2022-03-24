@@ -11,6 +11,14 @@ class Answer extends Model
 
     public $guarded = ['id'];
 
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    /* ------------------------------------------------- */
+    //      SCOPES
+    /* ------------------------------------------------- */
     public function scopeFilterCorrectChoices($query, \Illuminate\Database\Eloquent\Collection $correct_choices)
     {
 
