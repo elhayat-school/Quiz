@@ -11,6 +11,4 @@
 
     </div>
 
-    <script src="{{ asset('js/countdown.js') }}"></script>
-
 </x-app-layout>
