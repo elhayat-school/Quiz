@@ -5,8 +5,11 @@
 
             <x-application-logo />
 
+
+
         </div>
-<div class="text-center mt-20">
+
+<div class="text-center mt-20 bg-cover bg-center" >
 
         <p class="text-white text-2xl">
             لا يوجد مسابقة مبرمجة
