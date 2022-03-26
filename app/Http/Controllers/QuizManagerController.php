@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Answer;
 use App\Models\Quiz;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 class QuizManagerController extends Controller
@@ -15,7 +16,12 @@ class QuizManagerController extends Controller
 
     public function __construct()
     {
-        $this->currentQuiz = Quiz::with('questions.choices')->notDone()->sortByOldestStartTime()->first();
+        $this->currentQuiz = Cache::remember(
+            'current_quiz',
+            10,
+            fn () => Quiz::with('questions.choices')->notDone()->sortByOldestStartTime()->first()
+        );
+
         $this->currentTimestamp = time();
     }
 
@@ -116,7 +122,7 @@ class QuizManagerController extends Controller
 
         $correct_choices = $this->currentQuiz->choices()->where('is_correct', 1)->get();
 
-        $results =  Answer::with('user')
+        $results = Answer::with('user')
             ->select('user_id')
             ->addSelect(DB::raw('SUM(UNIX_TIMESTAMP(received_at) - UNIX_TIMESTAMP(served_at)) AS sum_elapsed_seconds'))
             ->addSelect(DB::raw('COUNT(DISTINCT question_id) AS count_correct_answers'))
