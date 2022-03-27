@@ -18,5 +18,5 @@ Route::controller(QuizManagerController::class)
     ->group(function () {
         Route::get('/play', 'getQuestion')->name('playground');
         Route::post('/anwsers', 'postAnswer')->name('anwswer.store');
-        Route::get('/results', 'getResults')->name('relults.index');
+        Route::get('/results', 'getResults')->name('results.index');
     });

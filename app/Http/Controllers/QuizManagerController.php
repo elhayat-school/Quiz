@@ -117,8 +117,6 @@ class QuizManagerController extends Controller
 
     public function getResults()
     {
-        if (is_null($this->currentQuiz))
-            return view('play.no_available_quizzes');
 
         $correct_choices = $this->currentQuiz->choices()->where('is_correct', 1)->get();
 
@@ -132,8 +130,11 @@ class QuizManagerController extends Controller
             ->groupBy('user_id')
             ->get();
 
-        return view('play.results')
-            ->with('results', $results);
+        if (is_null($results))
+            return view('play.no_results');
+        else
+            return view('play.results')
+                ->with('results', $results);
     }
 
     /**

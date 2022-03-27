@@ -8,15 +8,16 @@
         </div>
 
         <div>
-
-            <table class="text-white text-lg m-auto" dir="ltr">
+            <span class="text-amber-400  font-semibold text-xl" dir="ltr"> : نتائج المشاركون في لعبت اليوم</span>
+            <table class="text-white text-lg overflow-scroll m-auto mt-5" >
 
                 <tr>
-                    <th class="border p-2"> Classement </th>
-                    <th class="border p-2"> Nom </th>
+                    <th class="border p-2"> الرتبة </th>
+                    <th class="border p-2"> المشارك </th>
                     {{-- <th class="border p-2"> Email </th> --}}
-                    <th class="border p-2"> Reponses correct </th>
-                    <th class="border p-2"> Durée pour repondre correctement </th>
+                    <th class="border p-2"> عدد الإجابات الصحيحة </th>
+                    <th class="border p-2" > المدة الزمنية
+                    </th>
                 </tr>
 
                 <tbody>
@@ -32,11 +33,10 @@
                             @endif
                         @endif
                         <tr class="{{ $result->user_id === auth()->user()->id ? 'bg-green-100 bg-opacity-20' : '' }}">
-                            <td class="border p-2">{{ $i + 1 }}</td>
-                            <td class="border p-2">{{ $result->user->name }}</td>
-                            {{-- <td class="border p-2">{{ $result->user->email }}</td> --}}
-                            <td class="border p-2">{{ $result->count_correct_answers }} </td>
-                            <td class="border p-2">{{ $result->sum_elapsed_seconds }} seconds</td>
+                            <td class="border p-2 text-center">{{ $i + 1 }}</td>
+                            <td class="border p-2 text-center">{{ $result->user->name }}</td>
+                            <td class="border p-2 text-center">{{ $result->count_correct_answers }} </td>
+                            <td class="border p-2 text-center">{{ $result->sum_elapsed_seconds }} ثانية</td>
                         </tr>
                     @endforeach
                 </tbody>
