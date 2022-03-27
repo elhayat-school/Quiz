@@ -32,7 +32,7 @@ html {
   -moz-tab-size: 4; /* 3 */
   -o-tab-size: 4;
      tab-size: 4; /* 3 */
-  font-family: Nunito, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"; /* 4 */
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"; /* 4 */
 }
 
 /*
@@ -619,9 +619,6 @@ select {
 .z-50 {
   z-index: 50;
 }
-.z-20 {
-  z-index: 20;
-}
 .m-4 {
   margin: 1rem;
 }
@@ -761,6 +758,9 @@ select {
 .w-full {
   width: 100%;
 }
+.w-32 {
+  width: 8rem;
+}
 .w-44 {
   width: 11rem;
 }
@@ -787,26 +787,11 @@ select {
 .w-6 {
   width: 1.5rem;
 }
-.w-32 {
-  width: 8rem;
-}
 .w-8 {
   width: 2rem;
 }
 .w-auto {
   width: auto;
-}
-.w-4\/6 {
-  width: 66.666667%;
-}
-.w-2\/6 {
-  width: 33.333333%;
-}
-.w-1\/6 {
-  width: 16.666667%;
-}
-.w-40 {
-  width: 10rem;
 }
 .max-w-7xl {
   max-width: 80rem;
@@ -844,38 +829,6 @@ select {
 }
 .transform {
   transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
-}
-@-webkit-keyframes bounce {
-
-  0%, 100% {
-    transform: translateY(-25%);
-    -webkit-animation-timing-function: cubic-bezier(0.8,0,1,1);
-            animation-timing-function: cubic-bezier(0.8,0,1,1);
-  }
-
-  50% {
-    transform: none;
-    -webkit-animation-timing-function: cubic-bezier(0,0,0.2,1);
-            animation-timing-function: cubic-bezier(0,0,0.2,1);
-  }
-}
-@keyframes bounce {
-
-  0%, 100% {
-    transform: translateY(-25%);
-    -webkit-animation-timing-function: cubic-bezier(0.8,0,1,1);
-            animation-timing-function: cubic-bezier(0.8,0,1,1);
-  }
-
-  50% {
-    transform: none;
-    -webkit-animation-timing-function: cubic-bezier(0,0,0.2,1);
-            animation-timing-function: cubic-bezier(0,0,0.2,1);
-  }
-}
-.animate-bounce {
-  -webkit-animation: bounce 1s infinite;
-          animation: bounce 1s infinite;
 }
 .cursor-default {
   cursor: default;
@@ -1050,24 +1003,6 @@ select {
   --tw-bg-opacity: 1;
   background-color: rgb(71 85 105 / var(--tw-bg-opacity));
 }
-.bg-opacity-5 {
-  --tw-bg-opacity: 0.05;
-}
-.bg-opacity-80 {
-  --tw-bg-opacity: 0.8;
-}
-.bg-opacity-100 {
-  --tw-bg-opacity: 1;
-}
-.bg-cover {
-  background-size: cover;
-}
-.bg-center {
-  background-position: center;
-}
-.bg-origin-padding {
-  background-origin: padding-box;
-}
 .fill-current {
   fill: currentColor;
 }
@@ -1151,10 +1086,10 @@ select {
   text-align: center;
 }
 .font-sans {
-  font-family: Nunito, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 }
 .font-amiri {
-  font-family: "Amiri", serif;
+  font-family: "Amiri", cursive;
 }
 .text-sm {
   font-size: 0.875rem;
@@ -1164,10 +1099,6 @@ select {
   font-size: 1.5rem;
   line-height: 2rem;
 }
-.text-5xl {
-  font-size: 3rem;
-  line-height: 1;
-}
 .text-xl {
   font-size: 1.25rem;
   line-height: 1.75rem;
@@ -1176,13 +1107,13 @@ select {
   font-size: 1rem;
   line-height: 1.5rem;
 }
-.text-xs {
-  font-size: 0.75rem;
-  line-height: 1rem;
-}
 .text-lg {
   font-size: 1.125rem;
   line-height: 1.75rem;
+}
+.text-5xl {
+  font-size: 3rem;
+  line-height: 1;
 }
 .font-medium {
   font-weight: 500;
@@ -1363,10 +1294,6 @@ select {
   --tw-bg-opacity: 1;
   background-color: rgb(21 128 61 / var(--tw-bg-opacity));
 }
-.hover\:bg-gray-700:hover {
-  --tw-bg-opacity: 1;
-  background-color: rgb(55 65 81 / var(--tw-bg-opacity));
-}
 .hover\:bg-gray-100:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(243 244 246 / var(--tw-bg-opacity));
@@ -1402,10 +1329,6 @@ select {
 .hover\:text-gray-700:hover {
   --tw-text-opacity: 1;
   color: rgb(55 65 81 / var(--tw-text-opacity));
-}
-.hover\:text-green-900:hover {
-  --tw-text-opacity: 1;
-  color: rgb(20 83 45 / var(--tw-text-opacity));
 }
 .focus\:z-10:focus {
   z-index: 10;
@@ -1589,6 +1512,10 @@ select {
   .lg\:py-12 {
     padding-top: 3rem;
     padding-bottom: 3rem;
+  }
+
+  .lg\:pb-32 {
+    padding-bottom: 8rem;
   }
 }
 

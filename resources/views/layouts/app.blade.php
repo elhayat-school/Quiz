@@ -9,7 +9,7 @@
     <title>{{ config('app.name', 'Laravel') }}</title>
 
     <!-- Fonts -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap">
+    {{-- <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap"> --}}
 
     <!-- Styles -->
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
@@ -23,8 +23,9 @@
         <!-- Page Content -->
         <main>
             <div class="lg:py-12 ">
-                <div class="max-w-7xl mx-auto sm:px-6 lg:px-8" >
-                    <div class="bg-slate-800 overflow-hidden shadow-sm sm:rounded-lg font-amiri h-screen lg:h-fit  bg-cover bg-center " style="background-image: url('assets/bg-stars.png')" dir="rtl">
+                <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                    <div class="bg-slate-800 overflow-hidden shadow-sm sm:rounded-lg font-amiri h-screen lg:h-fit lg:pb-32"
+                        dir="rtl">
 
                         {{ $slot }}
 

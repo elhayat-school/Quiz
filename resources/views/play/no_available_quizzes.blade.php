@@ -9,7 +9,7 @@
 
         </div>
 
-<div class="text-center mt-20 bg-cover bg-center" >
+<div class="text-center mt-20" >
 
         <p class="text-white text-2xl">
             لا يوجد مسابقة مبرمجة
