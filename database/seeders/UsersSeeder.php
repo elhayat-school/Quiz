@@ -21,6 +21,6 @@ class UsersSeeder extends Seeder
             'password' => password_hash('123', PASSWORD_DEFAULT),
         ]);
 
-        \App\Models\User::factory(10)->create();
+        \App\Models\User::factory(500)->create();
     }
 }
