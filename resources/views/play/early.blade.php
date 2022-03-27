@@ -18,7 +18,8 @@
             @else
                 <img src="{{ asset('assets/cat.gif') }}" class="w-32" />
             @endif
-            <div id="quiz-countdown" data-duration="{{ $seconds_to_wait }}" data-duration-format="HH:mm:ss"
+            <div CountDown data-countdown-duration="{{ $seconds_to_wait }}" data-countdown-format="HH:mm:ss"
+                data-countdown-step="1s"
                 class="bg-white border-2 border-amber-400 rounded-full text-2xl font-semibold px-2 w-44 text-center"
                 dir="ltr">
             </div>

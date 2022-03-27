@@ -3,7 +3,8 @@
 
         <div class="flex justify-between w-full items-center ">
 
-            <div id="question-countdown" data-duration="{{ $question->duration }}" data-duration-format="mm:ss"
+            <div CountDown data-countdown-duration="{{ $question->duration }}" data-countdown-format="mm:ss"
+                data-countdown-step="1s"
                 class="bg-white border-2 border-amber-400 rounded-full text-2xl font-semibold px-2 w-32 text-center"
                 dir="ltr">
             </div>

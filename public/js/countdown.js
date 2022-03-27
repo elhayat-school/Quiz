@@ -1,54 +1,35 @@
-const quizCountdown = document.querySelector("#quiz-countdown");
+document.querySelectorAll("[CountDown]").forEach((el) => {
+    let remainingTime = parseInt(el.dataset.countdownDuration);
+    const timerFormat = el.dataset.countdownFormat;
+    let countdownStep = (function () {
+        const countdownStep = el.dataset.countdownStep.match(
+            /(?:(?<h>\d{0,2})h)?(?:(?<m>\d{0,2})m)?(?:(?<s>\d{0,2})s)?/
+        );
 
-if (quizCountdown) {
-    let quizDelay = parseInt(quizCountdown.dataset.duration);
-    const quizDelayFormat = quizCountdown.dataset.durationFormat;
+        return (
+            (countdownStep.groups.h
+                ? parseInt(countdownStep.groups.h) * 3600
+                : 0) +
+            (countdownStep.groups.m
+                ? parseInt(countdownStep.groups.m) * 60
+                : 0) +
+            (countdownStep.groups.s ? parseInt(countdownStep.groups.s) : 0)
+        );
+    })();
 
-    quizCountdown.innerHTML = moment
-        .utc(quizDelay * 1000)
-        .format(quizDelayFormat);
+    // init
+    el.innerHTML = moment.utc(remainingTime * 1000).format(timerFormat);
 
     setInterval(() => {
-        quizDelay--;
+        remainingTime -= countdownStep;
 
-        if (quizDelay <= 0) {
+        if (remainingTime <= 0) {
             location.reload();
             return;
         }
 
-        quizDelay = quizDelay < 0 ? 0 : quizDelay;
+        remainingTime = remainingTime < 0 ? 0 : remainingTime;
 
-        quizCountdown.innerHTML = moment
-            .utc(quizDelay * 1000)
-            .format("HH:mm:ss");
-    }, 1000);
-}
-
-/* ------------------------------------------------- */
-//      Question countdown
-/* ------------------------------------------------- */
-const questionCountdown = document.querySelector("#question-countdown");
-
-if (questionCountdown) {
-    let questionDuration = parseInt(questionCountdown.dataset.duration);
-    const questionDurationFormat = questionCountdown.dataset.durationFormat;
-
-    questionCountdown.innerHTML = moment
-        .utc(questionDuration * 1000)
-        .format(questionDurationFormat);
-
-    setInterval(() => {
-        questionDuration--;
-
-        if (questionDuration <= 0) {
-            location.reload();
-            return;
-        }
-
-        questionDuration = questionDuration < 0 ? 0 : questionDuration;
-
-        questionCountdown.innerHTML = moment
-            .utc(questionDuration * 1000)
-            .format(questionDurationFormat);
-    }, 1000);
-}
+        el.innerHTML = moment.utc(remainingTime * 1000).format(timerFormat);
+    }, countdownStep * 1000);
+});
