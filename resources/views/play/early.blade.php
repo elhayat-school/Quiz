@@ -11,12 +11,13 @@
         <div class="w-full flex flex-col items-center space-y-10 mt-20">
 
             <p class="text-white text-2xl">
-                أنت هنا مبكرًا
+                لم تبدأ المسابقة بعد، يرجى الإنتظار أو العودة في :
             </p>
-            <p class=" text-5xl animate-bounce">
-                ⌛
-            </p>
-
+            @if ($seconds_to_wait > 600)
+                <img src="{{ asset('assets/blue-cat.gif') }}" class="w-32" />
+            @else
+                <img src="{{ asset('assets/cat.gif') }}" class="w-32" />
+            @endif
             <div id="quiz-countdown" data-duration="{{ $seconds_to_wait }}" data-duration-format="HH:mm:ss"
                 class="bg-white border-2 border-amber-400 rounded-full text-2xl font-semibold px-2 w-44 text-center"
                 dir="ltr">

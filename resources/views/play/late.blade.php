@@ -6,6 +6,7 @@
             <x-application-logo />
 
         </div>
+
         <div class="text-center mt-20">
 
             <p class="text-white text-2xl">
@@ -18,6 +19,6 @@
 
     </div>
 
-    <script src="{{ asset('js/countdown.js') }}"></script>
+
 
 </x-app-layout>
