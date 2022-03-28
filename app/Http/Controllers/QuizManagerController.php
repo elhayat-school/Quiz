@@ -118,6 +118,9 @@ class QuizManagerController extends Controller
     public function getResults()
     {
 
+        if (is_null($this->currentQuiz))
+            return view('play.no_available_quizzes');
+
         $correct_choices = $this->currentQuiz->choices()->where('is_correct', 1)->get();
 
         $results = Answer::with('user')
