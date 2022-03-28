@@ -9,21 +9,21 @@
 
         <div>
             <span class="text-amber-400  font-semibold text-xl" dir="ltr"> : نتائج المشاركون في لعبت اليوم</span>
-            <table class="text-white text-lg overflow-scroll m-auto mt-5" >
+            <table class="text-white text-lg overflow-scroll m-auto mt-5">
 
                 <tr>
                     <th class="border p-2"> الرتبة </th>
                     <th class="border p-2"> المشارك </th>
                     {{-- <th class="border p-2"> Email </th> --}}
                     <th class="border p-2"> عدد الإجابات الصحيحة </th>
-                    <th class="border p-2" > المدة الزمنية
+                    <th class="border p-2"> المدة الزمنية
                     </th>
                 </tr>
 
                 <tbody>
 
-                    @foreach ($results as $i => $result)
-                        @if ($i >= 10)
+                    @foreach ($results as $rank => $result)
+                        @if ($rank >= 10)
                             @if ($result->user_id !== auth()->user()->id)
                                 @php
                                     continue;
@@ -33,7 +33,7 @@
                             @endif
                         @endif
                         <tr class="{{ $result->user_id === auth()->user()->id ? 'bg-green-100 bg-opacity-20' : '' }}">
-                            <td class="border p-2 text-center">{{ $i + 1 }}</td>
+                            <td class="border p-2 text-center">{{ $rank + 1 }}</td>
                             <td class="border p-2 text-center">{{ $result->user->name }}</td>
                             <td class="border p-2 text-center">{{ $result->count_correct_answers }} </td>
                             <td class="border p-2 text-center">{{ $result->sum_elapsed_seconds }} ثانية</td>

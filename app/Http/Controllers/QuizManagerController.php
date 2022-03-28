@@ -123,6 +123,7 @@ class QuizManagerController extends Controller
 
         $correct_choices = $this->currentQuiz->choices()->where('is_correct', 1)->get();
 
+        // cache
         $results = Answer::with('user')
             ->select('user_id')
             ->addSelect(DB::raw('SUM(UNIX_TIMESTAMP(received_at) - UNIX_TIMESTAMP(served_at)) AS sum_elapsed_seconds'))
@@ -135,9 +136,14 @@ class QuizManagerController extends Controller
 
         if (is_null($results))
             return view('play.no_results');
-        else
-            return view('play.results')
-                ->with('results', $results);
+
+        $filtered_results = $results->reject(function ($result, $rank) {
+            return $rank >= 10 && $result->user->id !== auth()->user()->id;
+        });
+        unset($results);
+
+        return view('play.results')
+            ->with('results', $filtered_results);
     }
 
     /**
