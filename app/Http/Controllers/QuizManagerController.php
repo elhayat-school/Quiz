@@ -62,6 +62,7 @@ class QuizManagerController extends Controller
             return view('play.finished');
 
         $question = NULL;
+        $readonly_countdown = NULL;
 
         if ($this->canAnswerPreviouslyServedQuestion($answers)) {
 
@@ -70,6 +71,14 @@ class QuizManagerController extends Controller
 
             // Reset previous question
             $question = $this->currentQuiz->questions[$answers->count() - 1];
+            $readonly_countdown = false; // !
+        } else if ($this->previouslyServedQuestionTimeNotElapsed($answers)) {
+            //  !
+            $this->currentQuiz->questions[$answers->count() - 1]->duration = $this->currentQuiz->questions[$answers->count() - 1]->duration - ($this->currentTimestamp - strtotime($answers->last()->served_at)); // Set the spared time
+
+            // Reset previous question
+            $question = $this->currentQuiz->questions[$answers->count() - 1];
+            $readonly_countdown = true; // !
         } else {
 
             // Set new question
@@ -89,6 +98,7 @@ class QuizManagerController extends Controller
 
         return view('play.question')
             // ->with('quiz_remaining_time', $quiz_remaining_time)
+            ->with('readonly_countdown', $readonly_countdown)
             ->with('question', $question);
     }
 
@@ -173,6 +183,10 @@ class QuizManagerController extends Controller
         return false;
     }
 
+    /* ------------------------------------------------- */
+    //      Context conditions
+    /* ------------------------------------------------- */
+
     /**
      * - Have some answers (placeholder|filled) recorded for the current Quiz
      * + **AND**
@@ -184,24 +198,51 @@ class QuizManagerController extends Controller
      */
     private function canAnswerPreviouslyServedQuestion(\Illuminate\Database\Eloquent\Collection $answers): bool
     {
-        if ($answers->count() === 0)
-            // First time requesting a question
+        if ($this->firstTimeRequestingQuestion($answers))
             return false;
 
-        if (
-            !empty($answers->last()->choice_number) &&
-            !empty($answers->last()->received_at)
-        )
-            // Did answer the latest question he got served
+        if ($this->filledLatestAnswer($answers))
             return false;
 
-        $answer_elapsed_time =  $this->currentTimestamp - strtotime($answers->last()->served_at);
-        $previously_served_question_duration = $this->currentQuiz->questions[$answers->count() - 1]->duration;
-
-        if ($answer_elapsed_time <= $previously_served_question_duration)
-            // Still has spared time to answer
+        if ($this->hasSparedTimeToAnswer($answers))
             return true;
 
         return false;
+    }
+
+    private function previouslyServedQuestionTimeNotElapsed(\Illuminate\Database\Eloquent\Collection $answers): bool
+    {
+        if ($this->firstTimeRequestingQuestion($answers))
+            return false;
+
+        if (!$this->filledLatestAnswer($answers))
+            return false;
+
+        if ($this->hasSparedTimeToAnswer($answers))
+            return true;
+
+        return false;
+    }
+
+    /* ------------------------------------------------- */
+    //      Micro conditions
+    /* ------------------------------------------------- */
+
+    private function firstTimeRequestingQuestion(\Illuminate\Database\Eloquent\Collection $answers): bool
+    {
+        return $answers->count() === 0;
+    }
+
+    private function filledLatestAnswer(\Illuminate\Database\Eloquent\Collection $answers): bool
+    {
+        return !empty($answers->last()->choice_number) && !empty($answers->last()->received_at);
+    }
+
+    private function hasSparedTimeToAnswer(\Illuminate\Database\Eloquent\Collection $answers): bool
+    {
+        $answer_elapsed_time =  $this->currentTimestamp - strtotime($answers->last()->served_at);
+        $previously_served_question_duration = $this->currentQuiz->questions[$answers->count() - 1]->duration;
+
+        return $answer_elapsed_time <= $previously_served_question_duration;
     }
 }
