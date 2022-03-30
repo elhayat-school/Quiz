@@ -172,12 +172,10 @@ class QuizManagerController extends Controller
      */
     private function finishedAllQuestions(\Illuminate\Database\Eloquent\Collection $answers): bool
     {
-        if ($answers->count() < $this->currentQuiz->questions->count())
-            // Didn't get to the last question
+        if (!$this->receivedLastQuestion($answers))
             return false;
 
-        if (($this->currentTimestamp - strtotime($answers->last()->served_at)) >= $this->currentQuiz->questions->last()->duration)
-            // Time for last question elapsed
+        if ($this->timeForLastAnswerElapsed($answers))
             return true;
 
         if (!empty($answers->last()->choice_number) && !empty($answers->last()->received_at))
@@ -207,5 +205,18 @@ class QuizManagerController extends Controller
         $previously_served_question_duration = $this->currentQuiz->questions[$answers->count() - 1]->duration;
 
         return $answer_elapsed_time <= $previously_served_question_duration;
+    }
+
+    private function timeForLastAnswerElapsed(\Illuminate\Database\Eloquent\Collection $answers): bool
+    {
+        return ($this->currentTimestamp - strtotime($answers->last()->served_at)) >= $this->currentQuiz->questions->last()->duration;
+    }
+
+    private function receivedLastQuestion(\Illuminate\Database\Eloquent\Collection $answers): bool
+    {
+        if ($answers->count() > $this->currentQuiz->questions->count())
+            throw new \Exception('Check the junk code you wrote in receivedLastQuestion', 1);
+
+        return $answers->count() === $this->currentQuiz->questions->count();
     }
 }
