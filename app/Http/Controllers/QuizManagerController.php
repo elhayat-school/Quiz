@@ -64,21 +64,28 @@ class QuizManagerController extends Controller
         $question = NULL;
         $readonly_countdown = NULL;
 
-        if ($this->canAnswerPreviouslyServedQuestion($answers)) {
+        if (
+            !$this->firstTimeRequestingQuestion($answers) &&
+            $this->hasSparedTimeToAnswer($answers)
+        ) {
 
-            //  !
-            $this->currentQuiz->questions[$answers->count() - 1]->duration = $this->currentQuiz->questions[$answers->count() - 1]->duration - ($this->currentTimestamp - strtotime($answers->last()->served_at)); // Set the spared time
+            if (!$this->filledLatestAnswer($answers)) {
 
-            // Reset previous question
-            $question = $this->currentQuiz->questions[$answers->count() - 1];
-            $readonly_countdown = false; // !
-        } else if ($this->previouslyServedQuestionTimeNotElapsed($answers)) {
-            //  !
-            $this->currentQuiz->questions[$answers->count() - 1]->duration = $this->currentQuiz->questions[$answers->count() - 1]->duration - ($this->currentTimestamp - strtotime($answers->last()->served_at)); // Set the spared time
+                // !
+                $this->currentQuiz->questions[$answers->count() - 1]->duration = $this->currentQuiz->questions[$answers->count() - 1]->duration - ($this->currentTimestamp - strtotime($answers->last()->served_at)); // Set the spared time
 
-            // Reset previous question
-            $question = $this->currentQuiz->questions[$answers->count() - 1];
-            $readonly_countdown = true; // !
+                // Reset previous question
+                $question = $this->currentQuiz->questions[$answers->count() - 1];
+                $readonly_countdown = false; // !
+
+            } else {
+                // !
+                $this->currentQuiz->questions[$answers->count() - 1]->duration = $this->currentQuiz->questions[$answers->count() - 1]->duration - ($this->currentTimestamp - strtotime($answers->last()->served_at)); // Set the spared time
+
+                // Reset previous question
+                $question = $this->currentQuiz->questions[$answers->count() - 1];
+                $readonly_countdown = true; // !
+            }
         } else {
 
             // Set new question
@@ -156,14 +163,11 @@ class QuizManagerController extends Controller
             ->with('results', $filtered_results);
     }
 
+    /* ------------------------------------------------- */
+    //      Context conditions
+    /* ------------------------------------------------- */
+
     /**
-     * The player has finished the current Quiz if:
-     * - Every question has a recorded answer (placeholder)
-     * +  **AND**
-     * -  -  Time to fill  the last answer elapsed
-     * -  +  **OR**
-     * -  -  Last answer is filled
-     *
      * @param \Illuminate\Database\Eloquent\Collection $answers Authenticated User answers for the current Quiz
      */
     private function finishedAllQuestions(\Illuminate\Database\Eloquent\Collection $answers): bool
@@ -178,47 +182,6 @@ class QuizManagerController extends Controller
 
         if (!empty($answers->last()->choice_number) && !empty($answers->last()->received_at))
             // Last question is answered
-            return true;
-
-        return false;
-    }
-
-    /* ------------------------------------------------- */
-    //      Context conditions
-    /* ------------------------------------------------- */
-
-    /**
-     * - Have some answers (placeholder|filled) recorded for the current Quiz
-     * + **AND**
-     * - Didn't fill the Answer of the priviously served Question
-     * + **AND**
-     * - Still have remaining time to answer the priviously served Question
-     *
-     * @param \Illuminate\Database\Eloquent\Collection $answers Authenticated User answers for the current Quiz
-     */
-    private function canAnswerPreviouslyServedQuestion(\Illuminate\Database\Eloquent\Collection $answers): bool
-    {
-        if ($this->firstTimeRequestingQuestion($answers))
-            return false;
-
-        if ($this->filledLatestAnswer($answers))
-            return false;
-
-        if ($this->hasSparedTimeToAnswer($answers))
-            return true;
-
-        return false;
-    }
-
-    private function previouslyServedQuestionTimeNotElapsed(\Illuminate\Database\Eloquent\Collection $answers): bool
-    {
-        if ($this->firstTimeRequestingQuestion($answers))
-            return false;
-
-        if (!$this->filledLatestAnswer($answers))
-            return false;
-
-        if ($this->hasSparedTimeToAnswer($answers))
             return true;
 
         return false;
