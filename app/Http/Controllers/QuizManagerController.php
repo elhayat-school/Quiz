@@ -38,8 +38,6 @@ class QuizManagerController extends Controller
             return view('play.early')
                 ->with('seconds_to_wait', strtotime($this->currentQuiz->start_at) - $this->currentTimestamp);
 
-        // ($time_diff >= -$this->currentQuiz->duration && $time_diff <= 0)
-
         elseif ($time_diff < -$this->currentQuiz->duration)
             return view('play.late');
 
@@ -53,38 +51,39 @@ class QuizManagerController extends Controller
 
         if (
             !config('quiz.QUIZ_ALLOW_DELAY') &&
-            $answers->count() === 0 &&
+            $this->firstTimeRequestingQuestion($answers) &&
             ($this->currentTimestamp - strtotime($this->currentQuiz->start_at) > config('quiz.QUIZ_MAX_DELAY'))
         )
             return view('play.late');
 
-        if ($this->finishedAllQuestions($answers))
+        if (
+            $this->reachedLastQuestion($answers) &&
+            (!$this->hasSparedTimeForLatestAnswer($answers) ||
+                $this->filledLatestAnswer($answers)
+            )
+        )
             return view('play.finished');
 
         $question = NULL;
         $readonly_countdown = NULL;
 
         if (
-            !$this->firstTimeRequestingQuestion($answers) &&
-            $this->hasSparedTimeToAnswer($answers)
+            !$this->firstTimeRequestingQuestion($answers) && // prevent negative answer index
+            $this->hasSparedTimeForLatestAnswer($answers)
         ) {
+
+            // !
+            $this->currentQuiz->questions[$answers->count() - 1]->duration = $this->currentQuiz->questions[$answers->count() - 1]->duration - ($this->currentTimestamp - strtotime($answers->last()->served_at)); // Set the spared time
+
+            // Reset previous question
+            $question = $this->currentQuiz->questions[$answers->count() - 1];
 
             if (!$this->filledLatestAnswer($answers)) {
 
-                // !
-                $this->currentQuiz->questions[$answers->count() - 1]->duration = $this->currentQuiz->questions[$answers->count() - 1]->duration - ($this->currentTimestamp - strtotime($answers->last()->served_at)); // Set the spared time
-
-                // Reset previous question
-                $question = $this->currentQuiz->questions[$answers->count() - 1];
-                $readonly_countdown = false; // !
-
+                $readonly_countdown = false;
             } else {
-                // !
-                $this->currentQuiz->questions[$answers->count() - 1]->duration = $this->currentQuiz->questions[$answers->count() - 1]->duration - ($this->currentTimestamp - strtotime($answers->last()->served_at)); // Set the spared time
 
-                // Reset previous question
-                $question = $this->currentQuiz->questions[$answers->count() - 1];
-                $readonly_countdown = true; // !
+                $readonly_countdown = true;
             }
         } else {
 
@@ -164,28 +163,6 @@ class QuizManagerController extends Controller
     }
 
     /* ------------------------------------------------- */
-    //      Context conditions
-    /* ------------------------------------------------- */
-
-    /**
-     * @param \Illuminate\Database\Eloquent\Collection $answers Authenticated User answers for the current Quiz
-     */
-    private function finishedAllQuestions(\Illuminate\Database\Eloquent\Collection $answers): bool
-    {
-        if (!$this->receivedLastQuestion($answers))
-            return false;
-
-        if ($this->timeForLastAnswerElapsed($answers))
-            return true;
-
-        if (!empty($answers->last()->choice_number) && !empty($answers->last()->received_at))
-            // Last question is answered
-            return true;
-
-        return false;
-    }
-
-    /* ------------------------------------------------- */
     //      Micro conditions
     /* ------------------------------------------------- */
 
@@ -199,7 +176,7 @@ class QuizManagerController extends Controller
         return !empty($answers->last()->choice_number) && !empty($answers->last()->received_at);
     }
 
-    private function hasSparedTimeToAnswer(\Illuminate\Database\Eloquent\Collection $answers): bool
+    private function hasSparedTimeForLatestAnswer(\Illuminate\Database\Eloquent\Collection $answers): bool
     {
         $answer_elapsed_time =  $this->currentTimestamp - strtotime($answers->last()->served_at);
         $previously_served_question_duration = $this->currentQuiz->questions[$answers->count() - 1]->duration;
@@ -207,15 +184,10 @@ class QuizManagerController extends Controller
         return $answer_elapsed_time <= $previously_served_question_duration;
     }
 
-    private function timeForLastAnswerElapsed(\Illuminate\Database\Eloquent\Collection $answers): bool
-    {
-        return ($this->currentTimestamp - strtotime($answers->last()->served_at)) >= $this->currentQuiz->questions->last()->duration;
-    }
-
-    private function receivedLastQuestion(\Illuminate\Database\Eloquent\Collection $answers): bool
+    private function reachedLastQuestion(\Illuminate\Database\Eloquent\Collection $answers): bool
     {
         if ($answers->count() > $this->currentQuiz->questions->count())
-            throw new \Exception('Check the junk code you wrote in receivedLastQuestion', 1);
+            throw new \Exception('Check the junk code you wrote in reachedLastQuestion', 1);
 
         return $answers->count() === $this->currentQuiz->questions->count();
     }
