@@ -14,6 +14,9 @@ class QuizManagerController extends Controller
 
     private $currentQuiz;
 
+    // * ...++++++++++(start_at)---(start_at + duration)----------...
+    private $secondsToQuizStart;
+
     public function __construct()
     {
         $this->currentQuiz = Cache::remember(
@@ -27,23 +30,23 @@ class QuizManagerController extends Controller
 
     public function getQuestion()
     {
-        // * ...++++++++++(start_at)---(start_at + duration)----------...
 
         if (is_null($this->currentQuiz))
             return view('play.no_available_quizzes');
 
-        $time_diff = strtotime($this->currentQuiz->start_at) - $this->currentTimestamp; // ! Timezone
+        $this->secondsToQuizStart = strtotime($this->currentQuiz->start_at) - $this->currentTimestamp; // ! Timezone
 
-        if ($time_diff > 0)
+        if ($this->secondsToQuizStart > 0)
             return view('play.early')
-                ->with('seconds_to_wait', strtotime($this->currentQuiz->start_at) - $this->currentTimestamp);
+                ->with('seconds_to_wait', $this->secondsToQuizStart);
 
-        elseif ($time_diff < -$this->currentQuiz->duration)
+        elseif ($this->secondsToQuizStart < -$this->currentQuiz->duration)
             return view('play.late');
 
         /* ------------------------------------------------- */
         //      It's Quiz time
         /* ------------------------------------------------- */
+        // TIME_DIFF = [-QUIZ_DURATION - 0] (NEGATIVE INT)
 
         $answers = $this->currentQuiz->answers()
             ->where('user_id', auth()->user()->id)
@@ -52,7 +55,7 @@ class QuizManagerController extends Controller
         if (
             !config('quiz.QUIZ_ALLOW_DELAY') &&
             $this->firstTimeRequestingQuestion($answers) &&
-            ($this->currentTimestamp - strtotime($this->currentQuiz->start_at) > config('quiz.QUIZ_MAX_DELAY'))
+            (-$this->secondsToQuizStart > config('quiz.QUIZ_MAX_DELAY'))
         )
             return view('play.late');
 
@@ -98,7 +101,7 @@ class QuizManagerController extends Controller
             ]);
         }
 
-        $quiz_remaining_time = $this->currentQuiz->duration - ($this->currentTimestamp - strtotime($this->currentQuiz->start_at));
+        $quiz_remaining_time = $this->currentQuiz->duration + $this->secondsToQuizStart;
         if ($question->duration > $quiz_remaining_time)
             $question->duration = $quiz_remaining_time;
 
