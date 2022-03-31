@@ -5,9 +5,7 @@ use App\Http\Controllers\QuizManagerController;
 
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('auth.login');
-});
+Route::Get('/', fn () => to_route('login'));
 
 require __DIR__ . '/auth.php';
 
