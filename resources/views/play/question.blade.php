@@ -1,5 +1,5 @@
 <x-app-layout>
-    <div class="p-6 ">
+    <div class="p-6 h-screen">
 
         <div class="flex justify-between w-full items-center ">
 
@@ -11,6 +11,7 @@
 
             <x-application-logo />
         </div>
+
         <form action="{{ route('anwswer.store') }}" method="POST">
             @csrf
             <input type="hidden" name="question_id" value="{{ $question->id }}" />
@@ -37,7 +38,6 @@
         </form>
 
     </div>
-
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"
         integrity="sha512-qTXRIMyZIFb8iQcfjXWCO8+M5Tbc38Qi5WzdPOYZHIlZpzBHG3L3by84BBBOiRGiEb7KKtAOAs5qYdUiZiQNNQ=="
