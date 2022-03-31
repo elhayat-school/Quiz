@@ -10,33 +10,40 @@
             </div>
 
             <x-application-logo />
+
         </div>
 
-        <form action="{{ route('anwswer.store') }}" method="POST">
-            @csrf
-            <input type="hidden" name="question_id" value="{{ $question->id }}" />
+        @if (!$readonly_countdown)
 
-            <h2 dir="rtl" class="px-4 py-6 rounded-b-xl text-2xl text-amber-400">
-                {{ $question->content }}
+            <form action="{{ route('anwswer.store') }}" method="POST">
+                @csrf
+                <input type="hidden" name="question_id" value="{{ $question->id }}" />
+
+                <h2 dir="rtl" class="px-4 py-6 rounded-b-xl text-2xl text-amber-400">
+                    {{ $question->content }}
+                </h2>
+
+                @foreach ($question->choices->shuffle() as $choice)
+                    <div class="py-4 rounded-md shadow-sm flex items-center flex-row text-white text-xl">
+                        <input name="choice_number" type="radio" value="{{ $choice->choice_number }}"
+                            class="h-6 w-6 ml-2 " required />
+
+                        <label dir="rtl" class="flex-1">
+                            {{ $choice->content }}
+                        </label>
+                    </div>
+                @endforeach
+
+                <x-button class="mt-8 px-8 text-2xl rounded-full">
+                    تأكيد الإجابة
+                </x-button>
+
+            </form>
+        @else
+            <h2 dir="rtl" class="mt-10 px-4 py-6 rounded-b-xl text-2xl text-white text-center">
+                يرجى الانتظار حتى نهاية العد التنازلي
             </h2>
-
-            @foreach ($question->choices->shuffle() as $choice)
-                <div class="py-4 rounded-md shadow-sm flex items-center flex-row text-white text-xl">
-                    <input name="choice_number" type="radio" value="{{ $choice->choice_number }}"
-                        class="h-6 w-6 ml-2 " required />
-
-                    <label dir="rtl" class="flex-1">
-                        {{ $choice->content }}
-                    </label>
-                </div>
-            @endforeach
-
-            <x-button class="mt-8 px-8 text-2xl rounded-full">
-                تأكيد الإجابة
-            </x-button>
-
-        </form>
-
+        @endif
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"
