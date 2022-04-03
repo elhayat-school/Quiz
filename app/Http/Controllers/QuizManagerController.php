@@ -41,7 +41,7 @@ class QuizManagerController extends Controller
                 ->with('seconds_to_wait', $this->secondsToQuizStart);
 
         elseif ($this->secondsToQuizStart < -$this->currentQuiz->duration)
-            return view('play.late');
+            return view('play.ended');
 
         /* ------------------------------------------------- */
         //      It's Quiz time
@@ -81,13 +81,11 @@ class QuizManagerController extends Controller
             // Reset previous question
             $question = $this->currentQuiz->questions[$answers->count() - 1];
 
-            if (!$this->filledLatestAnswer($answers)) {
-
+            if (!$this->filledLatestAnswer($answers))
                 $readonly_countdown = false;
-            } else {
-
+            else
                 $readonly_countdown = true;
-            }
+
         } else {
 
             // Set new question

@@ -13,9 +13,9 @@
         <div class="text-center mt-20">
 
             <p class="text-white text-2xl">
-                انت متأخر
-            </p>
-                <a href="/results">
+                لقد إنتهت لعبة اليوم </p>
+
+            <a href="/results">
                 <x-results-button>
                     انظر إلى النتائج
                 </x-results-button>
