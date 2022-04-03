@@ -33,7 +33,8 @@
                         </label>
 
                         <textarea name="questions[{{ $i }}][content]" required
-                            class="bg-slate-700 text-gray-100 h-32 w-56 p-2 mx-3 rounded-md border border-slate-500"></textarea>
+                            class="bg-slate-700 text-gray-100 h-32 w-56 p-2 mx-3 rounded-md border border-slate-500"
+                            dir="rtl"></textarea>
                     </div>
 
                     @for ($j = 1; $j < 5; $j++)
@@ -52,9 +53,9 @@
                                     value="{{ $j }}" required>
                             </div>
 
-
                             <textarea name="questions[{{ $i }}][choices][{{ $j }}]"
-                                class="bg-slate-700 text-gray-100 h-24 w-56 p-2 mx-3 rounded-md border border-slate-500"></textarea>
+                                class="bg-slate-700 text-gray-100 h-24 w-56 p-2 mx-3 rounded-md border border-slate-500"
+                                dir="rtl"></textarea>
                         </div>
                     @endfor
 

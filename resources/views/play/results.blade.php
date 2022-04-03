@@ -13,11 +13,11 @@
 
         <div>
 
-            <span class="text-amber-400  font-semibold text-xl" dir="ltr"> : نتائج المشاركون في لعبت اليوم</span>
+            <span class="text-amber-400  font-semibold text-xl" dir="ltr"> : نتائج المشاركين في لعبة اليوم</span>
             <table class="text-white text-lg overflow-scroll m-auto mt-5">
 
                 <tr>
-                    <th class="border p-2"> الرتبة </th>
+                    <th class="border p-2"> المرتبة </th>
                     <th class="border p-2"> المشارك </th>
                     {{-- <th class="border p-2"> Email </th> --}}
                     <th class="border p-2"> عدد الإجابات الصحيحة </th>
