@@ -41,7 +41,7 @@
             </form>
         @else
             <h2 dir="rtl" class="mt-10 px-4 py-6 rounded-b-xl text-2xl text-white text-center">
-                يرجى الانتظار حتى نهاية العد التنازلي
+                يرجى الانتظار حتى نهاية العد التنازلي قبل الخوض في السؤال الموالي
             </h2>
         @endif
     </div>

@@ -14,7 +14,6 @@ class QuizManagerController extends Controller
 
     private $currentQuiz;
 
-    // * ...++++++++++(start_at)---(start_at + duration)----------...
     private $secondsToQuizStart;
 
     public function __construct()
@@ -34,6 +33,7 @@ class QuizManagerController extends Controller
         if (is_null($this->currentQuiz))
             return view('play.no_available_quizzes');
 
+        // * ...++++++++++(start_at)---(start_at + duration)----------...
         $this->secondsToQuizStart = strtotime($this->currentQuiz->start_at) - $this->currentTimestamp; // ! Timezone
 
         if ($this->secondsToQuizStart > 0)
@@ -46,7 +46,7 @@ class QuizManagerController extends Controller
         /* ------------------------------------------------- */
         //      It's Quiz time
         /* ------------------------------------------------- */
-        // TIME_DIFF = [-QUIZ_DURATION - 0] (NEGATIVE INT)
+        // secondsToQuizStart = [-QUIZ_DURATION - 0] (NEGATIVE INT) -> secondsSinceQuizStart (abs)
 
         $answers = $this->currentQuiz->answers()
             ->where('user_id', auth()->user()->id)
@@ -55,7 +55,7 @@ class QuizManagerController extends Controller
         if (
             !config('quiz.QUIZ_ALLOW_DELAY') &&
             $this->firstTimeRequestingQuestion($answers) &&
-            (-$this->secondsToQuizStart > config('quiz.QUIZ_MAX_DELAY'))
+            ($this->secondsSinceQuizStart() > config('quiz.QUIZ_MAX_DELAY'))
         )
             return view('play.late');
 
@@ -99,7 +99,8 @@ class QuizManagerController extends Controller
             ]);
         }
 
-        $quiz_remaining_time = $this->currentQuiz->duration + $this->secondsToQuizStart;
+        $quiz_remaining_time = $this->currentQuiz->duration - $this->secondsSinceQuizStart();
+
         if ($question->duration > $quiz_remaining_time)
             $question->duration = $quiz_remaining_time;
 
@@ -191,5 +192,17 @@ class QuizManagerController extends Controller
             throw new \Exception('Check the junk code you wrote in reachedLastQuestion', 1);
 
         return $answers->count() === $this->currentQuiz->questions->count();
+    }
+
+    /* ------------------------------------------------- */
+    //      -----------
+    /* ------------------------------------------------- */
+
+    public function secondsSinceQuizStart(): int
+    {
+        if ($this->secondsToQuizStart > 0)
+            throw new \Exception('bad lexics usage', 1);
+
+        return abs($this->secondsToQuizStart);
     }
 }
