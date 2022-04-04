@@ -54,31 +54,15 @@ class QuizController extends Controller
     }
 
     /**
-     * @param  \App\Models\Quiz  $quiz
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Quiz $quiz)
-    {
-        //
-    }
-
-    /**
-     * @param  \App\Models\Quiz  $quiz
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Quiz $quiz)
-    {
-        //
-    }
-
-    /**
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\Quiz  $quiz
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, Quiz $quiz)
     {
-        //
+        $quiz->update(['done' => $request->new_state === "done"]);
+
+        return back();
     }
 
     /**
