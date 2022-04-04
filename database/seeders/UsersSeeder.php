@@ -19,7 +19,6 @@ class UsersSeeder extends Seeder
             'name' => 'nsvjon',
             'email' => 'y@y.y',
             'password' => password_hash('123', PASSWORD_DEFAULT),
-            // 'establishment' => config('quiz.ESTABLISHMENTS')[array_rand(config('quiz.ESTABLISHMENTS'))]
         ]);
 
         \App\Models\User::factory(500)->create();
