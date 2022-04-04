@@ -19,6 +19,7 @@ return new class extends Migration
             $table->dateTime('start_at');
             $table->boolean('done')->default(0);
             $table->unsignedSmallInteger('duration');
+            $table->string('participation_stats', 50)->nullable();
             //
             $table->timestamps();
         });

@@ -19,6 +19,7 @@
             <th class="p-2 border border-gray-500"> Question 2 </th>
             <th class="p-2 border border-gray-500"> Question 3 </th>
             <th class="p-2 border border-gray-500"> Question 4 </th>
+            <th></th>
         </tr>
 
         @foreach ($quizzes as $quiz)
@@ -84,6 +85,24 @@
 
                     </td>
                 @endforeach
+
+                <td>
+                    @if ($quiz->done && !$quiz->participation_stats)
+                        <form action="{{ route('quizzes.update', ['quiz' => $quiz->id]) }}" method="post">
+                            @csrf
+                            @method('PUT')
+                            {{ _p_field() }}
+
+                            <button type="submit"
+                                class="bg-blue-700 hover:bg-blue-600 m-1 p-2 font-bold rounded-full border border-blue-700">
+                                Caluclate stats
+                            </button>
+                        </form>
+                    @endif
+                    @if ($quiz->participation_stats)
+                        {{ $quiz->participation_stats }}
+                    @endif
+                </td>
             </tr>
         @endforeach
 
