@@ -9,7 +9,7 @@ Route::Get('/', fn () => to_route('login'));
 
 require __DIR__ . '/auth.php';
 
-Route::resource('/quiz', QuizController::class)->middleware('auth.weak');
+Route::resource('/quizzes', QuizController::class)->except('show', 'edit')->middleware('auth.weak');
 
 Route::controller(QuizManagerController::class)
     ->middleware('auth')

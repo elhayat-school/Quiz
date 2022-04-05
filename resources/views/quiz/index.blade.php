@@ -14,14 +14,51 @@
     <table class="m-4">
         <tr>
             <th></th>
+            <th></th>
             <th class="p-2 border border-gray-500"> Question 1 </th>
             <th class="p-2 border border-gray-500"> Question 2 </th>
             <th class="p-2 border border-gray-500"> Question 3 </th>
             <th class="p-2 border border-gray-500"> Question 4 </th>
+            <th class="p-2 border border-gray-500"> Participation stats </th>
         </tr>
 
         @foreach ($quizzes as $quiz)
             <tr>
+
+                <td class="p-1 border border-gray-500 text-center">
+                    <div>
+                        QUIZ n°{{ $quiz->id }}
+                        @if (!$quiz->done && !$quiz->participation_stats)
+                            <form action="{{ route('quizzes.update', ['quiz' => $quiz->id]) }}" method="post">
+                                @csrf
+                                @method('PUT')
+                                {{ _p_field() }}
+
+                                <input type="hidden" name="new_state" value="done">
+
+                                <button type="submit"
+                                    class="bg-orange-700 hover:bg-orange-600 m-1 p-2 font-bold rounded-full border border-orange-700">
+                                    Mark as done
+                                </button>
+                            </form>
+                        @elseif ($quiz->done && !$quiz->participation_stats)
+                            <form action="{{ route('quizzes.update', ['quiz' => $quiz->id]) }}" method="post">
+                                @csrf
+                                @method('PUT')
+                                {{ _p_field() }}
+
+                                <input type="hidden" name="new_state" value="not-done">
+
+                                <button type="submit"
+                                    class="bg-blue-700 hover:bg-blue-600 m-1 p-2 font-bold rounded-full border border-blue-700">
+                                    Mark as not done
+                                </button>
+                            </form>
+                        @elseif ($quiz->done && $quiz->participation_stats)
+                            DONE
+                        @endif
+                    </div>
+                </td>
 
                 <td class="p-1 border border-gray-500 text-center">
                     <div class="">
@@ -51,6 +88,32 @@
 
                     </td>
                 @endforeach
+
+                <td class="p-1 border border-gray-500 text-center">
+                    @if ($quiz->done && !$quiz->participation_stats)
+                        <form action="{{ route('quizzes.update', ['quiz' => $quiz->id]) }}" method="post">
+                            @csrf
+                            @method('PUT')
+                            {{ _p_field() }}
+
+                            <button type="submit"
+                                class="bg-blue-700 hover:bg-blue-600 m-1 p-2 font-bold rounded-full border border-blue-700">
+                                Caluclate stats
+                            </button>
+                        </form>
+                    @endif
+
+                    @if ($quiz->participation_stats)
+                        <ul>
+                            @foreach (explode('-', $quiz->participation_stats) as $stat)
+                                {{-- USE ACCESSOR --}}
+                                <li>
+                                    {{ $stat }}
+                                </li>
+                            @endforeach
+                        </ul>
+                    @endif
+                </td>
             </tr>
         @endforeach
 

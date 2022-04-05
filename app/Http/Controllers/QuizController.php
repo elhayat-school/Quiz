@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Answer;
 use App\Models\Choice;
 use App\Models\Quiz;
 use Illuminate\Http\Request;
@@ -54,31 +55,40 @@ class QuizController extends Controller
     }
 
     /**
-     * @param  \App\Models\Quiz  $quiz
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Quiz $quiz)
-    {
-        //
-    }
-
-    /**
-     * @param  \App\Models\Quiz  $quiz
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Quiz $quiz)
-    {
-        //
-    }
-
-    /**
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\Quiz  $quiz
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, Quiz $quiz)
     {
-        //
+        if (isset($request->new_state))
+            $quiz->update(['done' => $request->new_state === "done"]);
+        else {
+            // $establishments = DB::table('users')
+            //     ->whereNotNull('establishment')
+            //     ->groupBy('establishment')
+            //     ->pluck('establishment');
+
+            $establishments = config('quiz.ESTABLISHMENTS');
+
+            $str = '';
+
+            foreach ($establishments as $establishment) {
+                $count = Answer::query()
+                    ->join('users', 'users.id', '=', 'user_id')
+                    ->join('questions', 'questions.id', '=', 'question_id')
+                    ->select(DB::raw('COUNT(DISTINCT(answers.user_id)) as establishment_player_count'))
+                    ->where('questions.quiz_id', 1)
+                    ->where('users.establishment', $establishment)
+                    ->pluck('establishment_player_count')[0];
+
+                $str .= "$establishment:$count-";
+            }
+            $quiz->update(['participation_stats' => $str]);
+        }
+
+
+        return back();
     }
 
     /**
