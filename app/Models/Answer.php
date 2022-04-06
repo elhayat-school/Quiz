@@ -11,6 +11,10 @@ class Answer extends Model
 
     public $guarded = ['id'];
 
+    protected $casts = [
+        'user_id' => 'integer',
+    ];
+
     public function user()
     {
         return $this->belongsTo(User::class);
