@@ -11,7 +11,7 @@
 
 <body class="bg-slate-900 text-gray-200">
 
-    <form action='{{ route('quiz.store') }}' method="POST">
+    <form action='{{ route('quizzes.store') }}' method="POST">
 
         <div class="w-max m-auto">
 

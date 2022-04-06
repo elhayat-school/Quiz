@@ -51,7 +51,7 @@ class QuizController extends Controller
             }
             Choice::insert($choices);
         });
-        return to_route('quiz.index', ['_p' => get_weak_auth_hashed_password()]);
+        return to_route('quizzes.index', ['_p' => get_weak_auth_hashed_password()]);
     }
 
     /**
@@ -78,7 +78,7 @@ class QuizController extends Controller
                     ->join('users', 'users.id', '=', 'user_id')
                     ->join('questions', 'questions.id', '=', 'question_id')
                     ->select(DB::raw('COUNT(DISTINCT(answers.user_id)) as establishment_player_count'))
-                    ->where('questions.quiz_id', 1)
+                    ->where('questions.quiz_id', $quiz->id)
                     ->where('users.establishment', $establishment)
                     ->pluck('establishment_player_count')[0];
 
