@@ -15,7 +15,7 @@
             <p class="text-white text-2xl">
                 لقد إنتهت لعبة اليوم </p>
 
-            <a href="/results">
+            <a href="{{ route('ranking.current_quiz') }}">
                 <x-results-button>
                     انظر إلى النتائج
                 </x-results-button>

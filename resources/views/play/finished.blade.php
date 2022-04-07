@@ -16,10 +16,10 @@
             <p class="text-white text-2xl">
                 تهانينا لقد انتهيت من المشاركة في مسابقة اليوم
             </p>
-            <p class=" text-5xl mt-20">
+            <p class="text-5xl mt-20">
                 🙌
             </p>
-            <a href="/results">
+            <a href="{{ route('ranking.current_quiz') }}">
                 <x-results-button>
                     انظر إلى النتائج
                 </x-results-button>

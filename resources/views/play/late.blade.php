@@ -15,7 +15,7 @@
             <p class="text-white text-2xl">
                 انت متأخر
             </p>
-                <a href="/results">
+            <a href="{{ route('ranking.current_quiz') }}">
                 <x-results-button>
                     انظر إلى النتائج
                 </x-results-button>
