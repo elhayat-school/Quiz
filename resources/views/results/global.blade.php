@@ -13,13 +13,12 @@
 
         <div>
 
-            <span class="text-amber-400  font-semibold text-xl" dir="ltr"> : نتائج المشاركين في لعبة اليوم</span>
+            <span class="text-amber-400  font-semibold text-xl" dir="ltr"> :النتائج العامة لشهر رمضان </span>
             <table class="text-white text-lg overflow-scroll m-auto mt-5">
 
                 <tr>
                     <th class="border p-2"> المرتبة </th>
                     <th class="border p-2"> المشارك </th>
-                    {{-- <th class="border p-2"> Email </th> --}}
                     <th class="border p-2"> عدد الإجابات الصحيحة </th>
                     <th class="border p-2"> المدة الزمنية
                     </th>
@@ -28,7 +27,7 @@
                 <tbody>
 
                     @foreach ($results as $rank => $result)
-                        @if ($rank >= 10)
+                        {{-- @if ($rank >= 10)
                             @if ($result->user_id !== auth()->user()->id)
                                 @php
                                     continue;
@@ -36,7 +35,7 @@
                             @elseif ($result->user_id === auth()->user()->id)
                                 <tr class="h-8"></tr>
                             @endif
-                        @endif
+                        @endif --}}
                         <tr class="{{ $result->user_id === auth()->user()->id ? 'bg-green-100 bg-opacity-20' : '' }}">
                             <td class="border p-2 text-center">{{ $rank + 1 }}</td>
                             <td class="border p-2 text-center">{{ $result->user->name }}</td>
