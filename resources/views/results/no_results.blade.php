@@ -12,7 +12,7 @@
         <div class="text-center mt-20">
 
             <p class="text-white text-2xl">
-                لا يوجد مسابقة نتائج
+                لا يوجد نتائج
             </p>
             <p class=" text-5xl mt-20">
                 🌛

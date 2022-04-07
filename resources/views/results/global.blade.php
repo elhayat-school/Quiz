@@ -13,7 +13,7 @@
 
         <div>
 
-            <span class="text-amber-400  font-semibold text-xl" dir="ltr"> : نتائج الأوائل في الجولة الأخيرة</span>
+            <span class="text-amber-400  font-semibold text-xl" dir="ltr"> :النتائج العامة لشهر رمضان </span>
             <table class="text-white text-lg overflow-scroll m-auto mt-5">
 
                 <tr>
@@ -27,7 +27,7 @@
                 <tbody>
 
                     @foreach ($results as $rank => $result)
-                        @if ($rank >= 10)
+                        {{-- @if ($rank >= 10)
                             @if ($result->user_id !== auth()->user()->id)
                                 @php
                                     continue;
@@ -35,7 +35,7 @@
                             @elseif ($result->user_id === auth()->user()->id)
                                 <tr class="h-8"></tr>
                             @endif
-                        @endif
+                        @endif --}}
                         <tr class="{{ $result->user_id === auth()->user()->id ? 'bg-green-100 bg-opacity-20' : '' }}">
                             <td class="border p-2 text-center">{{ $rank + 1 }}</td>
                             <td class="border p-2 text-center">{{ $result->user->name }}</td>
