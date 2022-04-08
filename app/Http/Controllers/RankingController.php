@@ -28,7 +28,6 @@ class RankingController extends Controller
         if (is_null($ranking))
             return view('results.no_results');
 
-        $ranking->limit = 10;
         $ranking = $this->limitRankingList($ranking);
 
         return view('results.results')
@@ -46,12 +45,10 @@ class RankingController extends Controller
         // cache
         $ranking = Answer::getRanking($correct_choices)->get();
 
-        // $ranking->limit = 10;
-        // $ranking = $this->limitRankingList($ranking);
+        // $ranking = $this->limitRankingList($ranking, 5);
 
         return view('results.global')
             ->with('results', $ranking);
-        // ->with('results', $filtered_ranking);
     }
 
     /* ------------------------------------------------- */
@@ -59,18 +56,18 @@ class RankingController extends Controller
     /* ------------------------------------------------- */
 
     /**
-     * ? IDK how to do this in a query
+     * TODO: IDK how to do the equivelent filtering in a query
      */
-    private function limitRankingList(\Illuminate\Database\Eloquent\Collection $rankingList)
+    private function limitRankingList(\Illuminate\Database\Eloquent\Collection $rankingList, int $limit = 10): \Illuminate\Database\Eloquent\Collection
     {
-        if (empty($rankingList->limit) || $rankingList->limit <= 0)
+        if (empty($limit) || $limit <= 0)
             throw new \Exception('No valid limit property on the rankingList collection', 1);
 
-        $tempCollection = $rankingList->reject(function ($result, $rank) use ($rankingList) {
-            return $rank >= $rankingList->limit && $result->user->id !== auth()->user()->id;
+        $tempCollection = $rankingList->reject(function ($result, $rank) use ($limit) {
+            return $rank >= $limit && $result->user->id !== auth()->user()->id;
         });
 
-        $tempCollection->limit = $rankingList->limit; // re-set the limit property
+        $tempCollection->limit = $limit; // Set the limit property to reuse in the view
 
         return $tempCollection;
     }
