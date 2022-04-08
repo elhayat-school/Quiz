@@ -27,7 +27,7 @@
                 <tbody>
 
                     @foreach ($results as $rank => $result)
-                        {{-- @if ($rank >= 10)
+                        @if (isset($results->limit) && $rank >= $results->limit)
                             @if ($result->user_id !== auth()->user()->id)
                                 @php
                                     continue;
@@ -35,7 +35,8 @@
                             @elseif ($result->user_id === auth()->user()->id)
                                 <tr class="h-8"></tr>
                             @endif
-                        @endif --}}
+                        @endif
+
                         <tr class="{{ $result->user_id === auth()->user()->id ? 'bg-green-100 bg-opacity-20' : '' }}">
                             <td class="border p-2 text-center">{{ $rank + 1 }}</td>
                             <td class="border p-2 text-center">{{ $result->user->name }}</td>

@@ -28,13 +28,11 @@ class RankingController extends Controller
         if (is_null($ranking))
             return view('results.no_results');
 
-        $filtered_ranking = $ranking->reject(function ($result, $rank) {
-            return $rank >= 10 && $result->user->id !== auth()->user()->id;
-        });
-        unset($ranking);
+        $ranking->limit = 10;
+        $ranking = $this->limitRankingList($ranking);
 
         return view('results.results')
-            ->with('results', $filtered_ranking);
+            ->with('results', $ranking);
     }
 
     public function globalResults()
@@ -48,14 +46,32 @@ class RankingController extends Controller
         // cache
         $ranking = Answer::getRanking($correct_choices)->get();
 
-
-        // $filtered_ranking = $ranking->reject(function ($result, $rank) {
-        //     return $rank >= 10 && $result->user->id !== auth()->user()->id;
-        // });
-        // unset($ranking);
+        // $ranking->limit = 10;
+        // $ranking = $this->limitRankingList($ranking);
 
         return view('results.global')
             ->with('results', $ranking);
         // ->with('results', $filtered_ranking);
+    }
+
+    /* ------------------------------------------------- */
+    //      ******************
+    /* ------------------------------------------------- */
+
+    /**
+     * ? IDK how to do this in a query
+     */
+    private function limitRankingList(\Illuminate\Database\Eloquent\Collection $rankingList)
+    {
+        if (empty($rankingList->limit) || $rankingList->limit <= 0)
+            throw new \Exception('No valid limit property on the rankingList collection', 1);
+
+        $tempCollection = $rankingList->reject(function ($result, $rank) use ($rankingList) {
+            return $rank >= $rankingList->limit && $result->user->id !== auth()->user()->id;
+        });
+
+        $tempCollection->limit = $rankingList->limit; // re-set the limit property
+
+        return $tempCollection;
     }
 }
