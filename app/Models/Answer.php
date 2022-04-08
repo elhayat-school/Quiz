@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class Answer extends Model
 {
@@ -23,6 +24,23 @@ class Answer extends Model
     /* ------------------------------------------------- */
     //      SCOPES
     /* ------------------------------------------------- */
+
+    public function scopeGetRanking($query, \Illuminate\Database\Eloquent\Collection $correct_choices)
+    {
+        $query->with('user')
+            ->select('user_id')
+            ->addSelect(DB::raw('SUM(UNIX_TIMESTAMP(received_at) - UNIX_TIMESTAMP(served_at)) AS sum_elapsed_seconds'))
+            ->addSelect(DB::raw('COUNT(DISTINCT question_id) AS count_correct_answers'))
+            ->filterCorrectChoices($correct_choices)
+            ->orderBy('count_correct_answers', 'DESC')
+            ->orderBy('sum_elapsed_seconds')
+            ->groupBy('user_id');
+    }
+
+    /**
+     * ! whereIn can't replace this scope
+     *
+     */
     public function scopeFilterCorrectChoices($query, \Illuminate\Database\Eloquent\Collection $correct_choices)
     {
 
@@ -36,7 +54,5 @@ class Answer extends Model
                 $query->Where('question_id', $correct_choice->question_id)->where("choice_number", $correct_choice->choice_number);
             });
         }
-
-        return $query;
     }
 }
