@@ -114,11 +114,9 @@ class QuizManagerController extends Controller
      */
     public function postAnswer(Request $request)
     {
-        $question = $this->currentQuiz->questions->filter(function ($question) use ($request) {
-            return $question->id == $request->question_id;
-        })->first();
+        $question = $this->currentQuiz->questions->where('id', $request->question_id)->first();
 
-        $answer = Answer::where('user_id', auth()->user()->id)
+        $answer = auth()->user()->answers()
             ->where('question_id', $question->id)
             ->firstOrfail();
 
