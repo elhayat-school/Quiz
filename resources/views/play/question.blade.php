@@ -15,7 +15,7 @@
 
         @if (!$readonly_countdown)
 
-            <form action="{{ route('anwswer.store') }}" method="POST">
+            <form action="{{ route('answer') }}" method="POST">
                 @csrf
                 <input type="hidden" name="question_id" value="{{ $question->id }}" />
 

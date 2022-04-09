@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\AnswerController;
 use App\Http\Controllers\QuizController;
-use App\Http\Controllers\QuizManagerController;
+use App\Http\Controllers\PlaygroundController;
 use App\Http\Controllers\RankingController;
 use Illuminate\Support\Facades\Route;
 
@@ -12,13 +12,16 @@ require __DIR__ . '/auth.php';
 
 Route::resource('/quizzes', QuizController::class)->except('show', 'edit')->middleware('auth.weak');
 
-Route::get('/play', [QuizManagerController::class, 'getQuestion'])->name('playground')->middleware('auth');
-
-Route::post('/anwsers', [AnswerController::class, 'recordChoice'])->name('anwswer.store')->middleware('auth');
+Route::prefix('play')
+    ->middleware('auth')
+    ->group(function () {
+        Route::get('', [PlaygroundController::class, 'getQuizContext'])->name('playground');
+        Route::post('answer', [AnswerController::class, 'recordChoice'])->name('answer');
+    });
 
 Route::controller(RankingController::class)
-    ->middleware('auth')
     ->prefix('results')
+    ->middleware('auth')
     ->group(function () {
         Route::get('/current_quiz', 'currentQuizResults')->name('ranking.current_quiz');
         Route::get('/global', 'globalResults')->name('ranking.global');

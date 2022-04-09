@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Answer;
 use App\Services\CurrentQuiz;
 
-class QuizManagerController extends Controller
+class PlaygroundController extends Controller
 {
     public int $currentTimestamp;
 
@@ -20,7 +20,7 @@ class QuizManagerController extends Controller
         $this->currentTimestamp = time();
     }
 
-    public function getQuestion()
+    public function getQuizContext()
     {
 
         if (is_null($this->currentQuiz))
