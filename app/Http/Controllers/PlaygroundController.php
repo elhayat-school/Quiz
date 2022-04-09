@@ -62,7 +62,7 @@ class PlaygroundController extends Controller
             return view('play.finished');
 
         $question = NULL;
-        $readonly_countdown = NULL;
+        $readonly_countdown = false;
 
         if (
             !$this->firstTimeRequestingQuestion($answers) && // prevent negative answer index
@@ -75,9 +75,7 @@ class PlaygroundController extends Controller
             // Reset previous question
             $question = $this->currentQuiz->questions[$answers->count() - 1];
 
-            if (!$this->filledLatestAnswer($answers))
-                $readonly_countdown = false;
-            else
+            if ($this->filledLatestAnswer($answers))
                 $readonly_countdown = true;
         } else {
 
