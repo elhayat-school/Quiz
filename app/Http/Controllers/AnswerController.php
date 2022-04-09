@@ -13,7 +13,7 @@ class AnswerController extends Controller
 
     public function __construct(CurrentQuiz $currentQuiz)
     {
-        $this->currentQuiz = $currentQuiz->get();
+        $this->currentQuiz = $currentQuiz();
 
         $this->currentTimestamp = time();
     }
@@ -26,8 +26,8 @@ class AnswerController extends Controller
     {
         $question = $this->currentQuiz->questions->where('id', $request->question_id)->first();
 
-        $answer = auth()->user()->answers()
-            ->where('question_id', $question->id)
+        $answer = $question->answers()
+            ->where('user_id', auth()->user()->id)
             ->firstOrfail();
 
         if (

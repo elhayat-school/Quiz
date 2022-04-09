@@ -16,7 +16,7 @@ class PlaygroundController extends Controller
 
     public function __construct(CurrentQuiz $currentQuiz)
     {
-        $this->currentQuiz = $currentQuiz->get();
+        $this->currentQuiz = $currentQuiz();
 
         $this->currentTimestamp = time();
     }

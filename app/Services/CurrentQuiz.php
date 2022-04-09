@@ -18,7 +18,7 @@ class CurrentQuiz
         );
     }
 
-    public function get()
+    public function __invoke()
     {
         return $this->currentQuiz;
     }

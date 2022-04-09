@@ -14,7 +14,7 @@ class RankingController extends Controller
      */
     public function currentQuizResults(CurrentQuiz $currentQuiz)
     {
-        $current_quiz = $currentQuiz->get();
+        $current_quiz = $currentQuiz();
 
         if (is_null($current_quiz))
             return view('play.no_available_quizzes');
