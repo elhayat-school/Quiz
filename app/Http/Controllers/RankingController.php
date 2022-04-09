@@ -4,18 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\Answer;
 use App\Models\Choice;
-use App\Models\Quiz;
-use Illuminate\Support\Facades\Cache;
+use App\Services\CurrentQuiz;
 
 class RankingController extends Controller
 {
-    public function currentQuizResults()
+    public function currentQuizResults(CurrentQuiz $currentQuiz)
     {
-        $current_quiz = Cache::remember(
-            'current_quiz',
-            10,
-            fn () => Quiz::with('questions.choices')->notDone()->sortByOldestStartTime()->first()
-        );
+        $current_quiz = $currentQuiz->get();
 
         if (is_null($current_quiz))
             return view('play.no_available_quizzes');
@@ -36,7 +31,6 @@ class RankingController extends Controller
 
     public function globalResults()
     {
-
         if (!Answer::count())
             return view('results.no_results');
 
@@ -57,6 +51,7 @@ class RankingController extends Controller
 
     /**
      * TODO: IDK how to do the equivelent filtering in a query
+     * ? Caching the $rankingList may compensate the downside of getting all results (less round trips)
      */
     private function limitRankingList(\Illuminate\Database\Eloquent\Collection $rankingList, int $limit = 10): \Illuminate\Database\Eloquent\Collection
     {

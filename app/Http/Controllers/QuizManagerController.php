@@ -3,9 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Answer;
-use App\Models\Quiz;
+use App\Services\CurrentQuiz;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cache;
 
 class QuizManagerController extends Controller
 {
@@ -15,13 +14,9 @@ class QuizManagerController extends Controller
 
     private $secondsToQuizStart;
 
-    public function __construct()
+    public function __construct(CurrentQuiz $currentQuiz)
     {
-        $this->currentQuiz = Cache::remember(
-            'current_quiz',
-            10,
-            fn () => Quiz::with('questions.choices')->notDone()->sortByOldestStartTime()->first()
-        );
+        $this->currentQuiz = $currentQuiz->get();
 
         $this->currentTimestamp = time();
     }
