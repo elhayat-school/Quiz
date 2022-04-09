@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AnswerController;
 use App\Http\Controllers\QuizController;
 use App\Http\Controllers\QuizManagerController;
 use App\Http\Controllers\RankingController;
@@ -11,12 +12,9 @@ require __DIR__ . '/auth.php';
 
 Route::resource('/quizzes', QuizController::class)->except('show', 'edit')->middleware('auth.weak');
 
-Route::controller(QuizManagerController::class)
-    ->middleware('auth')
-    ->group(function () {
-        Route::get('/play', 'getQuestion')->name('playground');
-        Route::post('/anwsers', 'postAnswer')->name('anwswer.store');
-    });
+Route::get('/play', [QuizManagerController::class, 'getQuestion'])->name('playground')->middleware('auth');
+
+Route::post('/anwsers', [AnswerController::class, 'recordChoice'])->name('anwswer.store')->middleware('auth');
 
 Route::controller(RankingController::class)
     ->middleware('auth')
