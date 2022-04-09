@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Answer;
 use App\Services\CurrentQuiz;
+use Illuminate\Support\Collection;
 
 class PlaygroundController extends Controller
 {
@@ -106,17 +107,29 @@ class PlaygroundController extends Controller
     //      Micro conditions
     /* ------------------------------------------------- */
 
-    private function firstTimeRequestingQuestion(\Illuminate\Database\Eloquent\Collection $answers): bool
+    /**
+     * @var Illuminate\Support\Collection $answers
+     * @return bool
+     */
+    private function firstTimeRequestingQuestion(Collection $answers): bool
     {
         return $answers->count() === 0;
     }
 
-    private function filledLatestAnswer(\Illuminate\Database\Eloquent\Collection $answers): bool
+    /**
+     * @var Illuminate\Support\Collection $answers
+     * @return bool
+     */
+    private function filledLatestAnswer(Collection $answers): bool
     {
         return !empty($answers->last()->choice_number) && !empty($answers->last()->received_at);
     }
 
-    private function hasSparedTimeForLatestAnswer(\Illuminate\Database\Eloquent\Collection $answers): bool
+    /**
+     * @var Illuminate\Support\Collection $answers
+     * @return bool
+     */
+    private function hasSparedTimeForLatestAnswer(Collection $answers): bool
     {
         $answer_elapsed_time =  $this->currentTimestamp - strtotime($answers->last()->served_at);
         $previously_served_question_duration = $this->currentQuiz->questions[$answers->count() - 1]->duration;
@@ -124,7 +137,11 @@ class PlaygroundController extends Controller
         return $answer_elapsed_time <= $previously_served_question_duration;
     }
 
-    private function reachedLastQuestion(\Illuminate\Database\Eloquent\Collection $answers): bool
+    /**
+     * @var Illuminate\Support\Collection $answers
+     * @return bool
+     */
+    private function reachedLastQuestion(Collection $answers): bool
     {
         if ($answers->count() > $this->currentQuiz->questions->count())
             throw new \Exception('Check the junk code you wrote in reachedLastQuestion', 1);
@@ -133,7 +150,7 @@ class PlaygroundController extends Controller
     }
 
     /* ------------------------------------------------- */
-    //      -----------
+    //      Helpers
     /* ------------------------------------------------- */
 
     public function secondsSinceQuizStart(): int

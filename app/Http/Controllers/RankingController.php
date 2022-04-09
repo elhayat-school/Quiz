@@ -5,9 +5,13 @@ namespace App\Http\Controllers;
 use App\Models\Answer;
 use App\Models\Choice;
 use App\Services\CurrentQuiz;
+use Illuminate\Support\Collection;
 
 class RankingController extends Controller
 {
+    /**
+     * @return \Illuminate\Http\Response
+     */
     public function currentQuizResults(CurrentQuiz $currentQuiz)
     {
         $current_quiz = $currentQuiz->get();
@@ -29,6 +33,9 @@ class RankingController extends Controller
             ->with('results', $ranking);
     }
 
+    /**
+     * @return \Illuminate\Http\Response
+     */
     public function globalResults()
     {
         if (!Answer::count())
@@ -46,14 +53,14 @@ class RankingController extends Controller
     }
 
     /* ------------------------------------------------- */
-    //      ******************
+    //      Helpers
     /* ------------------------------------------------- */
 
     /**
      * TODO: IDK how to do the equivelent filtering in a query
      * ? Caching the $rankingList may compensate the downside of getting all results (less round trips)
      */
-    private function limitRankingList(\Illuminate\Database\Eloquent\Collection $rankingList, int $limit = 10): \Illuminate\Database\Eloquent\Collection
+    private function limitRankingList(Collection $rankingList, int $limit = 10): Collection
     {
         if (empty($limit) || $limit <= 0)
             throw new \Exception('No valid limit property on the rankingList collection', 1);
