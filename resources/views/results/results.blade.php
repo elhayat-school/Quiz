@@ -11,13 +11,19 @@
 
         </div>
 
-        <div>
-
-            <span class="text-amber-400  font-semibold text-xl" dir="ltr"> : نتائج الأوائل في الجولة الأخيرة</span>
-
-            <x-tables.ranking :results="$results" />
-
+        <div class="text-center">
+            <a href="{{ route('ranking.global') }}">
+                <x-results-button>
+                    الترتيب العام
+                </x-results-button>
+            </a>
         </div>
+
+        <div>
+            <span class="text-amber-400 font-semibold text-xl" dir="ltr"> : نتائج الأوائل في الجولة الأخيرة</span>
+        </div>
+
+        <x-tables.ranking :results="$results" />
 
     </div>
 
