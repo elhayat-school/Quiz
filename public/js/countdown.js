@@ -1,35 +1,46 @@
 document.querySelectorAll("[CountDown]").forEach((el) => {
-    let remainingTime = parseInt(el.dataset.countdownDuration);
-    const timerFormat = el.dataset.countdownFormat;
-    let countdownStep = (function () {
-        const countdownStep = el.dataset.countdownStep.match(
+    const TIMERFORMAT = el.dataset.countdownFormat;
+
+    const COUNTDOWNSTEPSECONDS = (function () {
+        const COUNTDOWNSTEP = el.dataset.countdownStep.match(
             /(?:(?<h>\d{0,2})h)?(?:(?<m>\d{0,2})m)?(?:(?<s>\d{0,2})s)?/
         );
 
         return (
-            (countdownStep.groups.h
-                ? parseInt(countdownStep.groups.h) * 3600
+            (COUNTDOWNSTEP.groups.h
+                ? parseInt(COUNTDOWNSTEP.groups.h) * 3600
                 : 0) +
-            (countdownStep.groups.m
-                ? parseInt(countdownStep.groups.m) * 60
+            (COUNTDOWNSTEP.groups.m
+                ? parseInt(COUNTDOWNSTEP.groups.m) * 60
                 : 0) +
-            (countdownStep.groups.s ? parseInt(countdownStep.groups.s) : 0)
+            (COUNTDOWNSTEP.groups.s ? parseInt(COUNTDOWNSTEP.groups.s) : 0)
         );
     })();
 
+    const TARGETTIMESTAMP = setStartTimestamp(
+        parseInt(el.dataset.countdownDuration)
+    );
+
+    let remainingMilliSeconds = TARGETTIMESTAMP - Date.now();
+
     // init
-    el.innerHTML = moment.utc(remainingTime * 1000).format(timerFormat);
+    el.innerHTML = moment.utc(remainingMilliSeconds).format(TIMERFORMAT);
 
     setInterval(() => {
-        remainingTime -= countdownStep;
+        remainingMilliSeconds = TARGETTIMESTAMP - Date.now();
 
-        if (remainingTime <= 0) {
+        if (remainingMilliSeconds <= 0) {
             location.reload();
             return;
         }
 
-        remainingTime = remainingTime < 0 ? 0 : remainingTime;
+        remainingMilliSeconds =
+            remainingMilliSeconds < 0 ? 0 : remainingMilliSeconds;
 
-        el.innerHTML = moment.utc(remainingTime * 1000).format(timerFormat);
-    }, countdownStep * 1000);
+        el.innerHTML = moment.utc(remainingMilliSeconds).format(TIMERFORMAT);
+    }, COUNTDOWNSTEPSECONDS * 1000);
 });
+
+function setStartTimestamp(remainingSeconds) {
+    return Date.now() + remainingSeconds * 1000;
+}
