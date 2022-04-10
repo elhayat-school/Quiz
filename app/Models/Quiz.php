@@ -20,7 +20,9 @@ class Quiz extends Model
 
     public function choices()
     {
-        return $this->hasManyThrough(Choice::class, Question::class);
+        return $this->hasManyThrough(Choice::class, Question::class)
+            ->whereNot('choices.content', '')
+            ->orWhereNull('choices.content');
     }
 
     public function answers()

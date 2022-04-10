@@ -13,7 +13,9 @@ class Question extends Model
 
     public function choices()
     {
-        return $this->hasMany(Choice::class);
+        return $this->hasMany(Choice::class)
+            ->whereNot('choices.content', '')
+            ->orWhereNull('choices.content');
     }
 
     public function answers()
