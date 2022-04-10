@@ -10,7 +10,7 @@ Route::Get('/', fn () => to_route('login'));
 
 require __DIR__ . '/auth.php';
 
-Route::resource('/quizzes', QuizController::class)->except('show', 'edit')->middleware('auth.weak');
+Route::resource('/quizzes', QuizController::class)->except('show', 'edit')->middleware('is_admin');
 
 Route::prefix('play')
     ->middleware('auth')

@@ -17,10 +17,13 @@ return new class extends Migration
             $table->id();
             $table->string('name')->nullable();
             $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
-            $table->SET('establishment', config('quiz.ESTABLISHMENTS'))->nullable();
             $table->string('password');
+            $table->SET('establishment', config('quiz.ESTABLISHMENTS'))->nullable();
+            $table->SET('role', config('rules.roles.in'))->nullable();
+            //
+            $table->timestamp('email_verified_at')->nullable();
             $table->rememberToken();
+            //
             $table->timestamps();
         });
     }

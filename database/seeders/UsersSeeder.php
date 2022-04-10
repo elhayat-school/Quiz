@@ -19,6 +19,7 @@ class UsersSeeder extends Seeder
             'name' => 'nsvjon',
             'email' => 'y@y.y',
             'password' => password_hash('123', PASSWORD_DEFAULT),
+            'role' => 'admin',
         ]);
 
         \App\Models\User::factory(500)->create();
