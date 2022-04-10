@@ -18,7 +18,7 @@ class CurrentQuiz
         );
     }
 
-    public function __invoke()
+    public function __invoke(): Quiz|null
     {
         return $this->currentQuiz;
     }

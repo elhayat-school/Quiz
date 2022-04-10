@@ -8,23 +8,30 @@ use Illuminate\Support\Collection;
 
 class PlaygroundController extends Controller
 {
+    /**
+     * @var int
+     */
     public int $currentTimestamp;
 
+    /**
+     * @var Quiz|null
+     */
     private $currentQuiz;
 
-    private $secondsToQuizStart;
+    /**
+     * @var int
+     */
+    private int $secondsToQuizStart;
 
     public function __construct(CurrentQuiz $currentQuiz)
     {
-        $this->currentQuiz = $currentQuiz();
-
         $this->currentTimestamp = time();
+        $this->currentQuiz = $currentQuiz();
     }
 
     public function getQuizContext()
     {
-
-        if (is_null($this->currentQuiz))
+        if (!$this->currentQuiz)
             return view('play.no_available_quizzes');
 
         // * ...++++++++++(start_at)---(start_at + duration)----------...
