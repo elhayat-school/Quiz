@@ -5,12 +5,70 @@
 /*!*****************************!*\
   !*** ./resources/js/app.js ***!
   \*****************************/
-/***/ (() => {
+/***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
 
 // require("./bootstrap");
 // import Alpine from "alpinejs";
 // window.Alpine = Alpine;
 // Alpine.start();
+__webpack_require__(/*! ./countdown */ "./resources/js/countdown.js");
+
+/***/ }),
+
+/***/ "./resources/js/countdown.js":
+/*!***********************************!*\
+  !*** ./resources/js/countdown.js ***!
+  \***********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "countDown": () => (/* binding */ countDown),
+/* harmony export */   "setStartTimestamp": () => (/* binding */ setStartTimestamp)
+/* harmony export */ });
+function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
+
+function _wrapRegExp() { _wrapRegExp = function _wrapRegExp(re, groups) { return new BabelRegExp(re, void 0, groups); }; var _super = RegExp.prototype, _groups = new WeakMap(); function BabelRegExp(re, flags, groups) { var _this = new RegExp(re, flags); return _groups.set(_this, groups || _groups.get(re)), _setPrototypeOf(_this, BabelRegExp.prototype); } function buildGroups(result, re) { var g = _groups.get(re); return Object.keys(g).reduce(function (groups, name) { return groups[name] = result[g[name]], groups; }, Object.create(null)); } return _inherits(BabelRegExp, RegExp), BabelRegExp.prototype.exec = function (str) { var result = _super.exec.call(this, str); return result && (result.groups = buildGroups(result, this)), result; }, BabelRegExp.prototype[Symbol.replace] = function (str, substitution) { if ("string" == typeof substitution) { var groups = _groups.get(this); return _super[Symbol.replace].call(this, str, substitution.replace(/\$<([^>]+)>/g, function (_, name) { return "$" + groups[name]; })); } if ("function" == typeof substitution) { var _this = this; return _super[Symbol.replace].call(this, str, function () { var args = arguments; return "object" != _typeof(args[args.length - 1]) && (args = [].slice.call(args)).push(buildGroups(args, _this)), substitution.apply(this, args); }); } return _super[Symbol.replace].call(this, str, substitution); }, _wrapRegExp.apply(this, arguments); }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); Object.defineProperty(subClass, "prototype", { writable: false }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+var countDown = function countDown() {
+  document.querySelectorAll("[CountDown]").forEach(function (el) {
+    var TIMERFORMAT = el.dataset.countdownFormat;
+
+    var COUNTDOWNSTEPSECONDS = function () {
+      var COUNTDOWNSTEP = el.dataset.countdownStep.match( /*#__PURE__*/_wrapRegExp(/(?:(\d{0,2})h)?(?:(\d{0,2})m)?(?:(\d{0,2})s)?/, {
+        h: 1,
+        m: 2,
+        s: 3
+      }));
+      return (COUNTDOWNSTEP.groups.h ? parseInt(COUNTDOWNSTEP.groups.h) * 3600 : 0) + (COUNTDOWNSTEP.groups.m ? parseInt(COUNTDOWNSTEP.groups.m) * 60 : 0) + (COUNTDOWNSTEP.groups.s ? parseInt(COUNTDOWNSTEP.groups.s) : 0);
+    }();
+
+    var TARGETTIMESTAMP = setStartTimestamp(parseInt(el.dataset.countdownDuration));
+    var remainingMilliSeconds = TARGETTIMESTAMP - Date.now(); // init
+
+    el.innerHTML = moment.utc(remainingMilliSeconds).format(TIMERFORMAT);
+    setInterval(function () {
+      remainingMilliSeconds = TARGETTIMESTAMP - Date.now();
+
+      if (remainingMilliSeconds <= 0) {
+        location.reload();
+        return;
+      }
+
+      remainingMilliSeconds = remainingMilliSeconds < 0 ? 0 : remainingMilliSeconds;
+      el.innerHTML = moment.utc(remainingMilliSeconds).format(TIMERFORMAT);
+    }, COUNTDOWNSTEPSECONDS * 1000);
+  });
+};
+function setStartTimestamp(remainingSeconds) {
+  return Date.now() + remainingSeconds * 1000;
+}
+countDown();
 
 /***/ }),
 
@@ -86,6 +144,18 @@ __webpack_require__.r(__webpack_exports__);
 /******/ 				}
 /******/ 			}
 /******/ 			return result;
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/define property getters */
+/******/ 	(() => {
+/******/ 		// define getter functions for harmony exports
+/******/ 		__webpack_require__.d = (exports, definition) => {
+/******/ 			for(var key in definition) {
+/******/ 				if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
+/******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+/******/ 				}
+/******/ 			}
 /******/ 		};
 /******/ 	})();
 /******/ 	

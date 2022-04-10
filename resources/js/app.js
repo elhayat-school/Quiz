@@ -5,3 +5,5 @@
 // window.Alpine = Alpine;
 
 // Alpine.start();
+
+require("./countdown");
