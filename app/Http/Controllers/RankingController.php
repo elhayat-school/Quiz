@@ -21,7 +21,7 @@ class RankingController extends Controller
 
         $correct_choices = $current_quiz->choices()->where('is_correct', 1)->get();
 
-        // cache
+        // TODO cache
         $ranking = Answer::getRanking($correct_choices)->get();
 
         if (is_null($ranking))
@@ -43,7 +43,7 @@ class RankingController extends Controller
 
         $correct_choices = Choice::where('is_correct', 1)->get();
 
-        // cache
+        // TODO cache
         $ranking = Answer::getRanking($correct_choices)->get();
 
         // $ranking = $this->limitRankingList($ranking, 5);

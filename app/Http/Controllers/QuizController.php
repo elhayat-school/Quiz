@@ -5,33 +5,29 @@ namespace App\Http\Controllers;
 use App\Models\Answer;
 use App\Models\Choice;
 use App\Models\Quiz;
+use Illuminate\Contracts\View\View;
+use Illuminate\Contracts\View\Factory;
 use Illuminate\Http\Request;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
 
 class QuizController extends Controller
 {
-    /**
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
+
+    public function index(): View|Factory
     {
         return view("quiz.index")
             ->with('quizzes', Quiz::with('questions.choices')->oldest('start_at')->get());
     }
 
-    /**
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
+
+    public function create(): View|Factory
     {
         return view('quiz.create');
     }
 
-    /**
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
+
+    public function store(Request $request): RedirectResponse
     {
         DB::transaction(function () use ($request) {
             $quiz = Quiz::create(['start_at' => $request->start_at, 'duration' => $request->duration]);
@@ -51,15 +47,11 @@ class QuizController extends Controller
             }
             Choice::insert($choices);
         });
-        return to_route('quizzes.index', ['_p' => get_weak_auth_hashed_password()]);
+
+        return to_route('quizzes.index');
     }
 
-    /**
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Quiz  $quiz
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Quiz $quiz)
+    public function update(Request $request, Quiz $quiz): RedirectResponse
     {
         if (isset($request->new_state))
             $quiz->update(['done' => $request->new_state === "done"]);
@@ -87,12 +79,10 @@ class QuizController extends Controller
             $quiz->update(['participation_stats' => $str]);
         }
 
-
         return back();
     }
 
     /**
-     * @param  \App\Models\Quiz  $quiz
      * @return \Illuminate\Http\Response
      */
     public function destroy(Quiz $quiz)

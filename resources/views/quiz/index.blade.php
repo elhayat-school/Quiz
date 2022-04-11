@@ -32,7 +32,6 @@
                             <form action="{{ route('quizzes.update', ['quiz' => $quiz->id]) }}" method="post">
                                 @csrf
                                 @method('PUT')
-                                {{ _p_field() }}
 
                                 <input type="hidden" name="new_state" value="done">
 
@@ -45,7 +44,6 @@
                             <form action="{{ route('quizzes.update', ['quiz' => $quiz->id]) }}" method="post">
                                 @csrf
                                 @method('PUT')
-                                {{ _p_field() }}
 
                                 <input type="hidden" name="new_state" value="not-done">
 
@@ -94,7 +92,6 @@
                         <form action="{{ route('quizzes.update', ['quiz' => $quiz->id]) }}" method="post">
                             @csrf
                             @method('PUT')
-                            {{ _p_field() }}
 
                             <button type="submit"
                                 class="bg-blue-700 hover:bg-blue-600 m-1 p-2 font-bold rounded-full border border-blue-700">

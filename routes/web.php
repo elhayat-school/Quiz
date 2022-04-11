@@ -10,19 +10,21 @@ Route::Get('/', fn () => to_route('login'));
 
 require __DIR__ . '/auth.php';
 
-Route::resource('/quizzes', QuizController::class)->except('show', 'edit')->middleware('is_admin');
+Route::middleware('auth')->group(function () {
 
-Route::prefix('play')
-    ->middleware('auth')
-    ->group(function () {
-        Route::get('', [PlaygroundController::class, 'getQuizContext'])->name('playground');
-        Route::post('answer', [AnswerController::class, 'recordChoice'])->name('answer');
-    });
+    Route::resource('/quizzes', QuizController::class)->except('show', 'edit')->middleware('is_admin');
 
-Route::controller(RankingController::class)
-    ->prefix('results')
-    ->middleware('auth')
-    ->group(function () {
-        Route::get('/current_quiz', 'currentQuizResults')->name('ranking.current_quiz');
-        Route::get('/global', 'globalResults')->name('ranking.global');
-    });
+    Route::prefix('play')
+        ->group(function () {
+            Route::get('', [PlaygroundController::class, 'getQuizContext'])->name('playground');
+            Route::post('answer', [AnswerController::class, 'recordChoice'])->name('answer');
+        });
+
+    Route::controller(RankingController::class)
+        ->prefix('results')
+        ->group(function () {
+            Route::get('/current_quiz', 'currentQuizResults')->name('ranking.current_quiz');
+            Route::get('/global', 'globalResults')->name('ranking.global')
+                ->middleware('is_admin'); // REMOVE LATER
+        });
+});
