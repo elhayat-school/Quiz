@@ -10,9 +10,12 @@ Route::Get('/', fn () => to_route('login'));
 
 require __DIR__ . '/auth.php';
 
-Route::middleware('auth')->group(function () {
+Route::middleware('auth', 'is_admin')->group(function () {
 
-    Route::resource('/quizzes', QuizController::class)->except('show', 'edit')->middleware('is_admin');
+    Route::resource('/quizzes', QuizController::class)->except('show', 'edit');
+});
+
+Route::middleware('auth')->group(function () {
 
     Route::prefix('play')
         ->group(function () {

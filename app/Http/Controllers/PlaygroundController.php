@@ -33,17 +33,17 @@ class PlaygroundController extends Controller
     public function getQuizContext()
     {
         if (!$this->currentQuiz)
-            return view('play.no_available_quizzes');
+            return view('playground.no_available_quizzes');
 
         // * ...++++++++++(start_at)---(start_at + duration)----------...
         $this->secondsToQuizStart = strtotime($this->currentQuiz->start_at) - $this->currentTimestamp; // ! Timezone
 
         if ($this->secondsToQuizStart > 0)
-            return view('play.early')
+            return view('playground.early')
                 ->with('seconds_to_wait', $this->secondsToQuizStart);
 
         elseif ($this->secondsToQuizStart < -$this->currentQuiz->duration)
-            return view('play.ended');
+            return view('playground.ended');
 
         /* ------------------------------------------------- */
         //      It's Quiz time
@@ -59,7 +59,7 @@ class PlaygroundController extends Controller
             $this->firstTimeRequestingQuestion($answers) &&
             ($this->secondsSinceQuizStart() > config('quiz.QUIZ_MAX_DELAY'))
         )
-            return view('play.late');
+            return view('playground.late');
 
         if (
             $this->reachedLastQuestion($answers) &&
@@ -67,9 +67,9 @@ class PlaygroundController extends Controller
                 $this->filledLatestAnswer($answers)
             )
         )
-            return view('play.finished');
+            return view('playground.finished');
 
-        return view('play.question')
+        return view('playground.question')
             ->with('question', $this->pickQuestion($answers));
     }
 
