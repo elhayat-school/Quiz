@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\RecordChoiceRequest;
 use App\Services\CurrentQuiz;
-use Illuminate\Http\Request;
 
 class AnswerController extends Controller
 {
@@ -22,7 +22,7 @@ class AnswerController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function recordChoice(Request $request)
+    public function recordChoice(RecordChoiceRequest $request)
     {
         $question = $this->currentQuiz->questions->where('id', $request->question_id)->first();
 
