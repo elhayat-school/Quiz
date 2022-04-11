@@ -17,12 +17,9 @@ class Quiz extends Model
         return $this->hasMany(Question::class);
     }
 
-
     public function choices()
     {
-        return $this->hasManyThrough(Choice::class, Question::class)
-            ->whereNot('choices.content', '')
-            ->orWhereNull('choices.content');
+        return $this->hasManyThrough(Choice::class, Question::class);
     }
 
     public function answers()
