@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Answer;
+use App\Models\Question;
 use App\Services\CurrentQuiz;
 use Illuminate\Support\Collection;
 
@@ -68,11 +69,11 @@ class PlaygroundController extends Controller
         )
             return view('play.finished');
 
-        [$question, $readonly_countdown] = $this->pickQuestion($answers);
+        $question = $this->pickQuestion($answers);
 
         return view('play.question')
             // ->with('quiz_remaining_time', $quiz_remaining_time)
-            ->with('readonly_countdown', $readonly_countdown)
+            ->with('must_wait_countdown', $question->mustWaitCountdown)
             ->with('question', $question);
     }
 
@@ -126,10 +127,10 @@ class PlaygroundController extends Controller
     //      Helpers
     /* ------------------------------------------------- */
 
-    private function pickQuestion(Collection $answers)
+    private function pickQuestion(Collection $answers): Question
     {
         $question = NULL;
-        $readonly_countdown = false;
+        $must_wait_countdown = false;
 
         if (
             !$this->firstTimeRequestingQuestion($answers) && // prevent negative answer index
@@ -143,7 +144,7 @@ class PlaygroundController extends Controller
             $question = $this->currentQuiz->questions[$answers->count() - 1];
 
             if ($this->filledLatestAnswer($answers))
-                $readonly_countdown = true;
+                $must_wait_countdown = true;
         } else {
 
             // Set new question
@@ -162,7 +163,9 @@ class PlaygroundController extends Controller
         if ($question->duration > $quiz_remaining_time)
             $question->duration = $quiz_remaining_time;
 
-        return [$question, $readonly_countdown];
+        $question->mustWaitCountdown = $must_wait_countdown;
+
+        return $question;
     }
 
     public function secondsSinceQuizStart(): int

@@ -13,7 +13,7 @@
 
         </div>
 
-        @if (!$readonly_countdown)
+        @if (!$must_wait_countdown)
 
             <form action="{{ route('answer') }}" method="POST">
                 @csrf
