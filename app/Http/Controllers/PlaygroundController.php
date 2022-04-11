@@ -68,39 +68,7 @@ class PlaygroundController extends Controller
         )
             return view('play.finished');
 
-        $question = NULL;
-        $readonly_countdown = false;
-
-        if (
-            !$this->firstTimeRequestingQuestion($answers) && // prevent negative answer index
-            $this->hasSparedTimeForLatestAnswer($answers)
-        ) {
-
-            // !
-            $this->currentQuiz->questions[$answers->count() - 1]->duration = $this->currentQuiz->questions[$answers->count() - 1]->duration - ($this->currentTimestamp - strtotime($answers->last()->served_at)); // Set the spared time
-
-            // Reset previous question
-            $question = $this->currentQuiz->questions[$answers->count() - 1];
-
-            if ($this->filledLatestAnswer($answers))
-                $readonly_countdown = true;
-        } else {
-
-            // Set new question
-            $question = $this->currentQuiz->questions[$answers->count()];
-
-            // placeholder answer(served_at)
-            Answer::create([
-                'user_id' => auth()->user()->id,
-                'question_id' => $question->id,
-                'served_at' => date('Y-m-d H:i:s'),
-            ]);
-        }
-
-        $quiz_remaining_time = $this->currentQuiz->duration - $this->secondsSinceQuizStart();
-
-        if ($question->duration > $quiz_remaining_time)
-            $question->duration = $quiz_remaining_time;
+        [$question, $readonly_countdown] = $this->pickQuestion($answers);
 
         return view('play.question')
             // ->with('quiz_remaining_time', $quiz_remaining_time)
@@ -157,6 +125,45 @@ class PlaygroundController extends Controller
     /* ------------------------------------------------- */
     //      Helpers
     /* ------------------------------------------------- */
+
+    private function pickQuestion(Collection $answers)
+    {
+        $question = NULL;
+        $readonly_countdown = false;
+
+        if (
+            !$this->firstTimeRequestingQuestion($answers) && // prevent negative answer index
+            $this->hasSparedTimeForLatestAnswer($answers)
+        ) {
+
+            // !
+            $this->currentQuiz->questions[$answers->count() - 1]->duration = $this->currentQuiz->questions[$answers->count() - 1]->duration - ($this->currentTimestamp - strtotime($answers->last()->served_at)); // Set the spared time
+
+            // Reset previous question
+            $question = $this->currentQuiz->questions[$answers->count() - 1];
+
+            if ($this->filledLatestAnswer($answers))
+                $readonly_countdown = true;
+        } else {
+
+            // Set new question
+            $question = $this->currentQuiz->questions[$answers->count()];
+
+            // placeholder answer(served_at)
+            Answer::create([
+                'user_id' => auth()->user()->id,
+                'question_id' => $question->id,
+                'served_at' => date('Y-m-d H:i:s'),
+            ]);
+        }
+
+        $quiz_remaining_time = $this->currentQuiz->duration - $this->secondsSinceQuizStart();
+
+        if ($question->duration > $quiz_remaining_time)
+            $question->duration = $quiz_remaining_time;
+
+        return [$question, $readonly_countdown];
+    }
 
     public function secondsSinceQuizStart(): int
     {
