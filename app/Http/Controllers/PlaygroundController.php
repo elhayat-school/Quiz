@@ -69,12 +69,8 @@ class PlaygroundController extends Controller
         )
             return view('play.finished');
 
-        $question = $this->pickQuestion($answers);
-
         return view('play.question')
-            // ->with('quiz_remaining_time', $quiz_remaining_time)
-            ->with('must_wait_countdown', $question->mustWaitCountdown)
-            ->with('question', $question);
+            ->with('question', $this->pickQuestion($answers));
     }
 
     /* ------------------------------------------------- */
