@@ -164,6 +164,9 @@ class PlaygroundController extends Controller
         return $question;
     }
 
+    /**
+     * @throws \Exception when using for positive amount of seconds
+     */
     public function secondsSinceQuizStart(): int
     {
         if ($this->secondsToQuizStart > 0)
