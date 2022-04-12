@@ -53,33 +53,35 @@ class QuizController extends Controller
 
     public function update(Request $request, Quiz $quiz): RedirectResponse
     {
-        if (isset($request->new_state))
-            $quiz->update(['done' => $request->new_state === "done"]);
-        else {
-            // $establishments = DB::table('users')
-            //     ->whereNotNull('establishment')
-            //     ->groupBy('establishment')
-            //     ->pluck('establishment');
+        $establishments = config('quiz.ESTABLISHMENTS');
+        // $establishments = DB::table('users')
+        //     ->whereNotNull('establishment')
+        //     ->groupBy('establishment')
+        //     ->pluck('establishment');
 
-            $establishments = config('quiz.ESTABLISHMENTS');
+        $str = '';
+        foreach ($establishments as $establishment) {
+            $count = Answer::query()
+                ->join('users', 'users.id', '=', 'user_id')
+                ->join('questions', 'questions.id', '=', 'question_id')
+                ->select(DB::raw('COUNT(DISTINCT(answers.user_id)) as establishment_player_count'))
+                ->where('questions.quiz_id', $quiz->id)
+                ->where('users.establishment', $establishment)
+                ->pluck('establishment_player_count')
+                ->first();
 
-            $str = '';
-
-            foreach ($establishments as $establishment) {
-                $count = Answer::query()
-                    ->join('users', 'users.id', '=', 'user_id')
-                    ->join('questions', 'questions.id', '=', 'question_id')
-                    ->select(DB::raw('COUNT(DISTINCT(answers.user_id)) as establishment_player_count'))
-                    ->where('questions.quiz_id', $quiz->id)
-                    ->where('users.establishment', $establishment)
-                    ->pluck('establishment_player_count')
-                    ->first();
-
-                if ($count > 0)
-                    $str .= "$establishment:$count-";
-            }
-            $quiz->update(['participation_stats' => $str]);
+            if ($count > 0)
+                $str .= "$establishment:$count-";
         }
+
+        $quiz->update(['participation_stats' => $str]);
+
+        return back();
+    }
+
+    public function MarkAsDone(Request $request, Quiz $quiz): RedirectResponse
+    {
+        $quiz->update(['done' => $request->new_state === "done"]);
 
         return back();
     }

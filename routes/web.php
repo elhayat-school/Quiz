@@ -12,7 +12,8 @@ require __DIR__ . '/auth.php';
 
 Route::middleware('auth', 'is_admin')->group(function () {
 
-    Route::resource('/quizzes', QuizController::class)->except('show', 'edit');
+    Route::resource('quizzes', QuizController::class)->except('show', 'edit');
+    Route::match(['put', 'patch'], 'quizzes/{quiz}/done', [QuizController::class, 'MarkAsDone'])->name('quizzes.done_state');
 });
 
 Route::middleware('auth')->group(function () {

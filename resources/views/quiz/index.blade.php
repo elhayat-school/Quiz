@@ -26,36 +26,24 @@
             <tr>
 
                 <td class="p-1 border border-gray-500 text-center">
-                    <div>
-                        QUIZ n°{{ $quiz->id }}
-                        @if (!$quiz->done && !$quiz->participation_stats)
-                            <form action="{{ route('quizzes.update', ['quiz' => $quiz->id]) }}" method="post">
-                                @csrf
-                                @method('PUT')
+                    QUIZ n°{{ $quiz->id }} <br>
 
-                                <input type="hidden" name="new_state" value="done">
+                    @if (!$quiz->participation_stats)
+                        <form action="{{ route('quizzes.done_state', ['quiz' => $quiz->id]) }}" method="post">
+                            @csrf
+                            @method('PUT')
 
-                                <button type="submit"
-                                    class="bg-orange-700 hover:bg-orange-600 m-1 p-2 font-bold rounded-full border border-orange-700">
-                                    Mark as done
-                                </button>
-                            </form>
-                        @elseif ($quiz->done && !$quiz->participation_stats)
-                            <form action="{{ route('quizzes.update', ['quiz' => $quiz->id]) }}" method="post">
-                                @csrf
-                                @method('PUT')
+                            <input type="hidden" name="new_state" value="{{ !$quiz->done ? 'done' : 'not-done' }}">
 
-                                <input type="hidden" name="new_state" value="not-done">
+                            <button type="submit"
+                                class="m-1 p-2 font-bold rounded-full border {{ !$quiz->done? 'bg-orange-700 hover:bg-orange-600 border-orange-700': 'bg-blue-700 hover:bg-blue-600 border-blue-700' }}">
+                                {{ !$quiz->done ? 'Mark as done' : 'Mark as not done' }}
+                            </button>
 
-                                <button type="submit"
-                                    class="bg-blue-700 hover:bg-blue-600 m-1 p-2 font-bold rounded-full border border-blue-700">
-                                    Mark as not done
-                                </button>
-                            </form>
-                        @elseif ($quiz->done && $quiz->participation_stats)
-                            DONE
-                        @endif
-                    </div>
+                        </form>
+                    @elseif ($quiz->done && $quiz->participation_stats)
+                        DONE
+                    @endif
                 </td>
 
                 <td class="p-1 border border-gray-500 text-center">
