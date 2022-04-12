@@ -12,8 +12,14 @@ require __DIR__ . '/auth.php';
 
 Route::middleware('auth', 'is_admin')->group(function () {
 
-    Route::resource('quizzes', QuizController::class)->except('show', 'edit');
-    Route::match(['put', 'patch'], 'quizzes/{quiz}/done', [QuizController::class, 'MarkAsDone'])->name('quizzes.done_state');
+    Route::resource('quizzes', QuizController::class)->except('show', 'edit', 'update');
+
+    Route::controller(QuizController::class)
+        ->prefix('quizzes/{quiz}')
+        ->group(function () {
+            Route::match(['put', 'patch'], 'done', 'markAsDone')->name('quizzes.done_state');
+            Route::match(['put', 'patch'], 'participation-stats', 'cacheParticipationStats')->name('quizzes.cache_participation_stats');
+        });
 });
 
 Route::middleware('auth')->group(function () {

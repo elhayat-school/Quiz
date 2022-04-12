@@ -59,27 +59,28 @@
                 <x-tables.questions-cells :questions="$quiz->questions" />
 
                 <td class="p-1 border border-gray-500 text-center">
-                    @if ($quiz->done && !$quiz->participation_stats)
-                        <form action="{{ route('quizzes.update', ['quiz' => $quiz->id]) }}" method="post">
-                            @csrf
-                            @method('PUT')
+                    @if ($quiz->done)
+                        @if (!$quiz->participation_stats)
+                            <form action="{{ route('quizzes.cache_participation_stats', ['quiz' => $quiz->id]) }}"
+                                method="post">
+                                @csrf
+                                @method('PUT')
 
-                            <button type="submit"
-                                class="bg-blue-700 hover:bg-blue-600 m-1 p-2 font-bold rounded-full border border-blue-700">
-                                Caluclate stats
-                            </button>
-                        </form>
-                    @endif
-
-                    @if ($quiz->participation_stats)
-                        <ul>
-                            @foreach (explode('-', $quiz->participation_stats) as $stat)
-                                {{-- USE ACCESSOR --}}
-                                <li>
-                                    {{ $stat }}
-                                </li>
-                            @endforeach
-                        </ul>
+                                <button type="submit"
+                                    class="bg-blue-700 hover:bg-blue-600 m-1 p-2 font-bold rounded-full border border-blue-700">
+                                    Caluclate stats
+                                </button>
+                            </form>
+                        @elseif ($quiz->participation_stats)
+                            <ul>
+                                @foreach (explode('-', $quiz->participation_stats) as $stat)
+                                    {{-- USE ACCESSOR --}}
+                                    <li>
+                                        {{ $stat }}
+                                    </li>
+                                @endforeach
+                            </ul>
+                        @endif
                     @endif
                 </td>
             </tr>

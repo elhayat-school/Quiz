@@ -51,7 +51,7 @@ class QuizController extends Controller
         return to_route('quizzes.index');
     }
 
-    public function update(Request $request, Quiz $quiz): RedirectResponse
+    public function cacheParticipationStats(Quiz $quiz): RedirectResponse
     {
         $establishments = config('quiz.ESTABLISHMENTS');
         // $establishments = DB::table('users')
@@ -79,7 +79,7 @@ class QuizController extends Controller
         return back();
     }
 
-    public function MarkAsDone(Request $request, Quiz $quiz): RedirectResponse
+    public function markAsDone(Request $request, Quiz $quiz): RedirectResponse
     {
         $quiz->update(['done' => $request->new_state === "done"]);
 
