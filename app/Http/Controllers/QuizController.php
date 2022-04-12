@@ -72,9 +72,11 @@ class QuizController extends Controller
                     ->select(DB::raw('COUNT(DISTINCT(answers.user_id)) as establishment_player_count'))
                     ->where('questions.quiz_id', $quiz->id)
                     ->where('users.establishment', $establishment)
-                    ->pluck('establishment_player_count')[0];
+                    ->pluck('establishment_player_count')
+                    ->first();
 
-                $str .= "$establishment:$count-";
+                if ($count > 0)
+                    $str .= "$establishment:$count-";
             }
             $quiz->update(['participation_stats' => $str]);
         }
