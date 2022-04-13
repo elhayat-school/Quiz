@@ -32,20 +32,7 @@ class QuizController extends Controller
         DB::transaction(function () use ($request) {
             $quiz = Quiz::create(['start_at' => $request->start_at, 'duration' => $request->duration]);
             $questions = $quiz->questions()->createMany($request->questions);
-
-            $choices = [];
-            foreach ($request->questions as $i => $question_data) {
-                foreach ($question_data['choices'] as $j => $choice_content) {
-                    $choices[] = [
-                        'question_id' => $questions[$i - 1]->id, // Append foreign id
-                        'content' => $choice_content,
-                        'choice_number' => "$j",
-                        'is_correct' => "$j" === $question_data['is_correct'],
-                        'created_at' => date('Y-m-d H:i:s'),
-                    ];
-                }
-            }
-            Choice::insert($choices);
+            $this->insertChoices($questions, $request->questions);
         });
 
         return to_route('quizzes.index');
@@ -61,14 +48,7 @@ class QuizController extends Controller
 
         $str = '';
         foreach ($establishments as $establishment) {
-            $count = Answer::query()
-                ->join('users', 'users.id', '=', 'user_id')
-                ->join('questions', 'questions.id', '=', 'question_id')
-                ->select(DB::raw('COUNT(DISTINCT(answers.user_id)) as establishment_player_count'))
-                ->where('questions.quiz_id', $quiz->id)
-                ->where('users.establishment', $establishment)
-                ->pluck('establishment_player_count')
-                ->first();
+            $count = Answer::getEstablishmentParticipation($quiz->id, $establishment);
 
             if ($count > 0)
                 $str .= "$establishment:$count-";
@@ -92,5 +72,25 @@ class QuizController extends Controller
     public function destroy(Quiz $quiz)
     {
         //
+    }
+
+    /* ------------------------------------------------- */
+    //      HELPERS
+    /* ------------------------------------------------- */
+    private function insertChoices($questions, $reqQuestions)
+    {
+        $choices = [];
+        foreach ($reqQuestions as $i => $question_data) {
+            foreach ($question_data['choices'] as $j => $choice_content) {
+                $choices[] = [
+                    'question_id' => $questions[$i - 1]->id, // Append foreign id
+                    'content' => $choice_content,
+                    'choice_number' => "$j",
+                    'is_correct' => "$j" === $question_data['is_correct'],
+                    'created_at' => date('Y-m-d H:i:s'),
+                ];
+            }
+        }
+        Choice::insert($choices);
     }
 }
