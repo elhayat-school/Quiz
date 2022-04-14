@@ -24,12 +24,16 @@
             @endif
 
             <tr class="{{ $result->user_id === auth()->user()->id ? 'bg-green-100 bg-opacity-20' : '' }}">
-                <td class="border p-2 text-center">{{ $rank + 1 }}</td>
-                <td class="border p-2 text-center">{{ $result->user->name }}</td>
-                <td class="border p-2 text-center">{{ $result->count_correct_answers }} </td>
-                <td class="border p-2 text-center">{{ $result->sum_elapsed_seconds }} ثانية</td>
+                <td class="border p-2 text-center"> {{ $rank + 1 }} </td>
+                <td class="border p-2 text-center"> {{ $result->user->name }} </td>
+                <td class="border p-2 text-center"> {{ $result->count_correct_answers }} </td>
+                <td class="border p-2 text-center"> {{ $result->sum_elapsed_seconds }} ثانية</td>
             </tr>
         @endforeach
     </tbody>
 
 </table>
+
+<div class="text-gray-200 p-2 text-center">
+    عدم ظهور اسمك يعني عدم مشاركتك أو أن اجاباتك لم تكن صحيحة
+</div>
