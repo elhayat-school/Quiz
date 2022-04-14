@@ -13,19 +13,16 @@ use Illuminate\Support\Facades\DB;
 
 class QuizController extends Controller
 {
-
     public function index(): View|Factory
     {
         return view("quiz.index")
             ->with('quizzes', Quiz::with('questions.choices')->oldest('start_at')->get());
     }
 
-
     public function create(): View|Factory
     {
         return view('quiz.create');
     }
-
 
     public function store(Request $request): RedirectResponse
     {
@@ -64,14 +61,6 @@ class QuizController extends Controller
         $quiz->update(['done' => $request->new_state === "done"]);
 
         return back();
-    }
-
-    /**
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Quiz $quiz)
-    {
-        //
     }
 
     /* ------------------------------------------------- */

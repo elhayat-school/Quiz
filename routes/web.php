@@ -12,7 +12,7 @@ require __DIR__ . '/auth.php';
 
 Route::middleware('auth', 'is_admin')->group(function () {
 
-    Route::resource('quizzes', QuizController::class)->except('show', 'edit', 'update');
+    Route::resource('quizzes', QuizController::class)->only('index', 'create', 'store');
 
     Route::controller(QuizController::class)
         ->prefix('quizzes/{quiz}')
