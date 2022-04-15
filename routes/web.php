@@ -33,7 +33,7 @@ Route::middleware('auth')->group(function () {
     Route::controller(RankingController::class)
         ->prefix('results')
         ->group(function () {
-            Route::get('/current_quiz', 'currentQuizResults')->name('ranking.current_quiz');
+            Route::get('/current-quiz', 'currentQuizResults')->name('ranking.current_quiz');
             Route::get('/global', 'globalResults')->name('ranking.global')
                 ->middleware('is_admin'); // REMOVE LATER
         });
