@@ -5,7 +5,7 @@ namespace App\Services;
 class QuizExamples
 {
 
-    public function example1($seconds_offset = 15)
+    public function example1(int $seconds_offset = 15): array
     {
         return [
             'start_at' => date('Y-m-d H:i:s', time() + $seconds_offset),
