@@ -3,13 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Answer;
-use App\Models\Choice;
 use App\Models\Quiz;
+use App\Services\FullQuizInsertion;
 use Illuminate\Contracts\View\View;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\DB;
 
 class QuizController extends Controller
 {
@@ -26,11 +25,9 @@ class QuizController extends Controller
 
     public function store(Request $request): RedirectResponse
     {
-        DB::transaction(function () use ($request) {
-            $quiz = Quiz::create(['start_at' => $request->start_at, 'duration' => $request->duration]);
-            $questions = $quiz->questions()->createMany($request->questions);
-            $this->insertChoices($questions, $request->questions);
-        });
+        $ins = new FullQuizInsertion;
+
+        $ins->insert($request->all());
 
         return to_route('quizzes.index');
     }
@@ -61,25 +58,5 @@ class QuizController extends Controller
         $quiz->update(['done' => $request->new_state === "done"]);
 
         return back();
-    }
-
-    /* ------------------------------------------------- */
-    //      HELPERS
-    /* ------------------------------------------------- */
-    private function insertChoices($questions, $reqQuestions)
-    {
-        $choices = [];
-        foreach ($reqQuestions as $i => $question_data) {
-            foreach ($question_data['choices'] as $j => $choice_content) {
-                $choices[] = [
-                    'question_id' => $questions[$i - 1]->id, // Append foreign id
-                    'content' => $choice_content,
-                    'choice_number' => "$j",
-                    'is_correct' => "$j" === $question_data['is_correct'],
-                    'created_at' => date('Y-m-d H:i:s'),
-                ];
-            }
-        }
-        Choice::insert($choices);
     }
 }
