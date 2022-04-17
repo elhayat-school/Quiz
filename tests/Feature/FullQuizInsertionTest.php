@@ -15,7 +15,7 @@ class FullQuizInsertionTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_post_new_quiz(): void
+    public function test_new_quiz_post_request(): void
     {
         $user = User::factory()->create();
         $user->role = 'admin';
@@ -30,7 +30,7 @@ class FullQuizInsertionTest extends TestCase
             ->assertRedirect(route('quizzes.index'));
     }
 
-    public function test_correct_insertion(): void
+    public function test_accurate_insertion(): void
     {
         $ins = new FullQuizInsertion;
         $quiz_seed = new FullQuizSeed;

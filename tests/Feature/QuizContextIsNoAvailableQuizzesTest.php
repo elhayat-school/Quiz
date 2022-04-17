@@ -8,7 +8,7 @@ use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Auth;
 use Tests\TestCase;
 
-class NoAvailableQuizzesTest extends TestCase
+class QuizContextIsNoAvailableQuizzesTest extends TestCase
 {
     use RefreshDatabase;
 
