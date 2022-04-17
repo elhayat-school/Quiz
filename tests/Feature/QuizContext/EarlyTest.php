@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature;
+namespace Tests\Feature\QuizContext;
 
 use App\Models\User;
 use App\Services\FullQuizInsertion;
@@ -10,7 +10,7 @@ use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Auth;
 use Tests\TestCase;
 
-class QuizContextIsEarlyTest extends TestCase
+class EarlyTest extends TestCase
 {
 
     use RefreshDatabase;
