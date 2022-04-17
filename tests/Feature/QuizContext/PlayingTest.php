@@ -10,14 +10,14 @@ use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Auth;
 use Tests\TestCase;
 
-class EarlyTest extends TestCase
+class PlayingTest extends TestCase
 {
 
     use RefreshDatabase;
 
-    public function test_sees_early_message_and_wait_time(): void
+    public function test_sees_first_question(): void
     {
-        $wait = 10;
+        $wait = -2;
 
         $user = User::factory()->create();
         Auth::login($user);
@@ -28,10 +28,12 @@ class EarlyTest extends TestCase
 
         $ins->insert($quiz_example1);
 
+        $question1 = $quiz_example1['questions'][0];
+
         $this->get(route('playground'))
-            ->assertSeeInOrder([
-                'لم تبدأ المسابقة بعد، يرجى الإنتظار أو العودة في',
-                // "data-countdown-duration=\"$wait\"", // CAN'T RELY ON THE PRECISION OF THIS PART
-            ], false);
+            ->assertSee($question1['content'])
+            ->assertSee($question1['choices'][1])
+            ->assertSee($question1['choices'][2])
+            ->assertSee($question1['choices'][3]);
     }
 }
