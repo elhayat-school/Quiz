@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-class QuizExamples
+class FullQuizSeed
 {
 
     public function example1(int $seconds_offset = 15): array

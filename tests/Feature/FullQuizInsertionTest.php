@@ -5,7 +5,7 @@ namespace Tests\Feature;
 use App\Models\User;
 use App\Services\CurrentQuiz;
 use App\Services\FullQuizInsertion;
-use App\Services\QuizExamples;
+use App\Services\FullQuizSeed;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Auth;
@@ -21,9 +21,9 @@ class FullQuizInsertionTest extends TestCase
         $user->role = 'admin';
         Auth::login($user);
 
-        $quiz_example = new QuizExamples;
+        $quiz_seed = new FullQuizSeed;
 
-        $response = $this->post(route('quizzes.store'), $quiz_example->example1())
+        $response = $this->post(route('quizzes.store'), $quiz_seed->example1())
             ->assertSessionHasNoErrors()
             // ->assertViewHasAll()
             // ->assertValid()
@@ -33,15 +33,13 @@ class FullQuizInsertionTest extends TestCase
     public function test_correct_insertion(): void
     {
         $ins = new FullQuizInsertion;
-        $quiz_example = new QuizExamples;
-        $quiz_example1 = $quiz_example->example1();
+        $quiz_seed = new FullQuizSeed;
+        $quiz_example1 = $quiz_seed->example1();
 
         $ins->insert($quiz_example1);
 
         $currentQuiz = new CurrentQuiz;
         $current_quiz = $currentQuiz();
-
-        dump($current_quiz->toArray());
 
         $this->assertTrue(
             $current_quiz->done === 0,

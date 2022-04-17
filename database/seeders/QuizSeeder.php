@@ -3,7 +3,7 @@
 namespace Database\Seeders;
 
 use App\Services\FullQuizInsertion;
-use App\Services\QuizExamples;
+use App\Services\FullQuizSeed;
 use Illuminate\Database\Seeder;
 
 class QuizSeeder extends Seeder
@@ -13,8 +13,8 @@ class QuizSeeder extends Seeder
     {
         $insertor = new FullQuizInsertion;
 
-        $examples = new QuizExamples;
+        $quiz_seed = new FullQuizSeed;
 
-        $insertor->insert($examples->example1());
+        $insertor->insert($quiz_seed->example1());
     }
 }
