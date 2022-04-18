@@ -30,10 +30,10 @@ class PlayingTest extends TestCase
 
         $question1 = $quiz_example1['questions'][0];
 
-        $this->get(route('playground'))
-            ->assertSee($question1['content'])
-            ->assertSee($question1['choices'][1])
-            ->assertSee($question1['choices'][2])
-            ->assertSee($question1['choices'][3]);
+        $response = $this->get(route('playground'))
+            ->assertSee($question1['content']);
+        foreach ($question1['choices'] as $choice) {
+            $response->assertSee($choice);
+        }
     }
 }

@@ -41,13 +41,15 @@ class FullQuizInsertionTest extends TestCase
         $currentQuiz = new CurrentQuiz;
         $current_quiz = $currentQuiz();
 
-        $this->assertTrue(
-            $current_quiz->done === 0,
+        $this->assertEquals(
+            0,
+            $current_quiz->done,
             'quiz shouldn\'t be done'
         );
 
-        $this->assertTrue(
-            $current_quiz->duration === $quiz_example1['duration'],
+        $this->assertEquals(
+            $quiz_example1['duration'],
+            $current_quiz->duration,
             'incorrect quiz duration'
         );
 
@@ -57,8 +59,9 @@ class FullQuizInsertionTest extends TestCase
             $src_question_content = $src_question['content'];
             $inserted_question_content = $question->content;
 
-            $this->assertTrue(
-                $inserted_question_content === $src_question_content,
+            $this->assertEquals(
+                $src_question_content,
+                $inserted_question_content,
                 "Questions ORDER DOESN'T MATCH: \n\t" .
                     "DB: $inserted_question_content \n\t" .
                     "AND \n\t" .
@@ -70,16 +73,19 @@ class FullQuizInsertionTest extends TestCase
                 $src_choice_content = $src_question['choices'][$j + 1];
                 $inserted_choice_content = $choice->content;
 
-                $this->assertTrue(
-                    $inserted_choice_content === $src_choice_content,
+                $this->assertEquals(
+                    $src_choice_content,
+                    $inserted_choice_content,
                     "Choices ORDER DOESN'T MATCH: \n\t" .
                         "DB: $inserted_choice_content \n\t" .
                         "AND \n\t" .
                         "SRC: $src_choice_content \n\t"
                 );
 
-                $this->assertTrue(
-                    ($src_question['is_correct'] == $j + 1) == $choice->is_correct
+                $this->assertEquals(
+                    ($src_question['is_correct'] == $j + 1),
+                    $choice->is_correct,
+                    "Incorrect choice is marked as correct"
                 );
             }
         }
