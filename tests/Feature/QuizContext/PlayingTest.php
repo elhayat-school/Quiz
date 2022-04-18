@@ -12,64 +12,30 @@ use Tests\TestCase;
 
 class PlayingTest extends TestCase
 {
-
     use RefreshDatabase;
 
     public function test_sees_first_question(): void
     {
-        $question_index = 0;
-
-        // Introduce multiplication
-        $wait = -2;
-
-        $user = User::factory()->create();
-        Auth::login($user);
-
-        $quiz_example_1 = FullQuizSeed::seed($wait);
-
-        $this->recordAnswers($question_index);
-
-        $this->seesQuestionAndItsChoices($quiz_example_1['questions'][$question_index]);
+        $this->sees_question(0);
     }
 
     public function test_sees_second_question(): void
     {
-        $question_index = 1;
-
-        // Introduce multiplication
-        $wait = -2;
-
-        $user = User::factory()->create();
-        Auth::login($user);
-
-        $quiz_example_1 = FullQuizSeed::seed($wait);
-
-        $this->recordAnswers($question_index);
-
-        $this->seesQuestionAndItsChoices($quiz_example_1['questions'][$question_index]);
+        $this->sees_question(1);
     }
 
     public function test_sees_third_question(): void
     {
-        $question_index = 2;
-
-        // Introduce multiplication
-        $wait = -2;
-
-        $user = User::factory()->create();
-        Auth::login($user);
-
-        $quiz_example_1 = FullQuizSeed::seed($wait);
-
-        $this->recordAnswers($question_index);
-
-        $this->seesQuestionAndItsChoices($quiz_example_1['questions'][$question_index]);
+        $this->sees_question(2);
     }
 
     public function test_sees_forth_question(): void
     {
-        $question_index = 3;
+        $this->sees_question(3);
+    }
 
+    private function sees_question(int $question_index): void
+    {
         // Introduce multiplication
         $wait = -2;
 
@@ -94,23 +60,32 @@ class PlayingTest extends TestCase
 
     private function recordAnswers(int $last_answer_index = 0): void
     {
-        if ($last_answer_index === 0)
-            return;
+        // echo "================== $last_answer_index";
 
         $questions = Question::all();
 
         if ($last_answer_index > $questions->count())
             throw new \Exception("Cannot record $last_answer_index answers for the quiz", 1);
 
-        for ($i = 0; $i < $last_answer_index; $i++) {
+        for ($i = 0; $i <= $last_answer_index; $i++) {
+            if ($i < $last_answer_index) {
 
-            $ans = $questions[$i]->answers()->create([
-                'user_id' => auth()->user()->id,
-                'choice_number' => rand(1, 4),
-                // Introduce multiplication
-                'served_at' => date('Y-m-d H:i:s',  time() - config('quiz.QUESTION_DEFAULT_DURATION') - 2),
-                'received_at' => date('Y-m-d H:i:s',  time() - 5),
-            ]);
+                $ans = $questions[$i]->answers()->create([
+                    'user_id' => auth()->user()->id,
+                    'choice_number' => rand(1, 4),
+                    // Introduce multiplication
+                    'served_at' => date('Y-m-d H:i:s',  time() - config('quiz.QUESTION_DEFAULT_DURATION') - 2),
+                    'received_at' => date('Y-m-d H:i:s',  time() - 5),
+                ]);
+                // dump($ans->toArray());
+            } else {
+                $ans = $questions[$i]->answers()->create([
+                    'user_id' => auth()->user()->id,
+                    // Introduce multiplication
+                    'served_at' => date('Y-m-d H:i:s',  time() - 2),
+                ]);
+                // dump($ans->toArray());
+            }
         }
     }
 }
