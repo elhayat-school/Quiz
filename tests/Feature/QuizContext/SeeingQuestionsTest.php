@@ -10,7 +10,7 @@ use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Auth;
 use Tests\TestCase;
 
-class PlayingTest extends TestCase
+class SeeingQuestionsTest extends TestCase
 {
     use RefreshDatabase;
 
