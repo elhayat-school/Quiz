@@ -5,6 +5,17 @@ namespace App\Services;
 class FullQuizSeed
 {
 
+    public static function seed(int $seconds_offset = 15)
+    {
+        $ins = new FullQuizInsertion;
+        $quiz_seed = new FullQuizSeed;
+        $quiz_example1 = $quiz_seed->example1($seconds_offset);
+
+        $ins->insert($quiz_example1);
+
+        return $quiz_example1;
+    }
+
     public function example1(int $seconds_offset = 15): array
     {
         return [
