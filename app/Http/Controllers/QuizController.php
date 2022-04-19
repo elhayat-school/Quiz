@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreQuizRequest;
 use App\Models\Answer;
 use App\Models\Quiz;
 use App\Services\FullQuizInsertion;
@@ -23,7 +24,7 @@ class QuizController extends Controller
         return view('quiz.create');
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(StoreQuizRequest $request): RedirectResponse
     {
         $ins = new FullQuizInsertion;
 
