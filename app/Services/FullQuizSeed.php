@@ -8,7 +8,7 @@ class FullQuizSeed
     public static function seed(int $seconds_offset = 15)
     {
         $ins = new FullQuizInsertion;
-        $quiz_seed = new FullQuizSeed;
+        $quiz_seed = new self;
         $quiz_example1 = $quiz_seed->example1($seconds_offset);
 
         $ins->insert($quiz_example1);

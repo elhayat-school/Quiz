@@ -32,7 +32,7 @@ class FullQuizInsertion
 
             foreach ($question_data['choices'] as $j => $choice_content) {
                 $choices[] = [
-                    'question_id' => $questions[$i]['id'],
+                    'question_id' => $question_data['id'],
                     'content' => $choice_content,
                     'choice_number' => "$j",
                     'is_correct' => "$j" === $question_data['is_correct'],
