@@ -34,9 +34,9 @@ class FullQuizInsertionTest extends TestCase
     {
         $ins = new FullQuizInsertion;
         $quiz_seed = new FullQuizSeed;
-        $quiz_example1 = $quiz_seed->example1();
+        $quiz_example_1 = $quiz_seed->example1();
 
-        $ins->insert($quiz_example1);
+        $ins->insert($quiz_example_1);
 
         $currentQuiz = new CurrentQuiz;
         $current_quiz = $currentQuiz();
@@ -48,13 +48,13 @@ class FullQuizInsertionTest extends TestCase
         );
 
         $this->assertEquals(
-            $quiz_example1['duration'],
+            quiz_duration(count($quiz_example_1['questions'])),
             $current_quiz->duration,
             'incorrect quiz duration'
         );
 
         foreach ($current_quiz->questions as $i => $question) {
-            $src_question = $quiz_example1['questions'][$i];
+            $src_question = $quiz_example_1['questions'][$i];
 
             $src_question_content = $src_question['content'];
             $inserted_question_content = $question->content;

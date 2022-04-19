@@ -19,8 +19,6 @@
 
             <input type="datetime-local" name="start_at" required
                 class="bg-slate-700 text-white p-2 m-3 rounded-md border border-slate-500">
-            <input type="number" min="0" name="duration" required
-                class="bg-slate-700 text-white w-16 p-2 m-3 rounded-md border border-slate-500">
 
             <hr>
 

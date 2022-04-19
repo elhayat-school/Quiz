@@ -18,7 +18,7 @@ return new class extends Migration
             $table->foreignId('quiz_id')->constrained('quizzes')->onDelete('cascade');
             //
             $table->string('content');
-            $table->unsignedSmallInteger('duration')->default(config('quiz.QUESTION_DEFAULT_DURATION'));
+            $table->unsignedSmallInteger('duration');
             //
             $table->timestamps();
         });

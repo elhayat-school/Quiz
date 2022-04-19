@@ -12,11 +12,17 @@ class FullQuizInsertion
     public function insert($data)
     {
         DB::transaction(function () use ($data) {
-            $quiz = Quiz::create(['start_at' => $data['start_at'], 'duration' => $data['duration']]);
+            $quiz = Quiz::create([
+                'start_at' => $data['start_at'],
+                'duration' => quiz_duration(count($data['questions']))
+            ]);
 
             foreach ($data['questions'] as $i => $question) {
 
-                $inserted_question = $quiz->questions()->create(['content' => $question['content']]);
+                $inserted_question = $quiz->questions()->create([
+                    'content' => $question['content'],
+                    'duration' => config('quiz.QUESTION_DEFAULT_DURATION')
+                ]);
 
                 $data['questions'][$i]['id'] = $inserted_question->id;
             }
@@ -28,7 +34,7 @@ class FullQuizInsertion
     private function insertChoices($questions)
     {
         $choices = [];
-        foreach ($questions as $i => $question_data) {
+        foreach ($questions as $question_data) {
 
             foreach ($question_data['choices'] as $j => $choice_content) {
                 $choices[] = [

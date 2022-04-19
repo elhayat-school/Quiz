@@ -20,7 +20,6 @@ class StoreQuizRequest extends FormRequest
                 // 'date_format:Y-m-d H:i:s'
                 // 'date_format:Y-m-d H:i'
             ],
-            'duration' => ['required', 'integer'],
             'questions.*.content' => ['required', 'min:1', 'max:100'],
             'questions.*.is_correct' => ['required', 'integer', 'between:1,4'],
             'questions.*.choices.*' => ['nullable', 'min:1', 'max:100'],

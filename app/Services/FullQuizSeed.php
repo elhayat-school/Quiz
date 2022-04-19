@@ -20,7 +20,6 @@ class FullQuizSeed
     {
         return [
             'start_at' => date('Y-m-d H:i:s', time() + $seconds_offset),
-            'duration' => 100,
             'questions' => [
                 [
                     'content' => 'في أي عام فُرِض الصيام على المسلمين',
