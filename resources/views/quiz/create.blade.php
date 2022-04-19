@@ -16,7 +16,6 @@
         <div class="w-max m-auto">
 
             @csrf
-            {{ _p_field() }}
 
             <input type="datetime-local" name="start_at" required
                 class="bg-slate-700 text-white p-2 m-3 rounded-md border border-slate-500">
@@ -25,7 +24,7 @@
 
             <hr>
 
-            @for ($i = 1; $i < 5; $i++)
+            @for ($i = 0; $i < 4; $i++)
                 <div class="w-max p-1 flex items-baseline">
                     <div class="flex flex-col">
                         <label for="questions[{{ $i }}][content]" class="my-1 mx-2 text-2xl font-bold">
