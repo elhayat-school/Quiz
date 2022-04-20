@@ -10,8 +10,10 @@ Route::Get('/', fn () => to_route('login'));
 
 require __DIR__ . '/auth.php';
 
+// ADMIN ROUTES
 Route::middleware('auth', 'is_admin')->group(function () {
 
+    // QUIZ RESOURCE
     Route::resource('quizzes', QuizController::class)->only('index', 'create', 'store');
 
     Route::controller(QuizController::class)
@@ -22,14 +24,17 @@ Route::middleware('auth', 'is_admin')->group(function () {
         });
 });
 
+// AUTH ROUTES
 Route::middleware('auth')->group(function () {
 
+    // PLAYGROUND
     Route::prefix('play')
         ->group(function () {
             Route::get('', [PlaygroundController::class, 'getQuizContext'])->name('playground');
             Route::post('answer', [AnswerController::class, 'recordChoice'])->name('answer');
         });
 
+    // RANKING
     Route::controller(RankingController::class)
         ->prefix('results')
         ->group(function () {
