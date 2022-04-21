@@ -48,13 +48,20 @@ class QuizContextData
             return;
         }
 
+        $answers = $this->currentQuiz->answers()
+            ->where('user_id', auth()->user()->id)
+            ->get();
+
         // * ...++++++++++(start_at)---(start_at + duration)----------...
         $this->secondsToQuizStart = strtotime($this->currentQuiz->start_at) - $this->currentTimestamp; // ! Timezone
 
         if ($this->secondsToQuizStart > 0) {
             $this->context = self::EARLY;
             return;
-        } elseif ($this->secondsToQuizStart < -$this->currentQuiz->duration) {
+        } elseif (
+            $this->secondsToQuizStart < -$this->currentQuiz->duration
+            && $this->firstTimeRequestingQuestion($answers)
+        ) {
             $this->context = self::LATE;
             return;
         }
@@ -64,16 +71,12 @@ class QuizContextData
         /* ------------------------------------------------- */
         // secondsToQuizStart = [-QUIZ_DURATION - 0] (NEGATIVE INT) -> secondsSinceQuizStart (abs)
 
-        $answers = $this->currentQuiz->answers()
-            ->where('user_id', auth()->user()->id)
-            ->get();
-
         if (
             !config('quiz.QUIZ_ALLOW_DELAY') &&
             $this->firstTimeRequestingQuestion($answers) &&
             ($this->secondsSinceQuizStart() > config('quiz.QUIZ_MAX_DELAY'))
         ) {
-            $this->context = self::LATE;
+            $this->context = self::ENDED;
             return;
         }
 
