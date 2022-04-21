@@ -614,6 +614,12 @@ select {
 .top-0 {
   top: 0px;
 }
+.left-0 {
+  left: 0px;
+}
+.bottom-0 {
+  bottom: 0px;
+}
 .z-0 {
   z-index: 0;
 }
@@ -810,6 +816,12 @@ select {
 }
 .w-auto {
   width: auto;
+}
+.w-96 {
+  width: 24rem;
+}
+.w-12 {
+  width: 3rem;
 }
 .max-w-7xl {
   max-width: 80rem;

@@ -19,6 +19,9 @@
 </head>
 
 <body class="font-sans antialiased">
+
+    <x-nav.hamburger-menu />
+
     <div class="min-h-screen bg-slate-600">
         <!-- Page Content -->
         <main>
