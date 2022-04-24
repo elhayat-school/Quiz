@@ -62,7 +62,7 @@ class QuizContextData
             $this->secondsToQuizStart < -$this->currentQuiz->duration
             && $this->firstTimeRequestingQuestion($answers)
         ) {
-            $this->context = self::LATE;
+            $this->context = self::ENDED;
             return;
         }
 
@@ -76,7 +76,7 @@ class QuizContextData
             $this->firstTimeRequestingQuestion($answers) &&
             ($this->secondsSinceQuizStart() > config('quiz.QUIZ_MAX_DELAY'))
         ) {
-            $this->context = self::ENDED;
+            $this->context = self::LATE;
             return;
         }
 
