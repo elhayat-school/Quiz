@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\QuizContext;
+namespace Tests\Feature\Http\Controllers\PlaygroundController;
 
 use App\Models\User;
 use App\Services\FullQuizInsertion;
@@ -10,14 +10,14 @@ use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Auth;
 use Tests\TestCase;
 
-class EarlyTest extends TestCase
+class LateTest extends TestCase
 {
 
     use RefreshDatabase;
 
-    public function test_sees_early_message_and_wait_time(): void
+    public function test_sees_late_message_and_ranking_button(): void
     {
-        $wait = 10;
+        $wait = -config('quiz.QUIZ_MAX_DELAY') - 1;
 
         $user = User::factory()->create();
         Auth::login($user);
@@ -29,9 +29,9 @@ class EarlyTest extends TestCase
         $ins->insert($quiz_example1);
 
         $this->get(route('playground'))
-            ->assertSeeInOrder([
-                'لم تبدأ المسابقة بعد، يرجى الإنتظار أو العودة في',
-                // "data-countdown-duration=\"$wait\"", // CAN'T RELY ON THE PRECISION OF THIS PART
-            ], false);
+            ->assertSee([
+                'انت متأخر',
+                'انظر إلى النتائج'
+            ]);
     }
 }

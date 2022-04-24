@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature;
+namespace Tests\Feature\Services;
 
 use App\Models\User;
 use App\Services\CurrentQuiz;
@@ -14,21 +14,6 @@ use Tests\TestCase;
 class FullQuizInsertionTest extends TestCase
 {
     use RefreshDatabase;
-
-    public function test_new_quiz_post_request(): void
-    {
-        $user = User::factory()->create();
-        $user->role = 'admin';
-        Auth::login($user);
-
-        $quiz_seed = new FullQuizSeed;
-
-        $response = $this->post(route('quizzes.store'), $quiz_seed->example1())
-            ->assertSessionHasNoErrors()
-            // ->assertViewHasAll()
-            // ->assertValid()
-            ->assertRedirect(route('quizzes.index'));
-    }
 
     public function test_accurate_insertion(): void
     {

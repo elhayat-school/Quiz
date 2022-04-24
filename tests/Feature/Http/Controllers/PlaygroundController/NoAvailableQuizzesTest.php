@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\QuizContext;
+namespace Tests\Feature\Http\Controllers\PlaygroundController;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
