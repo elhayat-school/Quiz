@@ -41,15 +41,16 @@ class QuizController extends Controller
         //     ->groupBy('establishment')
         //     ->pluck('establishment');
 
-        $str = '';
+        $participation_stats = [];
         foreach ($establishments as $establishment) {
             $count = Answer::getEstablishmentParticipation($quiz->id, $establishment);
 
             if ($count > 0)
-                $str .= "$establishment:$count-";
+                $participation_stats[] = "$establishment:$count";
         }
+        $participation_stats = implode('-', $participation_stats);
 
-        $quiz->update(['participation_stats' => $str]);
+        $quiz->update(['participation_stats' => $participation_stats]);
 
         return back();
     }
