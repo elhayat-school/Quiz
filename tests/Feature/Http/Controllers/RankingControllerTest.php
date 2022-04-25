@@ -33,8 +33,7 @@ class RankingControllerTest extends TestCase
 
     public function test_no_available_quizzes_on_global_ranking_for_admin(): void
     {
-        $user = User::factory()->create();
-        $user->role = 'admin';
+        $user = User::factory()->make(['role' => 'admin']);
         Auth::login($user);
 
         $this->get(route('ranking.global'))

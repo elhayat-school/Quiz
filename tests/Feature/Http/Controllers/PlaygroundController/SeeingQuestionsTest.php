@@ -2,12 +2,13 @@
 
 namespace Tests\Feature\Http\Controllers\PlaygroundController;
 
+use App\Models\Answer;
+use App\Models\Question;
 use App\Models\User;
 use Database\Seeders\FullQuizSeed;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Auth;
-use Tests\Helpers\RecordAnswers;
 use Tests\TestCase;
 
 class SeeingQuestionsTest extends TestCase
@@ -36,15 +37,29 @@ class SeeingQuestionsTest extends TestCase
 
     private function sees_question(int $question_index): void
     {
-        // Introduce multiplication
-        $wait = -2;
-
         $user = User::factory()->create();
         Auth::login($user);
 
-        $quiz_example_1 = FullQuizSeed::seed($wait);
+        $quiz_example_1 = FullQuizSeed::seed();
 
-        RecordAnswers::exec($question_index);
+        $this->travel(2)->seconds();
+
+        $questions = Question::all();
+        for ($i = 0; $i <= $question_index; $i++) {
+
+            if ($i < $question_index)
+                Answer::factory()
+                    ->answered()
+                    ->for(auth()->user())
+                    ->for($questions[$i])
+                    ->create();
+
+            else
+                Answer::factory()
+                    ->for(auth()->user())
+                    ->for($questions[$i])
+                    ->create();
+        }
 
         $this->seesQuestionAndItsChoices($quiz_example_1['questions'][$question_index]);
     }

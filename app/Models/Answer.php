@@ -22,6 +22,11 @@ class Answer extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function question()
+    {
+        return $this->belongsTo(Question::class);
+    }
+
     /* ------------------------------------------------- */
     //      SCOPES
     /* ------------------------------------------------- */
