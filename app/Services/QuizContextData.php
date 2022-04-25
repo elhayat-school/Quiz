@@ -168,7 +168,7 @@ class QuizContextData
             Answer::create([
                 'user_id' => auth()->user()->id,
                 'question_id' => $question->id,
-                'served_at' => date('Y-m-d H:i:s'),
+                'served_at' => date('Y-m-d H:i:s',  $this->currentTimestamp),
             ]);
         }
 
