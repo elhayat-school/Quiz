@@ -11,6 +11,6 @@ class QuizSeeder extends Seeder
 
     public function run(): void
     {
-        FullQuizSeed::seed();
+        FullQuizSeed::seed(15);
     }
 }

@@ -17,16 +17,16 @@ class LateTest extends TestCase
 
     public function test_sees_late_message(): void
     {
-        $wait = -config('quiz.QUIZ_MAX_DELAY') - 1;
-
         $user = User::factory()->create();
         Auth::login($user);
 
         $ins = new FullQuizInsertion;
         $quiz_seed = new FullQuizSeed;
-        $quiz_example1 = $quiz_seed->example1($wait);
+        $quiz_example1 = $quiz_seed->example1();
 
         $ins->insert($quiz_example1);
+
+        $this->travel(config('quiz.QUIZ_MAX_DELAY') + 1)->seconds();
 
         $this->get(route('playground'))
             ->assertSee('انت متأخر')
@@ -35,16 +35,16 @@ class LateTest extends TestCase
 
     public function test_not_sees_late_message_when_ended(): void
     {
-        $wait = -2000;
-
         $user = User::factory()->create();
         Auth::login($user);
 
         $ins = new FullQuizInsertion;
         $quiz_seed = new FullQuizSeed;
-        $quiz_example1 = $quiz_seed->example1($wait);
+        $quiz_example1 = $quiz_seed->example1();
 
         $ins->insert($quiz_example1);
+
+        $this->travel(3)->minutes();
 
         $this->get(route('playground'))
             ->assertDontSee('انت متأخر');

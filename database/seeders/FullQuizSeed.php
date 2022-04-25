@@ -7,7 +7,7 @@ use App\Services\FullQuizInsertion;
 class FullQuizSeed
 {
 
-    public static function seed(int $seconds_offset = 15)
+    public static function seed(int $seconds_offset = 0)
     {
         $ins = new FullQuizInsertion;
         $quiz_seed = new self;
@@ -18,7 +18,7 @@ class FullQuizSeed
         return $quiz_example1;
     }
 
-    public function example1(int $seconds_offset = 15): array
+    public function example1(int $seconds_offset = 0): array
     {
         return [
             'start_at' => date('Y-m-d H:i:s', time() + $seconds_offset),

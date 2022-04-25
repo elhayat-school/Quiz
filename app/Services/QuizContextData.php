@@ -29,7 +29,7 @@ class QuizContextData
 
     public function __construct(CurrentQuiz $currentQuiz)
     {
-        $this->currentTimestamp = time();
+        $this->currentTimestamp = now()->timestamp;
         $this->currentQuiz = $currentQuiz();
 
         $this->setQuizContextData();
