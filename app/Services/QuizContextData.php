@@ -9,19 +9,13 @@ use Illuminate\Support\Collection;
 
 class QuizContextData
 {
-    /**
-     * @var int
-     */
+    /** @var int*/
     public int $currentTimestamp;
 
-    /**
-     * @var Quiz|null
-     */
+    /** @var Quiz|null */
     private $currentQuiz;
 
-    /**
-     * @var int
-     */
+    /** @var int */
     public int $secondsToQuizStart;
 
     const NO_QUIZZES_AVAILABLE = 'NO_QUIZZES_AVAILABLE';

@@ -2,13 +2,11 @@
 
 namespace Tests\Feature\Services;
 
-use App\Models\User;
 use App\Services\CurrentQuiz;
 use App\Services\FullQuizInsertion;
-use App\Services\FullQuizSeed;
+use Database\Seeders\FullQuizSeed;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Support\Facades\Auth;
 use Tests\TestCase;
 
 class FullQuizInsertionTest extends TestCase

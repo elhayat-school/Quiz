@@ -3,11 +3,10 @@
 namespace Tests\Feature\Http\Controllers\PlaygroundController;
 
 use App\Models\User;
-use App\Services\FullQuizSeed;
+use Database\Seeders\FullQuizSeed;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Auth;
-use Tests\Helpers\RecordAnswers;
 use Tests\TestCase;
 
 class EndedTest extends TestCase

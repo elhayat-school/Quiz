@@ -1,6 +1,8 @@
 <?php
 
-namespace App\Services;
+namespace Database\Seeders;
+
+use App\Services\FullQuizInsertion;
 
 class FullQuizSeed
 {
