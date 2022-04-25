@@ -52,7 +52,20 @@ class QuizContextData
         if ($this->secondsToQuizStart > 0) {
             $this->context = self::EARLY;
             return;
-        } elseif (
+        }
+
+        if (
+            $this->secondsToQuizStart < 0 &&
+            $this->secondsToQuizStart > -$this->currentQuiz->duration && // Late only during quiz
+            $this->firstTimeRequestingQuestion($answers) &&
+            !config('quiz.QUIZ_ALLOW_DELAY') &&
+            ($this->secondsSinceQuizStart() > config('quiz.QUIZ_MAX_DELAY'))
+        ) {
+            $this->context = self::LATE;
+            return;
+        }
+
+        if (
             $this->secondsToQuizStart < -$this->currentQuiz->duration
             && $this->firstTimeRequestingQuestion($answers)
         ) {
@@ -64,15 +77,6 @@ class QuizContextData
         //      It's Quiz time
         /* ------------------------------------------------- */
         // secondsToQuizStart = [-QUIZ_DURATION - 0] (NEGATIVE INT) -> secondsSinceQuizStart (abs)
-
-        if (
-            !config('quiz.QUIZ_ALLOW_DELAY') &&
-            $this->firstTimeRequestingQuestion($answers) &&
-            ($this->secondsSinceQuizStart() > config('quiz.QUIZ_MAX_DELAY'))
-        ) {
-            $this->context = self::LATE;
-            return;
-        }
 
         if (
             $this->reachedLastQuestion($answers) &&

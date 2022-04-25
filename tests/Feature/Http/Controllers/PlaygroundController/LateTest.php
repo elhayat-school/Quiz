@@ -15,7 +15,7 @@ class LateTest extends TestCase
 
     use RefreshDatabase;
 
-    public function test_sees_late_message_and_ranking_button(): void
+    public function test_sees_late_message(): void
     {
         $wait = -config('quiz.QUIZ_MAX_DELAY') - 1;
 
@@ -29,9 +29,24 @@ class LateTest extends TestCase
         $ins->insert($quiz_example1);
 
         $this->get(route('playground'))
-            ->assertSee([
-                'انت متأخر',
-                'انظر إلى النتائج'
-            ]);
+            ->assertSee('انت متأخر')
+            ->assertDontSee('انظر إلى النتائج');
+    }
+
+    public function test_not_sees_late_message_when_ended(): void
+    {
+        $wait = -2000;
+
+        $user = User::factory()->create();
+        Auth::login($user);
+
+        $ins = new FullQuizInsertion;
+        $quiz_seed = new FullQuizSeed;
+        $quiz_example1 = $quiz_seed->example1($wait);
+
+        $ins->insert($quiz_example1);
+
+        $this->get(route('playground'))
+            ->assertDontSee('انت متأخر');
     }
 }
