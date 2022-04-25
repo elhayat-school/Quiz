@@ -15,12 +15,12 @@ class EndedTest extends TestCase
 
     public function test_sees_ended_message(): void
     {
-        $wait = -2000;
+        Auth::login(User::factory()->create());
 
-        $user = User::factory()->create();
-        Auth::login($user);
+        $quiz_example1 = FullQuizSeed::seed();
 
-        FullQuizSeed::seed($wait);
+        $delay = quiz_duration(count($quiz_example1['questions'])) + 10;
+        $this->travel($delay)->seconds();
 
         $this->get(route('playground'))
             ->assertSee([
