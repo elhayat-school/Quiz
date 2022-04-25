@@ -13,7 +13,7 @@ class QuizControllerTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_store(): void
+    public function test_store_quiz(): void
     {
         $user = User::factory()->create();
         $user->role = 'admin';

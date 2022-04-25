@@ -14,7 +14,7 @@ class EndedTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_example(): void
+    public function test_sees_ended_message(): void
     {
         $wait = -2000;
 

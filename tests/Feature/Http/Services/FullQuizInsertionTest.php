@@ -15,7 +15,7 @@ class FullQuizInsertionTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_accurate_insertion(): void
+    public function test_accurate_quiz_insertion(): void
     {
         $ins = new FullQuizInsertion;
         $quiz_seed = new FullQuizSeed;
