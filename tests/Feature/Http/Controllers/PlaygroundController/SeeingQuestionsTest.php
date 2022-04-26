@@ -27,6 +27,7 @@ class SeeingQuestionsTest extends TestCase
                 $response->assertSee($choice);
             }
 
+            // Go beyond currently seen question period
             $this->travel(config('quiz.QUESTION_DEFAULT_DURATION') + 1)->seconds();
         }
     }

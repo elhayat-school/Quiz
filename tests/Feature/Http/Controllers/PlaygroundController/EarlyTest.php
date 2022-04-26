@@ -3,7 +3,6 @@
 namespace Tests\Feature\Http\Controllers\PlaygroundController;
 
 use App\Models\User;
-use App\Services\FullQuizInsertion;
 use Database\Seeders\FullQuizSeed;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Auth;

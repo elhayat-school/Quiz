@@ -3,28 +3,20 @@
 namespace Tests\Feature\Http\Controllers\PlaygroundController;
 
 use App\Models\User;
-use App\Services\FullQuizInsertion;
 use Database\Seeders\FullQuizSeed;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Auth;
 use Tests\TestCase;
 
 class LateTest extends TestCase
 {
-
     use RefreshDatabase;
 
     public function test_sees_late_message(): void
     {
-        $user = User::factory()->create();
-        Auth::login($user);
+        Auth::login(User::factory()->create());
 
-        $ins = new FullQuizInsertion;
-        $quiz_seed = new FullQuizSeed;
-        $quiz_example1 = $quiz_seed->example1();
-
-        $ins->insert($quiz_example1);
+        FullQuizSeed::seed();
 
         $this->travel(config('quiz.QUIZ_MAX_DELAY') + 1)->seconds();
 
@@ -35,16 +27,12 @@ class LateTest extends TestCase
 
     public function test_not_sees_late_message_when_ended(): void
     {
-        $user = User::factory()->create();
-        Auth::login($user);
+        Auth::login(User::factory()->create());
 
-        $ins = new FullQuizInsertion;
-        $quiz_seed = new FullQuizSeed;
-        $quiz_example1 = $quiz_seed->example1();
+        $quiz_example1 = FullQuizSeed::seed();
 
-        $ins->insert($quiz_example1);
-
-        $this->travel(3)->minutes();
+        $delay = quiz_duration(count($quiz_example1['questions'])) + 10;
+        $this->travel($delay)->seconds();
 
         $this->get(route('playground'))
             ->assertDontSee('انت متأخر');

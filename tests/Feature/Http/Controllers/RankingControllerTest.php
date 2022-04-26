@@ -4,7 +4,6 @@ namespace Tests\Feature\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Auth;
 use Tests\TestCase;
 
@@ -14,8 +13,7 @@ class RankingControllerTest extends TestCase
 
     public function test_no_available_quizzes_on_current_quiz_ranking(): void
     {
-        $user = User::factory()->create();
-        Auth::login($user);
+        Auth::login(User::factory()->create());
 
         $this->get(route('ranking.current_quiz'))
             ->assertStatus(200)
@@ -24,8 +22,7 @@ class RankingControllerTest extends TestCase
 
     public function test_no_global_ranking_for_player(): void
     {
-        $user = User::factory()->create();
-        Auth::login($user);
+        Auth::login(User::factory()->create());
 
         $this->get(route('ranking.global'))
             ->assertStatus(403);
@@ -33,8 +30,7 @@ class RankingControllerTest extends TestCase
 
     public function test_no_available_quizzes_on_global_ranking_for_admin(): void
     {
-        $user = User::factory()->make(['role' => 'admin']);
-        Auth::login($user);
+        Auth::login(User::factory()->make(['role' => 'admin']));
 
         $this->get(route('ranking.global'))
             ->assertStatus(200)

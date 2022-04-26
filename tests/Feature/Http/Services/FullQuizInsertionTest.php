@@ -15,11 +15,7 @@ class FullQuizInsertionTest extends TestCase
 
     public function test_accurate_quiz_insertion(): void
     {
-        $ins = new FullQuizInsertion;
-        $quiz_seed = new FullQuizSeed;
-        $quiz_example_1 = $quiz_seed->example1();
-
-        $ins->insert($quiz_example_1);
+        $quiz_example_1 = FullQuizSeed::seed();
 
         $currentQuiz = new CurrentQuiz;
         $current_quiz = $currentQuiz();
