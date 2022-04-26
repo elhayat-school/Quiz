@@ -25,7 +25,7 @@ class LateTest extends TestCase
             ->assertDontSee('انظر إلى النتائج');
     }
 
-    public function test_not_sees_late_message_when_ended(): void
+    public function test_dont_see_late_message_when_ended(): void
     {
         Auth::login(User::factory()->create());
 
