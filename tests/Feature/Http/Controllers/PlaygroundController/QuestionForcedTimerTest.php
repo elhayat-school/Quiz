@@ -16,7 +16,7 @@ class QuestionForcedTimerTest extends TestCase
     {
         $this->travel(0)->seconds();
 
-        Auth::login(User::factory()->create());
+        $this->authenticate();
 
         FullQuizSeed::seed();
 
@@ -35,6 +35,7 @@ class QuestionForcedTimerTest extends TestCase
         $remaining_question_time = config('quiz.QUESTION_DEFAULT_DURATION') - $time_to_answer;
 
         $this->get(route('playground'))
+            ->assertOk()
             ->assertSee('يرجى الانتظار حتى نهاية العد التنازلي قبل الخوض في السؤال الموالي')
             ->assertSee("data-countdown-duration=\"$remaining_question_time\"", false);
     }

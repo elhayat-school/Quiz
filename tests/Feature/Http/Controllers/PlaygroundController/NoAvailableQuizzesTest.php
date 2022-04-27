@@ -13,10 +13,10 @@ class NoAvailableQuizzesTest extends TestCase
 
     public function test_sees_no_available_quizzes(): void
     {
-        Auth::login(User::factory()->create());
+        $this->authenticate();
 
         $this->get(route('playground'))
-            ->assertStatus(200)
+            ->assertOk()
             ->assertSee('لا يوجد مسابقة مبرمجة');
     }
 }

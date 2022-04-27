@@ -14,20 +14,21 @@ class LateTest extends TestCase
 
     public function test_sees_late_message(): void
     {
-        Auth::login(User::factory()->create());
+        $this->authenticate();
 
         FullQuizSeed::seed();
 
         $this->travel(config('quiz.QUIZ_MAX_DELAY') + 1)->seconds();
 
         $this->get(route('playground'))
+            ->assertOk()
             ->assertSee('انت متأخر')
             ->assertDontSee('انظر إلى النتائج');
     }
 
     public function test_dont_see_late_message_when_ended(): void
     {
-        Auth::login(User::factory()->create());
+        $this->authenticate();
 
         $quiz_example1 = FullQuizSeed::seed();
 
@@ -35,6 +36,7 @@ class LateTest extends TestCase
         $this->travel($delay)->seconds();
 
         $this->get(route('playground'))
+            ->assertOk()
             ->assertDontSee('انت متأخر');
     }
 }

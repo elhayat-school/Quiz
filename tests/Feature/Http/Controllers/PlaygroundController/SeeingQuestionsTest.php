@@ -14,13 +14,14 @@ class SeeingQuestionsTest extends TestCase
 
     public function test_sees_all_questions_in_sequence(): void
     {
-        Auth::login(User::factory()->create());
+        $this->authenticate();
 
         $quiz_example_1 = FullQuizSeed::seed();
 
         foreach ($quiz_example_1['questions'] as $question) {
 
             $response = $this->get(route('playground'))
+                ->assertOk()
                 ->assertSee($question['content']);
 
             foreach ($question['choices'] as $choice) {

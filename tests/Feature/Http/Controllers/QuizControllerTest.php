@@ -14,7 +14,7 @@ class QuizControllerTest extends TestCase
 
     public function test_store_quiz(): void
     {
-        Auth::login(User::factory()->make(['role' => 'admin']));
+        $this->authenticate('admin');
 
         $quiz_seed = new FullQuizSeed;
 

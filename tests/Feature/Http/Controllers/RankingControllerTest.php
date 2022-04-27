@@ -13,16 +13,16 @@ class RankingControllerTest extends TestCase
 
     public function test_no_available_quizzes_on_current_quiz_ranking(): void
     {
-        Auth::login(User::factory()->create());
+        $this->authenticate();
 
         $this->get(route('ranking.current_quiz'))
-            ->assertStatus(200)
+            ->assertOk()
             ->assertSee('لا يوجد مسابقة مبرمجة');
     }
 
     public function test_no_global_ranking_for_player(): void
     {
-        Auth::login(User::factory()->create());
+        $this->authenticate();
 
         $this->get(route('ranking.global'))
             ->assertStatus(403);
@@ -30,10 +30,10 @@ class RankingControllerTest extends TestCase
 
     public function test_no_available_quizzes_on_global_ranking_for_admin(): void
     {
-        Auth::login(User::factory()->make(['role' => 'admin']));
+        $this->authenticate('admin');
 
         $this->get(route('ranking.global'))
-            ->assertStatus(200)
+            ->assertOk()
             ->assertSee('لا يوجد نتائج');
     }
 }

@@ -16,7 +16,7 @@ class FinishedTest extends TestCase
 
     public function test_sees_finished_message(): void
     {
-        Auth::login(User::factory()->create());
+        $this->authenticate();
 
         FullQuizSeed::seed();
 
@@ -31,12 +31,13 @@ class FinishedTest extends TestCase
         }
 
         $this->get(route('playground'))
+            ->assertOk()
             ->assertSee('تهانينا لقد انتهيت من المشاركة في مسابقة اليوم');
     }
 
     public function test_dont_see_finished_message_when_ended(): void
     {
-        Auth::login(User::factory()->create());
+        $this->authenticate();
 
         $quiz_example1 = FullQuizSeed::seed();
 
@@ -44,6 +45,7 @@ class FinishedTest extends TestCase
         $this->travel($delay)->seconds();
 
         $this->get(route('playground'))
+            ->assertOk()
             ->assertDontSee('تهانينا لقد انتهيت من المشاركة في مسابقة اليوم');
     }
 }

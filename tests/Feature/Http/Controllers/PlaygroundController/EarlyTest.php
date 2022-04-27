@@ -16,13 +16,14 @@ class EarlyTest extends TestCase
     {
         $wait = 10;
 
-        Auth::login(User::factory()->create());
+        $this->authenticate();
 
         FullQuizSeed::seed();
 
         $this->travel(-$wait)->seconds();
 
         $this->get(route('playground'))
+            ->assertOk()
             ->assertSee('لم تبدأ المسابقة بعد، يرجى الإنتظار أو العودة في')
             ->assertSee("data-countdown-duration=\"$wait\"", false);
     }

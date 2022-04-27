@@ -14,7 +14,7 @@ class EndedTest extends TestCase
 
     public function test_sees_ended_message(): void
     {
-        Auth::login(User::factory()->create());
+        $this->authenticate();
 
         $quiz_example1 = FullQuizSeed::seed();
 
@@ -22,6 +22,7 @@ class EndedTest extends TestCase
         $this->travel($delay)->seconds();
 
         $this->get(route('playground'))
+            ->assertOk()
             ->assertSee([
                 'لقد إنتهت لعبة اليوم',
                 'انظر إلى النتائج'
