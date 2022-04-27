@@ -2,9 +2,7 @@
 
 namespace Tests\Feature\Http\Controllers\PlaygroundController;
 
-use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Auth;
 use Tests\TestCase;
 
 class NoAvailableQuizzesTest extends TestCase

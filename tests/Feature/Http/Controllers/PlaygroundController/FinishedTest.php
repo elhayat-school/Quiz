@@ -4,10 +4,8 @@ namespace Tests\Feature\Http\Controllers\PlaygroundController;
 
 use App\Models\Answer;
 use App\Models\Question;
-use App\Models\User;
 use Database\Seeders\FullQuizSeed;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Auth;
 use Tests\TestCase;
 
 class FinishedTest extends TestCase
