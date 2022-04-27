@@ -32,10 +32,10 @@ class QuizContextData
         $this->currentTimestamp = now()->timestamp;
         $this->currentQuiz = $currentQuiz();
 
-        $this->setQuizContextData();
+        $this->set();
     }
 
-    public function setQuizContextData(): void
+    private function set(): void
     {
         if (!$this->currentQuiz) {
             $this->context = self::NO_QUIZZES_AVAILABLE;
@@ -54,21 +54,7 @@ class QuizContextData
             return;
         }
 
-        if (
-            $this->secondsToQuizStart < 0 &&
-            $this->secondsToQuizStart > -$this->currentQuiz->duration && // Late only during quiz
-            $this->firstTimeRequestingQuestion($answers) &&
-            !config('quiz.QUIZ_ALLOW_DELAY') &&
-            ($this->secondsSinceQuizStart() > config('quiz.QUIZ_MAX_DELAY'))
-        ) {
-            $this->context = self::LATE;
-            return;
-        }
-
-        if (
-            $this->secondsToQuizStart < -$this->currentQuiz->duration
-            && $this->firstTimeRequestingQuestion($answers)
-        ) {
+        if ($this->secondsToQuizStart < -$this->currentQuiz->duration) {
             $this->context = self::ENDED;
             return;
         }
@@ -76,7 +62,15 @@ class QuizContextData
         /* ------------------------------------------------- */
         //      It's Quiz time
         /* ------------------------------------------------- */
-        // secondsToQuizStart = [-QUIZ_DURATION - 0] (NEGATIVE INT) -> secondsSinceQuizStart (abs)
+
+        if (
+            $this->firstTimeRequestingQuestion($answers) &&
+            !config('quiz.QUIZ_ALLOW_DELAY') &&
+            ($this->secondsSinceQuizStart() > config('quiz.QUIZ_MAX_DELAY'))
+        ) {
+            $this->context = self::LATE;
+            return;
+        }
 
         if (
             $this->reachedLastQuestion($answers) &&
