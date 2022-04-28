@@ -18,7 +18,7 @@ return new class extends Migration
             $table->foreignId('question_id')->constrained()->onDelete('cascade');
             //
             $table->string('content');
-            $table->set('choice_number', config('rules.choice_number.in'))->index();
+            $table->enum('choice_number', config('rules.choice_number.in'))->index();
             $table->boolean('is_correct');
             //
             $table->timestamps();

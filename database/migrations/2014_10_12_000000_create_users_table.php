@@ -18,8 +18,8 @@ return new class extends Migration
             $table->string('name')->nullable();
             $table->string('email')->unique();
             $table->string('password');
-            $table->set('establishment', config('quiz.ESTABLISHMENTS'))->nullable();
-            $table->set('role', config('rules.roles.in'))->nullable();
+            $table->enum('establishment', config('quiz.ESTABLISHMENTS'))->nullable();
+            $table->enum('role', config('rules.roles.in'))->nullable();
             //
             $table->timestamp('email_verified_at')->nullable();
             $table->rememberToken();

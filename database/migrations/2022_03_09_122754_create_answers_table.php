@@ -19,7 +19,7 @@ return new class extends Migration
             $table->foreignId('question_id')->constrained();
             $table->unique(['user_id', 'question_id']);
             //
-            $table->set('choice_number', config('rules.choice_number.in'))->nullable()->index();
+            $table->enum('choice_number', config('rules.choice_number.in'))->nullable()->index();
             $table->dateTime('served_at');
             $table->dateTime('received_at')->nullable();
             //
