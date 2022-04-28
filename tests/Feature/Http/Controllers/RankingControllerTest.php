@@ -85,4 +85,9 @@ class RankingControllerTest extends TestCase
         $this->assertCount($results->first()->count_correct_answers, auth()->user()->answers);
         $this->assertCount($results->first()->sum_elapsed_seconds, auth()->user()->answers);
     }
+
+    public function test_see_ranking_table()
+    {
+        # code...
+    }
 }
