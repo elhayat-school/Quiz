@@ -24,7 +24,7 @@ class RankingController extends Controller
         // TODO cache
         $ranking = Answer::getRanking($correct_choices)->get();
 
-        if (is_null($ranking))
+        if ($ranking->count() === 0)
             return view('results.no_results');
 
         $ranking = $this->limitRankingList($ranking);

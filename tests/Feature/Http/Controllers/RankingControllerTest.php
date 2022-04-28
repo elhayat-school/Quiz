@@ -4,6 +4,7 @@ namespace Tests\Feature\Http\Controllers;
 
 use App\Models\Answer;
 use App\Models\Question;
+use App\Models\User;
 use Database\Seeders\FullQuizSeed;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -12,28 +13,32 @@ class RankingControllerTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_no_available_quizzes_on_current_quiz_ranking(): void
+    public function test_no_ranking(): void
     {
-        $this->authenticate();
+        /** @var \Illuminate\Contracts\Auth\Authenticatable */
+        $student = User::factory()->create();
+        /** @var \Illuminate\Contracts\Auth\Authenticatable */
+        $admin = User::factory()->create(['role' => 'admin']);
 
-        $this->get(route('ranking.current_quiz'))
+        $this->actingAs($student)
+            ->get(route('ranking.current_quiz'))
             ->assertOk()
             ->assertSee('لا يوجد مسابقة مبرمجة');
-    }
 
-    public function test_no_global_ranking_for_player(): void
-    {
-        $this->authenticate();
+        $this->actingAs($admin)
+            ->get(route('ranking.global'))
+            ->assertOk()
+            ->assertSee('لا يوجد نتائج');
 
-        $this->get(route('ranking.global'))
-            ->assertStatus(403);
-    }
+        FullQuizSeed::seed();
 
-    public function test_no_available_quizzes_on_global_ranking_for_admin(): void
-    {
-        $this->authenticate('admin');
+        $this->actingAs($student)
+            ->get(route('ranking.current_quiz'))
+            ->assertOk()
+            ->assertSee('لا يوجد نتائج');
 
-        $this->get(route('ranking.global'))
+        $this->actingAs($admin)
+            ->get(route('ranking.current_quiz'))
             ->assertOk()
             ->assertSee('لا يوجد نتائج');
     }

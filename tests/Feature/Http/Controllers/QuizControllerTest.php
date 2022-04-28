@@ -14,9 +14,7 @@ class QuizControllerTest extends TestCase
     {
         $this->authenticate('admin');
 
-        $quiz_seed = new FullQuizSeed;
-
-        $this->post(route('quizzes.store'), $quiz_seed->example1())
+        $this->post(route('quizzes.store'), FullQuizSeed::seed())
             ->assertSessionHasNoErrors()
             ->assertRedirect(route('quizzes.index'));
     }
