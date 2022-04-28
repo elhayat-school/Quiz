@@ -20,7 +20,9 @@
 
 <body class="font-sans antialiased">
 
-    <x-nav.hamburger-menu />
+    {{-- <x-nav.hamburger-menu /> --}}
+    <img class="w-24 lg:w-52 absolute right-0 top-0" src="https://media.giphy.com/media/TRub2cQyyLihIu0Ufa/giphy.gif" />
+    {{-- {{ asset('assets/lamps3.gif') }} --}}
 
     <div class="min-h-screen bg-slate-600">
         <!-- Page Content -->
