@@ -9,6 +9,7 @@ use  Illuminate\Http\RedirectResponse;
 class AnswerController extends Controller
 {
     public int $currentTimestamp;
+
     private $currentQuiz;
 
     public function __construct(CurrentQuiz $currentQuiz)
@@ -29,9 +30,8 @@ class AnswerController extends Controller
             $this->currentTimestamp - strtotime($answer->served_at) <= $question->duration &&
             empty($answer->choice_number)
         ) {
-
             $answer->choice_number = $request->choice_number;
-            $answer->received_at = date('Y-m-d H:i:s',  $this->currentTimestamp);
+            $answer->received_at = date('Y-m-d H:i:s', $this->currentTimestamp);
 
             $answer->save();
         }

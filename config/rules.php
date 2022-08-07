@@ -2,10 +2,10 @@
 
 return [
 
-    "choice_number" => [
+    'choice_number' => [
         'in' => ['1', '2', '3', '4'],
     ],
-    "roles" => [
+    'roles' => [
         'in' => ['admin', 'student'],
     ],
 

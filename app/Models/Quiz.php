@@ -11,7 +11,6 @@ class Quiz extends Model
 
     public $guarded = ['id'];
 
-
     public function questions()
     {
         return $this->hasMany(Question::class);

@@ -17,7 +17,6 @@ class SeeingQuestionsTest extends TestCase
         $quiz_example_1 = FullQuizSeed::seed();
 
         foreach ($quiz_example_1['questions'] as $question) {
-
             $response = $this->get(route('playground'))
                 ->assertOk()
                 ->assertSee($question['content']);

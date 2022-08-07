@@ -6,7 +6,6 @@ use App\Services\FullQuizInsertion;
 
 class FullQuizSeed
 {
-
     public static function seed(int $seconds_offset = 0)
     {
         $ins = new FullQuizInsertion;
@@ -61,10 +60,10 @@ class FullQuizSeed
                         2 => 'الرسول صلى الله عليه و سلم',
                         3 => 'حمزة بن عبد المطلب',
                         // 4=> 'بلال ابن رباح',
-                    ]
+                    ],
                 ],
 
-            ]
+            ],
         ];
     }
 }

@@ -14,7 +14,7 @@ class WeakAuth
      */
     public function handle(Request $request, Closure $next)
     {
-        if (!isset($request->_p) || !password_verify_weak_auth($request->_p)) {
+        if (! isset($request->_p) || ! password_verify_weak_auth($request->_p)) {
             return response('unauthorized', 401);
         }
 

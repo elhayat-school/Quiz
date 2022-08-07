@@ -37,7 +37,7 @@ class Answer extends Model
             ->select([
                 'user_id',
                 DB::raw('SUM(UNIX_TIMESTAMP(received_at) - UNIX_TIMESTAMP(served_at)) AS sum_elapsed_seconds'),
-                DB::raw('COUNT(DISTINCT question_id) AS count_correct_answers')
+                DB::raw('COUNT(DISTINCT question_id) AS count_correct_answers'),
             ])
             ->filterCorrectChoices($correct_choices)
             ->orderBy('count_correct_answers', 'DESC')
@@ -47,18 +47,18 @@ class Answer extends Model
 
     /**
      * ! whereIn can't replace this scope
-     *
      */
     public function scopeFilterCorrectChoices($query, Collection $correct_choices)
     {
         foreach ($correct_choices as $i => $correct_choice) {
             if ($i === 0) {
-                $query->where('question_id', $correct_choice->question_id)->where("choice_number", $correct_choice->choice_number);
+                $query->where('question_id', $correct_choice->question_id)->where('choice_number', $correct_choice->choice_number);
+
                 continue;
             }
 
             $query->orWhere(function ($query) use ($correct_choice) {
-                $query->Where('question_id', $correct_choice->question_id)->where("choice_number", $correct_choice->choice_number);
+                $query->Where('question_id', $correct_choice->question_id)->where('choice_number', $correct_choice->choice_number);
             });
         }
     }
@@ -72,6 +72,7 @@ class Answer extends Model
             ->where('questions.quiz_id', $quiz_id)
             ->where('users.establishment', $establishment);
     }
+
     public static function getEstablishmentParticipation(int|string $quiz_id, string $establishment)
     {
         return self::calculateEstablishmentParticipation($quiz_id, $establishment)

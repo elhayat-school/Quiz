@@ -16,7 +16,7 @@ class IsAdmin
      */
     public function handle(Request $request, Closure $next)
     {
-        if (!$request->user() || $request->user()->role !== config('rules.roles.in')[0]) {
+        if (! $request->user() || $request->user()->role !== config('rules.roles.in')[0]) {
             abort(403);
         }
 

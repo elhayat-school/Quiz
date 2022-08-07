@@ -4,12 +4,11 @@ namespace App\Services;
 
 use App\Models\Answer;
 use App\Models\Question;
-use App\Services\CurrentQuiz;
 use Illuminate\Support\Collection;
 
 class QuizContextData
 {
-    /** @var int*/
+    /** @var int */
     public int $currentTimestamp;
 
     /** @var Quiz|null */
@@ -19,13 +18,18 @@ class QuizContextData
     public int $secondsToQuizStart;
 
     const NO_QUIZZES_AVAILABLE = 'NO_QUIZZES_AVAILABLE';
+
     const EARLY = 'EARLY';
+
     const ENDED = 'ENDED';
+
     const LATE = 'LATE';
+
     const FINISHED = 'FINISHED';
 
     public string $context = '';
-    public $question = NULL;
+
+    public $question = null;
 
     public function __construct(CurrentQuiz $currentQuiz)
     {
@@ -37,8 +41,9 @@ class QuizContextData
 
     private function set(): void
     {
-        if (!$this->currentQuiz) {
+        if (! $this->currentQuiz) {
             $this->context = self::NO_QUIZZES_AVAILABLE;
+
             return;
         }
 
@@ -51,11 +56,13 @@ class QuizContextData
 
         if ($this->secondsToQuizStart > 0) {
             $this->context = self::EARLY;
+
             return;
         }
 
         if ($this->secondsToQuizStart < -$this->currentQuiz->duration) {
             $this->context = self::ENDED;
+
             return;
         }
 
@@ -65,20 +72,22 @@ class QuizContextData
 
         if (
             $this->firstTimeRequestingQuestion($answers) &&
-            !config('quiz.QUIZ_ALLOW_DELAY') &&
+            ! config('quiz.QUIZ_ALLOW_DELAY') &&
             ($this->secondsSinceQuizStart() > config('quiz.QUIZ_MAX_DELAY'))
         ) {
             $this->context = self::LATE;
+
             return;
         }
 
         if (
             $this->reachedLastQuestion($answers) &&
-            (!$this->hasSparedTimeForLatestAnswer($answers) ||
+            (! $this->hasSparedTimeForLatestAnswer($answers) ||
                 $this->filledLatestAnswer($answers)
             )
         ) {
             $this->context = self::FINISHED;
+
             return;
         }
 
@@ -90,7 +99,8 @@ class QuizContextData
     /* ------------------------------------------------- */
 
     /**
-     * @var Illuminate\Support\Collection $answers
+     * @var Illuminate\Support\Collection
+     *
      * @return bool
      */
     private function firstTimeRequestingQuestion(Collection $answers): bool
@@ -99,34 +109,38 @@ class QuizContextData
     }
 
     /**
-     * @var Illuminate\Support\Collection $answers
+     * @var Illuminate\Support\Collection
+     *
      * @return bool
      */
     private function filledLatestAnswer(Collection $answers): bool
     {
-        return !empty($answers->last()->choice_number) && !empty($answers->last()->received_at);
+        return ! empty($answers->last()->choice_number) && ! empty($answers->last()->received_at);
     }
 
     /**
-     * @var Illuminate\Support\Collection $answers
+     * @var Illuminate\Support\Collection
+     *
      * @return bool
      */
     private function hasSparedTimeForLatestAnswer(Collection $answers): bool
     {
-        $answer_elapsed_time =  $this->currentTimestamp - strtotime($answers->last()->served_at);
+        $answer_elapsed_time = $this->currentTimestamp - strtotime($answers->last()->served_at);
         $previously_served_question_duration = $this->currentQuiz->questions[$answers->count() - 1]->duration;
 
         return $answer_elapsed_time <= $previously_served_question_duration;
     }
 
     /**
-     * @var Illuminate\Support\Collection $answers
+     * @var Illuminate\Support\Collection
+     *
      * @return bool
      */
     private function reachedLastQuestion(Collection $answers): bool
     {
-        if ($answers->count() > $this->currentQuiz->questions->count())
+        if ($answers->count() > $this->currentQuiz->questions->count()) {
             throw new \Exception('Check the junk code you wrote in reachedLastQuestion', 1);
+        }
 
         return $answers->count() === $this->currentQuiz->questions->count();
     }
@@ -137,11 +151,11 @@ class QuizContextData
 
     private function pickQuestion(Collection $answers): Question
     {
-        $question = NULL;
+        $question = null;
         $must_wait_countdown = false;
 
         if (
-            !$this->firstTimeRequestingQuestion($answers) && // prevent negative answer index
+            ! $this->firstTimeRequestingQuestion($answers) && // prevent negative answer index
             $this->hasSparedTimeForLatestAnswer($answers)
         ) {
 
@@ -151,8 +165,9 @@ class QuizContextData
             // Reset previous question
             $question = $this->currentQuiz->questions[$answers->count() - 1];
 
-            if ($this->filledLatestAnswer($answers))
+            if ($this->filledLatestAnswer($answers)) {
                 $must_wait_countdown = true;
+            }
         } else {
 
             // Set new question
@@ -162,14 +177,15 @@ class QuizContextData
             Answer::create([
                 'user_id' => auth()->user()->id,
                 'question_id' => $question->id,
-                'served_at' => date('Y-m-d H:i:s',  $this->currentTimestamp),
+                'served_at' => date('Y-m-d H:i:s', $this->currentTimestamp),
             ]);
         }
 
         $quiz_remaining_time = $this->currentQuiz->duration - $this->secondsSinceQuizStart();
 
-        if ($question->duration > $quiz_remaining_time)
+        if ($question->duration > $quiz_remaining_time) {
             $question->duration = $quiz_remaining_time;
+        }
 
         $question->mustWaitCountdown = $must_wait_countdown;
 
@@ -181,8 +197,9 @@ class QuizContextData
      */
     public function secondsSinceQuizStart(): int
     {
-        if ($this->secondsToQuizStart > 0)
+        if ($this->secondsToQuizStart > 0) {
             throw new \Exception('bad lexics usage', 1);
+        }
 
         return abs($this->secondsToQuizStart);
     }

@@ -1,14 +1,14 @@
 <?php
 
 use App\Http\Controllers\AnswerController;
-use App\Http\Controllers\QuizController;
 use App\Http\Controllers\PlaygroundController;
+use App\Http\Controllers\QuizController;
 use App\Http\Controllers\RankingController;
 use Illuminate\Support\Facades\Route;
 
 Route::Get('/', fn () => to_route('login'));
 
-require __DIR__ . '/auth.php';
+require __DIR__.'/auth.php';
 
 // ADMIN ROUTES
 Route::middleware('auth', 'is_admin')->group(function () {

@@ -3,10 +3,8 @@
 namespace Tests\Feature\Services;
 
 use App\Services\CurrentQuiz;
-use App\Services\FullQuizInsertion;
 use Database\Seeders\FullQuizSeed;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class FullQuizInsertionTest extends TestCase
@@ -41,30 +39,29 @@ class FullQuizInsertionTest extends TestCase
             $this->assertEquals(
                 $src_question_content,
                 $inserted_question_content,
-                "Questions ORDER DOESN'T MATCH: \n\t" .
-                    "DB: $inserted_question_content \n\t" .
-                    "AND \n\t" .
+                "Questions ORDER DOESN'T MATCH: \n\t".
+                    "DB: $inserted_question_content \n\t".
+                    "AND \n\t".
                     "SRC: $src_question_content \n\t"
             );
 
             foreach ($question->choices as $j => $choice) {
-
                 $src_choice_content = $src_question['choices'][$j + 1];
                 $inserted_choice_content = $choice->content;
 
                 $this->assertEquals(
                     $src_choice_content,
                     $inserted_choice_content,
-                    "Choices ORDER DOESN'T MATCH: \n\t" .
-                        "DB: $inserted_choice_content \n\t" .
-                        "AND \n\t" .
+                    "Choices ORDER DOESN'T MATCH: \n\t".
+                        "DB: $inserted_choice_content \n\t".
+                        "AND \n\t".
                         "SRC: $src_choice_content \n\t"
                 );
 
                 $this->assertEquals(
                     ($src_question['is_correct'] == $j + 1),
                     $choice->is_correct,
-                    "Incorrect choice is marked as correct"
+                    'Incorrect choice is marked as correct'
                 );
             }
         }

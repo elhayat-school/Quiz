@@ -88,6 +88,6 @@ class RankingControllerTest extends TestCase
 
     public function test_see_ranking_table()
     {
-        # code...
+        // code...
     }
 }

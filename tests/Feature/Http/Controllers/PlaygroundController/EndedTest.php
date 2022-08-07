@@ -23,7 +23,7 @@ class EndedTest extends TestCase
             ->assertOk()
             ->assertSee([
                 'لقد إنتهت لعبة اليوم',
-                'انظر إلى النتائج'
+                'انظر إلى النتائج',
             ]);
     }
 }

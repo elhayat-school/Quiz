@@ -16,16 +16,18 @@ class RankingController extends Controller
     {
         $current_quiz = $currentQuiz();
 
-        if (is_null($current_quiz))
+        if (is_null($current_quiz)) {
             return view('playground.no_available_quizzes');
+        }
 
         $correct_choices = $current_quiz->choices()->where('is_correct', 1)->get();
 
         // TODO cache
         $ranking = Answer::getRanking($correct_choices)->get();
 
-        if ($ranking->count() === 0)
+        if ($ranking->count() === 0) {
             return view('results.no_results');
+        }
 
         $ranking = $this->limitRankingList($ranking);
 
@@ -38,8 +40,9 @@ class RankingController extends Controller
      */
     public function globalResults()
     {
-        if (!Answer::count())
+        if (! Answer::count()) {
             return view('results.no_results');
+        }
 
         $correct_choices = Choice::where('is_correct', 1)->get();
 
@@ -62,8 +65,9 @@ class RankingController extends Controller
      */
     private function limitRankingList(Collection $rankingList, int $limit = 10): Collection
     {
-        if (empty($limit) || $limit <= 0)
+        if (empty($limit) || $limit <= 0) {
             throw new \Exception('No valid limit property on the rankingList collection', 1);
+        }
 
         $tempCollection = $rankingList->reject(function ($result, $rank) use ($limit) {
             return $rank >= $limit && $result->user->id !== auth()->user()->id;

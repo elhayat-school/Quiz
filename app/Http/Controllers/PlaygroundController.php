@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Services\QuizContextData;
-use Illuminate\Contracts\View\View;
 use Illuminate\Contracts\View\Factory;
+use Illuminate\Contracts\View\View;
 
 class PlaygroundController extends Controller
 {

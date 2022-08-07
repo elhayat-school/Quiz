@@ -6,16 +6,16 @@ use App\Http\Requests\StoreQuizRequest;
 use App\Models\Answer;
 use App\Models\Quiz;
 use App\Services\FullQuizInsertion;
-use Illuminate\Contracts\View\View;
 use Illuminate\Contracts\View\Factory;
-use Illuminate\Http\Request;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 
 class QuizController extends Controller
 {
     public function index(): View|Factory
     {
-        return view("quiz.index")
+        return view('quiz.index')
             ->with('quizzes', Quiz::with('questions.choices')->oldest('start_at')->get());
     }
 
@@ -45,8 +45,9 @@ class QuizController extends Controller
         foreach ($establishments as $establishment) {
             $count = Answer::getEstablishmentParticipation($quiz->id, $establishment);
 
-            if ($count > 0)
+            if ($count > 0) {
                 $participation_stats[] = "$establishment:$count";
+            }
         }
         $participation_stats = implode('-', $participation_stats);
 
@@ -57,7 +58,7 @@ class QuizController extends Controller
 
     public function markAsDone(Request $request, Quiz $quiz): RedirectResponse
     {
-        $quiz->update(['done' => $request->new_state === "done"]);
+        $quiz->update(['done' => $request->new_state === 'done']);
 
         return back();
     }
